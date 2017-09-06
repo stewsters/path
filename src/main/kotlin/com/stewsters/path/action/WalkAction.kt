@@ -4,7 +4,7 @@ import com.stewsters.path.entity.Entity
 import com.stewsters.path.map.TileType
 import com.stewsters.util.math.Point2i
 
-class WalkAction(pawn: Entity, private val offset: Point2i) : Action(pawn) {
+class WalkAction(pawn: Entity, val offset: Point2i) : Action(pawn) {
 
 
     override fun onPerform(): ActionResult {
@@ -15,11 +15,11 @@ class WalkAction(pawn: Entity, private val offset: Point2i) : Action(pawn) {
 
         val xCur = pawn.pos.x
         val yCur = pawn.pos.y
-//        val zCur = pawn.pos.z
+        // val zCur = pawn.pos.z
 
         val xPos = xCur + offset.x
         val yPos = yCur + offset.y
-        //      val zPos = zCur
+        // val zPos = zCur
 
 
         if (worldMap.outside(xPos, yPos)) {
@@ -27,17 +27,21 @@ class WalkAction(pawn: Entity, private val offset: Point2i) : Action(pawn) {
         }
 
         //See if there is an actor there
-        val canTraverse = pawn.canTraverse(xCur, yCur, xPos, yPos)
+        val targetList = worldMap.pawnInSquare(xPos, yPos, xPos + pawn.xSize - 1, yPos + pawn.ySize - 1)
 
-        val target = worldMap.pawnInSquare(xPos, yPos, xPos + pawn.xSize - 1, yPos + pawn.ySize - 1)
+        if (targetList.size > 0) {
 
-        if (target != null && target !== pawn) {
-            if ((pawn.ai != null) != (target.ai != null))
-                return ActionResult(AttackAction(pawn, target))
-            else
-                return ActionResult.FAILURE
+            for (target in targetList) {
+                if (target == pawn) {
+                    continue
+                } else if ((pawn.turnTaker != null) != (target.turnTaker != null))
+                    return ActionResult(AttackAction(pawn, target))
+                else
+                    return ActionResult.FAILURE
+            }
         }
 
+        // Open Door
         val targetTileType = worldMap.at(xPos, yPos).get().type
         if (targetTileType === TileType.CLOSED_DOOR) {
             return ActionResult(OpenDoorAction(pawn, Point2i(xPos, yPos)))
@@ -48,6 +52,7 @@ class WalkAction(pawn: Entity, private val offset: Point2i) : Action(pawn) {
 //        }
 
         // See if we can walk there.
+        val canTraverse = pawn.canTraverse(xCur, yCur, xPos, yPos)
         if (!canTraverse) {
             return ActionResult.FAILURE
         }

@@ -12,7 +12,7 @@ object MapGenerator {
                 val tile = chunk.at(x, y)
 
                 if (tile.isPresent)
-                    chunk.at(x, y).get().type = TileType.TREE
+                    chunk.at(x, y).get().type = TileType.GRASS
                 else {
                     println("$x $y")
                 }

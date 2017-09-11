@@ -2,12 +2,10 @@ package com.stewsters.path.action
 
 class ActionResult {
 
-    /// An alternate [Action] that should be performed instead of the one that failed.
-    val alternative: Action?
-    val nextAction: Action?
+    val alternative: Action? // An alternate [Action] that should be performed instead of the one that failed.
+    val nextAction: Action? // An [Action] that should be immediately follow this one.
 
-    /// `true` if the [Action] was successful and energy should be consumed.
-    val succeeded: Boolean
+    val succeeded: Boolean // true if the [Action] was successful and energy should be consumed.
 
     internal constructor(succeeded: Boolean) {
         this.succeeded = succeeded
@@ -21,7 +19,6 @@ class ActionResult {
         this.nextAction = nextAction
     }
 
-
     constructor(alternative: Action) {
         this.alternative = alternative
         this.succeeded = true
@@ -29,7 +26,6 @@ class ActionResult {
     }
 
     companion object {
-
         val SUCCESS = ActionResult(true)
         val FAILURE = ActionResult(false)
     }

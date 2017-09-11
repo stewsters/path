@@ -9,7 +9,8 @@ import com.valkryst.VTerminal.font.FontLoader
 object Game {
 
 
-    @JvmStatic fun main(args: Array<String>) {
+    @JvmStatic
+    fun main(args: Array<String>) {
         val font = FontLoader.loadFontFromJar("Fonts/DejaVu Sans Mono/18pt/bitmap.png", "Fonts/DejaVu Sans Mono/18pt/data.fnt", 1)
 
         val panelBuilder = PanelBuilder()

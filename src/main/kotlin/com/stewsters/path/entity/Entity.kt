@@ -1,7 +1,5 @@
 package com.stewsters.path.entity
 
-import com.stewsters.path.action.Action
-import com.stewsters.path.entity.ai.AI
 import com.stewsters.path.map.MapChunk
 import com.stewsters.util.math.Point2i
 import java.awt.Color
@@ -13,8 +11,7 @@ class Entity(
         var char: Char = '@',
         var color: Color = Color.WHITE,
 
-        var nextAction: Action? = null,
-        var ai: AI? = null,
+        var turnTaker: TurnTaker? = null,
 
         var life: Life? = null,
         var deathFunction: (Entity) -> Unit = {},
@@ -25,10 +22,13 @@ class Entity(
         val ySize: Int = 1
 ) {
 
-    fun canTraverse(xCur: Int, yCur: Int, xPos: Int, yPos: Int): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    init {
+        turnTaker?.parent = this
     }
 
+    fun canTraverse(xCur: Int, yCur: Int, xPos: Int, yPos: Int): Boolean {
+        return !chunk.at(xPos, yPos).get().type.blocks
+    }
 
 }
 

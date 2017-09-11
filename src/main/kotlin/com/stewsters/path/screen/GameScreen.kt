@@ -1,8 +1,8 @@
 package com.stewsters.path.screen
 
-import com.stewsters.path.action.WalkAction
+import com.stewsters.path.entity.Entity
+import com.stewsters.path.map.MapChunk
 import com.stewsters.path.map.World
-import com.stewsters.util.math.Point2i
 import com.valkryst.VTerminal.Panel
 import com.valkryst.VTerminal.builder.component.ScreenBuilder
 import com.valkryst.VTerminal.builder.component.TextAreaBuilder
@@ -14,7 +14,7 @@ import java.awt.event.KeyListener
 
 class GameScreen(panel: Panel, screenBuilder: ScreenBuilder) : Screen(screenBuilder), KeyListener {
 
-    val map = World(16, 16, 8, 8)
+    val world = World(16, 16, 8, 8)
 
     var messageBox: TextArea
 
@@ -69,8 +69,7 @@ class GameScreen(panel: Panel, screenBuilder: ScreenBuilder) : Screen(screenBuil
         }
 
         println("$dx $dy loc")
-        map.player.nextAction = WalkAction(map.player, Point2i(dx, dy))
+        world.player.turnTaker?.ai = { mapChunk: MapChunk, entity: Entity -> null }
     }
-
 
 }

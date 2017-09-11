@@ -28,12 +28,12 @@ class MainMenuScreen(panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
         panel.swapScreen(this)
 
         buttonNewGame.setOnClickFunction({
-            // Initialize map tiles:
+            // Initialize world tiles:
             val gameScreen = GameScreen(panel, screenBuilder)
 
             panel.swapScreen(gameScreen)
 
-//            val tiles = gameScreen.map.getCurrentMap()
+//            val tiles = gameScreen.world.getCurrentMap()
 //
 //            for (x in tiles.indices) {
 //                for (y in 0..tiles[x].size - 1) {
@@ -71,7 +71,7 @@ class MainMenuScreen(panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
 //            val npc = creatureBuilder.build()
 //            npc.getEquipment().setItemInSlot(EquipmentSlot.MAIN_HAND, weaponBuilder.build())
 
-//            gameScreen.map.addEntities(player, npc)
+//            gameScreen.world.addEntities(player, npc)
 
             // Create rooms:
 //            val roomA = Rect(20, 5, 10, 15)
@@ -86,8 +86,4 @@ class MainMenuScreen(panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
 
     }
 
-    @Override
-    fun update() {
-
-    }
 }

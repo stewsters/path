@@ -52,8 +52,7 @@ class WalkAction(pawn: Entity, val offset: Point2i) : Action(pawn) {
 //        }
 
         // See if we can walk there.
-        val canTraverse = pawn.canTraverse(xCur, yCur, xPos, yPos)
-        if (!canTraverse) {
+        if (!pawn.canTraverse(xCur, yCur, xPos, yPos)) {
             return ActionResult.FAILURE
         }
 

@@ -21,13 +21,12 @@ class WalkAction(pawn: Entity, val offset: Point2i) : Action(pawn) {
         val yPos = yCur + offset.y
         // val zPos = zCur
 
-
-        if (worldMap.outside(xPos, yPos)) {
-            return ActionResult.FAILURE
+        if (chunkMap.outside(xPos, yPos)) {
+            return ActionResult(MapTransition(pawn, offset))
         }
 
         //See if there is an actor there
-        val targetList = worldMap.pawnInSquare(xPos, yPos, xPos + pawn.xSize - 1, yPos + pawn.ySize - 1)
+        val targetList = chunkMap.pawnInSquare(xPos, yPos, xPos + pawn.xSize - 1, yPos + pawn.ySize - 1)
 
         if (targetList.size > 0) {
 
@@ -42,7 +41,7 @@ class WalkAction(pawn: Entity, val offset: Point2i) : Action(pawn) {
         }
 
         // Open Door
-        val targetTileType = worldMap.at(xPos, yPos).get().type
+        val targetTileType = chunkMap.at(xPos, yPos).get().type
         if (targetTileType === TileType.CLOSED_DOOR) {
             return ActionResult(OpenDoorAction(pawn, Point2i(xPos, yPos)))
         }

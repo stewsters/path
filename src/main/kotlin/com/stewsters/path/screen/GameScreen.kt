@@ -5,9 +5,7 @@ import com.stewsters.path.map.World
 import com.stewsters.util.math.Point2i
 import com.valkryst.VTerminal.Panel
 import com.valkryst.VTerminal.builder.component.ScreenBuilder
-import com.valkryst.VTerminal.builder.component.TextAreaBuilder
 import com.valkryst.VTerminal.component.Screen
-import com.valkryst.VTerminal.component.TextArea
 import com.valkryst.VTerminal.printer.RectanglePrinter
 import java.awt.Color
 import java.awt.event.KeyEvent
@@ -17,7 +15,7 @@ class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
 
     val world = World(16, 16, 8, 8)
 
-    var messageBox: TextArea
+    //    var messageBox: TextArea
     val worldArea: WorldArea
 
     init {
@@ -41,16 +39,16 @@ class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
         ))
         addComponent(worldArea)
 
-        val builder = TextAreaBuilder()
-        builder.radio = panel.radio
-        builder.columnIndex = 0
-        builder.rowIndex = 30
-        builder.width = 80
-        builder.height = 10
-        builder.isEditable = false
-        messageBox = builder.build()
-
-        addComponent(messageBox)
+//        val builder = TextAreaBuilder()
+//        builder.radio = panel.radio
+//        builder.columnIndex = 0
+//        builder.rowIndex = 30
+//        builder.width = 80
+//        builder.height = 10
+//        builder.isEditable = false
+//        messageBox = builder.build()
+//
+//        addComponent(messageBox)
     }
 
     override fun keyTyped(e: KeyEvent) {}

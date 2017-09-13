@@ -3,9 +3,8 @@ package com.stewsters.path.map
 object MapGenerator {
     val chunkSize = 32
 
-
-    fun generateMap(globalX: Int, globalY: Int): MapChunk {
-        val chunk = MapChunk(chunkSize, chunkSize)
+    fun generateMap(world: World, x: Int, y: Int): MapChunk {
+        val chunk = MapChunk(world, x, y, chunkSize, chunkSize)
 
         for (x in 0..chunkSize - 1) {
             for (y in 0..chunkSize - 1) {

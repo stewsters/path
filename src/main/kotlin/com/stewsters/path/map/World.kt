@@ -8,7 +8,7 @@ import com.stewsters.path.entity.TurnTaker
 import com.stewsters.util.math.Point2i
 
 
-class World(val xSize: Int, val ySize: Int, var xFocus: Int, var yFocus: Int) {
+class World(xSize: Int, ySize: Int, var xFocus: Int, var yFocus: Int) : Box(xSize, ySize) {
 
     private val tiles: Array<MapChunk>
     var player: Entity
@@ -18,7 +18,7 @@ class World(val xSize: Int, val ySize: Int, var xFocus: Int, var yFocus: Int) {
         assert(yFocus < ySize && yFocus >= 0)
 
         tiles = Array<MapChunk>(xSize * ySize, { index ->
-            MapGenerator.generateMap(0, 0)
+            MapGenerator.generateMap(this, index % xSize, index / ySize)
         })
 
         player = Entity(
@@ -87,6 +87,9 @@ class World(val xSize: Int, val ySize: Int, var xFocus: Int, var yFocus: Int) {
                 }
 
             }
+
+            if (map.pawnQueue.size == 0)
+                return
 
             currentTurnTaker = map.pawnQueue.poll()
             // increment time,

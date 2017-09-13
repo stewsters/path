@@ -12,11 +12,11 @@ class OpenDoorAction(pawn: Entity, private val pos: Point2i) : Action(pawn) {
         if (!pawn.doorOpener) {
             return ActionResult.FAILURE
         }
-        if (worldMap.at(pos.x, pos.y).get().type !== TileType.CLOSED_DOOR) {
+        if (chunkMap.at(pos.x, pos.y).get().type !== TileType.CLOSED_DOOR) {
             return ActionResult.FAILURE
         }
 
-        worldMap.at(pos.x, pos.y).get().type = TileType.OPEN_DOOR
+        chunkMap.at(pos.x, pos.y).get().type = TileType.OPEN_DOOR
 
         return ActionResult.SUCCESS
 

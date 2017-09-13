@@ -4,10 +4,11 @@ import com.stewsters.path.entity.Entity
 import com.stewsters.path.entity.TurnTaker
 import java.util.*
 
-class MapChunk constructor(val xSize: Int, val ySize: Int) {
+class MapChunk(val world: World, val x: Int, val y: Int,
+               xSize: Int, ySize: Int) : Box(xSize, ySize) {
 
     private val tiles = Array<Tile>(xSize * ySize, { Tile(TileType.GRASS) })
-    val pawnQueue: Queue<TurnTaker> = PriorityQueue<TurnTaker>()
+    val pawnQueue: PriorityQueue<TurnTaker> = PriorityQueue<TurnTaker>()
 
     private val spatialHash: SpatialHash = SpatialHash(xSize, ySize)
 
@@ -15,14 +16,6 @@ class MapChunk constructor(val xSize: Int, val ySize: Int) {
         if (x < 0 || y < 0 || x >= xSize || y >= ySize)
             return Optional.empty<Tile>()
         return Optional.of(tiles.get(x + y * xSize))
-    }
-
-    fun contains(x: Int, y: Int): Boolean {
-        return x > 0 && y > 0 && x < xSize && y < ySize
-    }
-
-    fun outside(x: Int, y: Int): Boolean {
-        return (x < 0 || y < 0 || x >= xSize || y >= ySize)
     }
 
     fun updatePawnPos(pawn: Entity, xPos: Int, yPos: Int) {
@@ -43,6 +36,12 @@ class MapChunk constructor(val xSize: Int, val ySize: Int) {
         }
     }
 
+    fun removePawn(pawn: Entity) {
+        spatialHash.remove(pawn)
+        if (pawn.turnTaker != null) {
+            pawnQueue.remove(pawn.turnTaker)
+        }
+    }
 
     fun writeToDisk() {
         TODO("Not implemented yet")
@@ -51,4 +50,5 @@ class MapChunk constructor(val xSize: Int, val ySize: Int) {
     fun restoreFromDisk() {
         TODO("Not implemented yet")
     }
+
 }

@@ -84,5 +84,19 @@ class WorldTest {
 
     }
 
+    @Test
+    fun indexTest() {
+        val world = World(8, 8, 2, 2)
+
+        for (x in (0..7)) {
+            for (y in (0..7)) {
+                val chunk = world.getMapAt(x, y)
+                assert(chunk.x == x)
+                assert(chunk.y == y)
+            }
+        }
+
+    }
+
 
 }

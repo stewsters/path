@@ -6,9 +6,10 @@ import com.stewsters.path.entity.Entity
 import com.stewsters.path.entity.Life
 import com.stewsters.path.entity.TurnTaker
 import com.stewsters.util.math.Point2i
+import java.util.*
 
 
-class World(xSize: Int, ySize: Int, var xFocus: Int, var yFocus: Int) : Box(xSize, ySize) {
+class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize) {
 
     private val tiles: Array<MapChunk>
     var player: Entity
@@ -17,12 +18,15 @@ class World(xSize: Int, ySize: Int, var xFocus: Int, var yFocus: Int) : Box(xSiz
         assert(xFocus < xSize && xFocus >= 0)
         assert(yFocus < ySize && yFocus >= 0)
 
+        val r:Random = Random(2323)
+        val seed = r.nextLong()
+
         tiles = Array<MapChunk>(xSize * ySize, { index ->
-            MapGenerator.generateMap(this, index % xSize, index / ySize)
+            MapGenerator.generateChunk(this, index % xSize, index / ySize, seed)
         })
 
         player = Entity(
-                chunk = getCurrentMap(),
+                chunk = getMapAt(xFocus, yFocus),
                 pos = Point2i(MapGenerator.chunkSize / 2, MapGenerator.chunkSize / 2),
                 turnTaker = TurnTaker(0, { _, _ -> null }),
                 life = Life(10)
@@ -33,7 +37,8 @@ class World(xSize: Int, ySize: Int, var xFocus: Int, var yFocus: Int) : Box(xSiz
     }
 
     fun getCurrentMap(): MapChunk {
-        return getMapAt(xFocus, yFocus)
+        return player.chunk
+
     }
 
     fun getMapAt(x: Int, y: Int): MapChunk {

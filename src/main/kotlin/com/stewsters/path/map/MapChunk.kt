@@ -12,10 +12,8 @@ class MapChunk(val world: World, val x: Int, val y: Int,
 
     private val spatialHash: SpatialHash = SpatialHash(xSize, ySize)
 
-    fun at(x: Int, y: Int): Optional<Tile> {
-        if (x < 0 || y < 0 || x >= xSize || y >= ySize)
-            return Optional.empty<Tile>()
-        return Optional.of(tiles.get(x + y * xSize))
+    fun at(x: Int, y: Int): Tile {
+        return tiles.get(x + y * xSize)
     }
 
     fun updatePawnPos(pawn: Entity, xPos: Int, yPos: Int) {

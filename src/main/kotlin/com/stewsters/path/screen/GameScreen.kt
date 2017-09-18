@@ -6,7 +6,6 @@ import com.stewsters.util.math.Point2i
 import com.valkryst.VTerminal.Panel
 import com.valkryst.VTerminal.builder.component.ScreenBuilder
 import com.valkryst.VTerminal.component.Screen
-import com.valkryst.VTerminal.printer.RectanglePrinter
 import java.awt.Color
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
@@ -21,24 +20,24 @@ class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
     init {
         panel.addKeyListener(this)
 
-        val printer = RectanglePrinter()
-        printer.width = 40
-        printer.height = 4
-        printer.title = "Player"
-        printer.print(this, 33, 1)
-
-        printer.width = 40
-        printer.height = 4
-        printer.title = "Target"
-        printer.print(this, 33, 6)
+//        val printer = RectanglePrinter()
+//        printer.width = 40
+//        printer.height = 4
+//        printer.title = "Player"
+//        printer.print(this, 33, 1)
+//
+//        printer.width = 40
+//        printer.height = 4
+//        printer.title = "Target"
+//        printer.print(this, 33, 6)
 
         worldArea = WorldArea(WorldBuilder(
-                world = world,
                 width = 32,
                 height = 32
         ))
         addComponent(worldArea)
 
+        display()
 //        val builder = TextAreaBuilder()
 //        builder.radio = panel.radio
 //        builder.columnIndex = 0
@@ -78,8 +77,13 @@ class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
         world.player.turnTaker?.setNextAction(WalkAction(world.player, Point2i(dx, dy)))
         world.update()
 
-        setForegroundColor(Color(255, 20, 20, 255))
-        setBackgroundColor(Color(0, 0, 0, 255))
+        display()
+
+    }
+
+    private fun display() {
+//        setForegroundColor(Color(255, 20, 20, 255))
+//        setBackgroundColor(Color(0, 0, 0, 255))
 
         val map = world.getCurrentMap()
 
@@ -92,10 +96,13 @@ class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
                     character.foregroundColor = entities.first().color
                     character.backgroundColor = Color.BLACK
                 } else {
-                    val type = map.at(x, y).get().type
+                    val type = map.at(x, y).type
                     character.character = type.char
                     character.foregroundColor = type.foreground
                     character.backgroundColor = type.background
+
+//                    character.isHidden = true
+                    character.shadeBackgroundColor(y.toDouble() / 32)
                 }
             }
         }

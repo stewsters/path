@@ -4,8 +4,8 @@ import com.stewsters.path.map.MapChunk
 import com.stewsters.util.math.Point2i
 import java.awt.Color
 
-class Entity(
-        val chunk: MapChunk,
+data class Entity(
+        var chunk: MapChunk,
         var pos: Point2i,
 
         var char: Char = '@',
@@ -16,6 +16,7 @@ class Entity(
         var life: Life? = null,
         var deathFunction: (Entity) -> Unit = {},
 
+        var inventory: Inventory?=null,
         val doorOpener: Boolean = true,
 
         val xSize: Int = 1,
@@ -26,10 +27,18 @@ class Entity(
         turnTaker?.parent = this
     }
 
+    // TODO: this should probably be moved to a function
     fun canTraverse(xCur: Int, yCur: Int, xPos: Int, yPos: Int): Boolean {
-        return !chunk.at(xPos, yPos).get().type.blocks
+        return !chunk.at(xPos, yPos).type.blocks
     }
 
+    fun globalX(): Int {
+        return chunk.x * chunk.xSize + pos.x
+    }
+
+    fun globalY(): Int {
+        return chunk.y * chunk.ySize + pos.y
+    }
+
+
 }
-
-

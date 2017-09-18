@@ -21,15 +21,15 @@ class MapTransition(entity: Entity, var movement: Point2i) : Action(entity) {
         }
 
         val world = chunkMap.world
-        if (world.outside(world.xFocus + movement.x, world.yFocus + movement.y)) {
+        if (world.outside(chunkMap.x + movement.x, chunkMap.y + movement.y)) {
             return ActionResult.FAILURE
         }
 
-
         val newChunk = world.getMapAt(chunkMap.x + movement.x, chunkMap.y + movement.y)
 
-        world.xFocus = newChunk.x
-        world.yFocus = newChunk.y
+        println("transition from ${pawn.chunk.x},${pawn.chunk.y} to ${newChunk.x},${newChunk.y}")
+
+        pawn.chunk = newChunk
 
         chunkMap.removePawn(pawn)
         if (movement.x < 0) {

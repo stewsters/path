@@ -41,7 +41,7 @@ class WalkAction(pawn: Entity, val offset: Point2i) : Action(pawn) {
         }
 
         // Open Door
-        val targetTileType = chunkMap.at(xPos, yPos).get().type
+        val targetTileType = chunkMap.at(xPos, yPos).type
         if (targetTileType === TileType.CLOSED_DOOR) {
             return ActionResult(OpenDoorAction(pawn, Point2i(xPos, yPos)))
         }
@@ -54,6 +54,8 @@ class WalkAction(pawn: Entity, val offset: Point2i) : Action(pawn) {
         if (!pawn.canTraverse(xCur, yCur, xPos, yPos)) {
             return ActionResult.FAILURE
         }
+
+        println("move from ${pawn.globalX()},${pawn.globalY()}")
 
         // At this point we know that we can walk, lets do it
         pawn.chunk.updatePawnPos(pawn, xPos, yPos)

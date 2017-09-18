@@ -41,7 +41,7 @@ class WorldTest {
         assert(world.player.pos.x == 16)
         assert(world.player.pos.y == 16)
 
-        world.getCurrentMap().at(18, 16).get().type = TileType.WALL
+        world.getCurrentMap().at(18, 16).type = TileType.WALL
 
         println("Start walking")
         world.player.turnTaker?.setNextAction(WalkAction(world.player, Point2i(1, 0)))
@@ -67,13 +67,13 @@ class WorldTest {
         assert(world.player.pos.y == 16)
 
 
-        world.getCurrentMap().at(17, 16).get().type = TileType.CLOSED_DOOR
+        world.getCurrentMap().at(17, 16).type = TileType.CLOSED_DOOR
 
         println("Start walking")
         world.player.turnTaker?.setNextAction(WalkAction(world.player, Point2i(1, 0)))
         world.update()
 
-        assert(world.getCurrentMap().at(17, 16).get().type == TileType.OPEN_DOOR)
+        assert(world.getCurrentMap().at(17, 16).type == TileType.OPEN_DOOR)
 
         println("Continue walking")
         world.player.turnTaker?.setNextAction(WalkAction(world.player, Point2i(1, 0)))
@@ -83,6 +83,24 @@ class WorldTest {
         assert(world.player.pos.y == 16)
 
     }
+
+    @Test
+    fun testAreaTransition() {
+        val world = World(8, 8, 2, 2)
+        assert(world.player.chunk.x == 2)
+        assert(world.player.chunk.y == 2)
+
+        for (x in (16..32)) {
+            world.player.turnTaker?.setNextAction(WalkAction(world.player, Point2i(1, 0)))
+            world.update()
+        }
+        assert(world.player.chunk.x == 3)
+        assert(world.player.chunk.y == 2)
+
+        assert(world.player.pos.x == 1)
+        assert(world.player.pos.y == 16)
+    }
+
 
     @Test
     fun indexTest() {

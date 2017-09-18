@@ -1,8 +1,6 @@
 package com.stewsters.path.map
 
 import com.stewsters.util.noise.OpenSimplexNoise
-import java.util.*
-
 
 object MapGenerator {
     val chunkSize = 32
@@ -19,7 +17,7 @@ object MapGenerator {
                 val nx: Int = chunkX * chunkSize + x
                 val ny: Int = chunkY * chunkSize + y
 
-                var ridginess = fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 320.0, 1.0 , 2.0, 0.5)
+                var ridginess = fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 320.0, 1.0, 2.0, 0.5)
                 ridginess = Math.abs(ridginess) * -1
 
                 var elevation = Math.max(fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 200.0, 1.0, 2.0, 0.5), ridginess)
@@ -29,8 +27,17 @@ object MapGenerator {
 //                }
 
                 var type = TileType.GRASS
-                if(elevation<0){
-                    type=TileType.WATER_OCEAN
+                if (elevation < 0) {
+                    type = TileType.WATER_OCEAN
+                } else if (elevation < 0.50) {
+
+                    if (el.eval(nx.toDouble(), ny.toDouble()) < elevation + 0.5) {
+                        type = TileType.TREE
+                    } else
+                        type = TileType.GRASS
+
+                } else {
+                    type = TileType.WALL
                 }
 
                 if (x == 6 && y <= 10 && y >= 6) {

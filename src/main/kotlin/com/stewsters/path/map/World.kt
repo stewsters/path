@@ -18,7 +18,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
         assert(xFocus < xSize && xFocus >= 0)
         assert(yFocus < ySize && yFocus >= 0)
 
-        val r:Random = Random(2323)
+        val r: Random = Random(2323)
         val seed = r.nextLong()
 
         tiles = Array<MapChunk>(xSize * ySize, { index ->

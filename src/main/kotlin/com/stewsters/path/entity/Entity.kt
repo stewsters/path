@@ -16,11 +16,14 @@ data class Entity(
         var life: Life? = null,
         var deathFunction: (Entity) -> Unit = {},
 
-        var inventory: Inventory?=null,
+        val item: Item? = null,
+        var inventory: Inventory? = null,
         val doorOpener: Boolean = true,
 
         val xSize: Int = 1,
-        val ySize: Int = 1
+        val ySize: Int = 1,
+
+        val blocks: Boolean = false
 ) {
 
     init {

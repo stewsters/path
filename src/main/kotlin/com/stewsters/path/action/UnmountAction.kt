@@ -5,8 +5,11 @@ import com.stewsters.path.entity.Entity
 class UnmountAction(pawn: Entity) : Action(pawn) {
 
     override fun onPerform(): ActionResult {
-        TODO("This needs to get implemented")
+        if(pawn.mount==null)
+            return ActionResult.FAILURE
 
-        return ActionResult.FAILURE
+        pawn.mount==null
+
+        return ActionResult.SUCCESS
     }
 }

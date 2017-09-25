@@ -2,9 +2,12 @@ package com.stewsters.path.map
 
 import com.stewsters.path.action.Action
 import com.stewsters.path.action.ActionResult
+import com.stewsters.path.action.RestAction
+import com.stewsters.path.action.WalkAction
 import com.stewsters.path.entity.Entity
 import com.stewsters.path.entity.Life
 import com.stewsters.path.entity.TurnTaker
+import com.stewsters.util.math.MatUtils
 import com.stewsters.util.math.Point2i
 import java.util.*
 
@@ -21,18 +24,50 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
         val r: Random = Random(2323)
         val seed = r.nextLong()
 
+        val worldWidth: Double = (MapGenerator.chunkSize * xSize).toDouble()
+
+        val shapes = listOf({ x: Int, y: Int ->
+            val xPercent = ((x / worldWidth) - 0.5) * 2
+            val yPercent = ((y / worldWidth) - 0.5) * 2
+
+            maxOf(xPercent * xPercent, yPercent * yPercent)
+        })
+
         tiles = Array<MapChunk>(xSize * ySize, { index ->
-            MapGenerator.generateChunk(this, index % xSize, index / ySize, seed)
+            MapGenerator.generateChunk(this, shapes, index % xSize, index / ySize, seed)
         })
 
         player = Entity(
                 chunk = getMapAt(xFocus, yFocus),
                 pos = Point2i(MapGenerator.chunkSize / 2, MapGenerator.chunkSize / 2),
                 turnTaker = TurnTaker(0, { _, _ -> null }),
-                life = Life(10)
+                life = Life(10),
+                doorOpener = true
         )
-
         getCurrentMap().addPawn(player)
+
+        val horse = Entity(
+                char = 'h',
+                chunk = player.chunk,
+                pos = Point2i(player.pos.x + 2, player.pos.y),
+                turnTaker = TurnTaker(0, { chunk, entity ->
+                    val playerX = player.globalX()
+                    val playerY = player.globalY()
+                    val horseX = entity.globalX()
+                    val horseY = entity.globalY()
+
+                    if (player.pos.getChebyshevDistance(entity.pos) > 5) {
+                        WalkAction(entity, Point2i(
+                                MatUtils.limit(playerX - horseX, -1, 1),
+                                MatUtils.limit(playerY - horseY, -1, 1)))
+                    } else
+                        RestAction(entity)
+                }),
+                life = Life(100),
+                mountable = true
+        )
+        getCurrentMap().addPawn(horse)
+
 
     }
 

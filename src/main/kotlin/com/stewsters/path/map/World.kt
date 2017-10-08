@@ -9,7 +9,6 @@ import com.stewsters.path.entity.Life
 import com.stewsters.path.entity.TurnTaker
 import com.stewsters.util.math.MatUtils
 import com.stewsters.util.math.Point2i
-import java.util.*
 
 
 class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize) {
@@ -21,8 +20,8 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
         assert(xFocus < xSize && xFocus >= 0)
         assert(yFocus < ySize && yFocus >= 0)
 
-        val r: Random = Random(2323)
-        val seed = r.nextLong()
+//        val r: Random = Random(2323)
+        val seed = "candy".hashCode().toLong() //  r.nextLong()
 
         val worldWidth: Double = (MapGenerator.chunkSize * xSize).toDouble()
 

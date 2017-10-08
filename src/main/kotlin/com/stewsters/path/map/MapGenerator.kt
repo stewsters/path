@@ -35,7 +35,7 @@ object MapGenerator {
 
                 } else if (elevation < 0.50) {
 
-                    if (el.eval(nx.toDouble(), ny.toDouble()) < elevation - 0.25) {
+                    if (el.eval(nx.toDouble(), ny.toDouble()) < elevation - 0.4) {
                         type = TileType.TREE
                     } else
                         type = TileType.GRASS

@@ -109,7 +109,7 @@ class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
                     character.backgroundColor = type.background
 
 //                    character.isHidden = true
-                    character.shadeBackgroundColor(y.toDouble() / 32)
+                    character.shadeBackgroundColor(world.player.pos.getChebyshevDistance(x, y).toDouble() / 32)
                 }
             }
         }

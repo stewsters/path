@@ -22,6 +22,10 @@ class MountAction(pawn: Entity) : Action(pawn) {
 
         pawn.mount = mount
 
+        pawn.chunk.removePawn(mount)
+
+        println("${pawn.name} mounts ${pawn.mount?.name}")
+
         // add it to entity's mount slot
 
         return ActionResult.SUCCESS

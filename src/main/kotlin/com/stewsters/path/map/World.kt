@@ -38,6 +38,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
         })
 
         player = Entity(
+                name = "Player",
                 chunk = getMapAt(xFocus, yFocus),
                 pos = Point2i(MapGenerator.chunkSize / 2, MapGenerator.chunkSize / 2),
                 turnTaker = TurnTaker(0, { _, _ -> null }),
@@ -47,6 +48,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
         getCurrentMap().addPawn(player)
 
         val horse = Entity(
+                name = "Roach",
                 char = 'h',
                 chunk = player.chunk,
                 pos = Point2i(player.pos.x + 2, player.pos.y),
@@ -68,6 +70,9 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
         )
         getCurrentMap().addPawn(horse)
 
+//        for(tile in tiles){
+//
+//        }
 
     }
 
@@ -104,7 +109,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
 
 
                 if (!result.succeeded) {
-                    println("${action.pawn.char} failed at ${action}")
+                    println("${action.pawn.name} failed at ${action}")
                     if (currentTurnTaker.parent == player) {
                         // player, they need time to select a new move
                         // cancel action, Do nothing
@@ -116,11 +121,11 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
 
                 if (result.alternative != null) {
                     // Alternative actions we should try
-                    println("${action.pawn.char} is trying ${result.alternative} instead of ${action}")
+                    println("${action.pawn.name} is trying ${result.alternative} instead of ${action}")
                     action = result.alternative
 
                 } else {
-                    println("${action.pawn.char} did ${action}${if (result.nextAction != null) ". Trying ${result.nextAction} next." else ""}")
+                    println("${action.pawn.name} did ${action}${if (result.nextAction != null) ". Trying ${result.nextAction} next." else ""}")
                     // We should automatically do another action after this one
                     currentTurnTaker.setNextAction(result.nextAction)
                     break

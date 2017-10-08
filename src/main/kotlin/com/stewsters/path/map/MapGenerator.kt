@@ -26,7 +26,7 @@ object MapGenerator {
                     elevation += mod(nx, ny)
                 }
 
-                var type = TileType.GRASS
+                var type: TileType
                 if (elevation < -0.2) {
                     type = TileType.WATER_LAKE
 

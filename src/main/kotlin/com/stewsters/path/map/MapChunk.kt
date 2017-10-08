@@ -2,6 +2,7 @@ package com.stewsters.path.map
 
 import com.stewsters.path.entity.Entity
 import com.stewsters.path.entity.TurnTaker
+import com.stewsters.util.math.Point2i
 import java.util.*
 
 class MapChunk(val world: World, val x: Int, val y: Int,
@@ -12,6 +13,7 @@ class MapChunk(val world: World, val x: Int, val y: Int,
 
     private val spatialHash: SpatialHash = SpatialHash(xSize, ySize)
 
+    fun at(p: Point2i): Tile = at(p.x, p.y)
     fun at(x: Int, y: Int): Tile {
         return tiles.get(x + y * xSize)
     }
@@ -21,6 +23,10 @@ class MapChunk(val world: World, val x: Int, val y: Int,
         pawn.pos.x = xPos
         pawn.pos.y = yPos
         spatialHash.add(pawn)
+    }
+
+    fun pawnInSquare(p: Point2i): List<Entity> {
+        return pawnInSquare(p.x, p.y)
     }
 
     fun pawnInSquare(xPos: Int, yPos: Int, xPos2: Int = xPos, yPos2: Int = yPos): List<Entity> {

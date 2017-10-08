@@ -3,10 +3,12 @@ package com.stewsters.path.entity
 import com.stewsters.path.map.MapChunk
 import com.stewsters.util.math.Point2i
 import java.awt.Color
+
 class Entity(
         var chunk: MapChunk,
         var pos: Point2i,
 
+        var name: String,
         var char: Char = '@',
         var color: Color = Color.WHITE,
 
@@ -45,6 +47,5 @@ class Entity(
     fun globalY(): Int {
         return chunk.y * chunk.ySize + pos.y
     }
-
 
 }

@@ -74,7 +74,7 @@ class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
                 action = MountAction(world.player)
             }
             KeyEvent.VK_U -> {
-                action = UnmountAction(world.player)
+                action = DismountAction(world.player)
             }
         }
 

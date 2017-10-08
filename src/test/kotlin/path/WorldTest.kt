@@ -1,3 +1,5 @@
+package path
+
 import com.stewsters.path.action.WalkAction
 import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
@@ -97,7 +99,8 @@ class WorldTest {
         assert(world.player.chunk.x == 3)
         assert(world.player.chunk.y == 2)
 
-        assert(world.player.pos.x == 1)
+        // this would be 1, but mounting the horse took a move.
+        assert(world.player.pos.x == 0)
         assert(world.player.pos.y == 16)
     }
 

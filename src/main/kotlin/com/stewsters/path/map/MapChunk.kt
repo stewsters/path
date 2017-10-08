@@ -2,6 +2,7 @@ package com.stewsters.path.map
 
 import com.stewsters.path.entity.Entity
 import com.stewsters.path.entity.TurnTaker
+import com.stewsters.path.util.Box
 import com.stewsters.util.math.Point2i
 import java.util.*
 

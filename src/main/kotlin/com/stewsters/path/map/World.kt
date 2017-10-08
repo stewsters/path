@@ -4,9 +4,9 @@ import com.stewsters.path.action.Action
 import com.stewsters.path.action.ActionResult
 import com.stewsters.path.action.RestAction
 import com.stewsters.path.action.WalkAction
-import com.stewsters.path.entity.Entity
-import com.stewsters.path.entity.Life
-import com.stewsters.path.entity.TurnTaker
+import com.stewsters.path.entity.*
+import com.stewsters.path.map.generator.MapGenerator
+import com.stewsters.path.util.Box
 import com.stewsters.util.math.MatUtils
 import com.stewsters.util.math.Point2i
 
@@ -42,9 +42,23 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
                 pos = Point2i(MapGenerator.chunkSize / 2, MapGenerator.chunkSize / 2),
                 turnTaker = TurnTaker(0, { _, _ -> null }),
                 life = Life(10),
-                doorOpener = true
+                doorOpener = true,
+                inventory = Inventory(ArrayList())
         )
         getCurrentMap().addPawn(player)
+
+        player.inventory?.items?.add(Entity(
+                name = "Rusted Saber",
+                description = "An old sword, it has seen its fair share of combat.",
+                chunk = player.chunk,
+                pos = player.pos,
+                char = '/',
+                item = Item(
+                        weapon = Weapon(damage = 5),
+                        equipment = Equipment(Slot.WEAPON, isEquipped = true)
+                )
+        ))
+
 
         val horse = Entity(
                 name = "Roach",

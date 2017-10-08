@@ -9,6 +9,8 @@ class Entity(
         var pos: Point2i,
 
         var name: String,
+        var description:String?=null,
+
         var char: Char = '@',
         var color: Color = Color.WHITE,
 

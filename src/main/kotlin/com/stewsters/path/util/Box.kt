@@ -1,4 +1,4 @@
-package com.stewsters.path.map
+package com.stewsters.path.util
 
 import com.stewsters.util.math.Point2i
 

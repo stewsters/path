@@ -36,6 +36,22 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
             MapGenerator.generateChunk(this, shapes, index % xSize, index / ySize, seed)
         })
 
+        // Construction
+        for (tile in tiles) {
+            for (x in 0..MapGenerator.chunkSize - 1) {
+                for (y in 0..MapGenerator.chunkSize - 1) {
+
+                    if (x == 6 && y <= 10 && y >= 6) {
+                        if (y == 8)
+                            tile.at(x, y).type = TileType.CLOSED_DOOR
+                        else
+                            tile.at(x, y).type = TileType.WALL
+                    }
+                }
+            }
+        }
+
+
         player = Entity(
                 name = "Player",
                 chunk = getMapAt(xFocus, yFocus),
@@ -82,6 +98,45 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
                 mountable = true
         )
         getCurrentMap().addPawn(horse)
+
+
+        for (mapChunk in tiles) {
+            for (i in 1..5) {
+                val x = MatUtils.getIntInRange(0, mapChunk.xSize-1)
+                val y = MatUtils.getIntInRange(0, mapChunk.ySize-1)
+
+                if (mapChunk.at(x, y).type.blocks)
+                    continue
+
+                if (mapChunk.pawnInSquare(x, y).size > 0)
+                    continue
+
+
+                val wolf = Entity(
+                        name = "Wolf",
+                        char = 'w',
+                        chunk = player.chunk,
+                        pos = Point2i(x, y),
+                        turnTaker = TurnTaker(0, { chunk, entity ->
+                            val playerX = player.globalX()
+                            val playerY = player.globalY()
+                            val xPos = entity.globalX()
+                            val yPos = entity.globalY()
+
+                            if (player.pos.getChebyshevDistance(entity.pos) > 5) {
+                                WalkAction(entity, Point2i(
+                                        MatUtils.limit(playerX - xPos, -1, 1),
+                                        MatUtils.limit(playerY - yPos, -1, 1)))
+                            } else
+                                RestAction(entity)
+                        }),
+                        life = Life(1)
+                )
+                mapChunk.addPawn(wolf)
+
+            }
+
+        }
 
 //        for(tile in tiles){
 //

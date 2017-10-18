@@ -67,6 +67,9 @@ class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
             KeyEvent.VK_RIGHT, KeyEvent.VK_D -> {
                 action = WalkAction(world.player, Point2i(1, 0))
             }
+            KeyEvent.VK_C -> {
+                action = CloseAdjacentDoors(world.player)
+            }
             KeyEvent.VK_H -> {
                 action = HarvestAction(world.player)
             }

@@ -47,14 +47,7 @@ object MapGenerator {
                     type = TileType.WALL
                 }
 
-                if (x == 6 && y <= 10 && y >= 6) {
-                    if (y == 8)
-                        type = TileType.CLOSED_DOOR
-                    else
-                        type = TileType.WALL
-                }
                 chunk.at(x, y).type = type
-
             }
         }
 

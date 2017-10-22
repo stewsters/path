@@ -9,4 +9,7 @@ data class Life(var max: Int, var cur: Int = max) {
     fun heal(i: Int) {
         cur = Math.min(cur + i, max)
     }
+
+    fun isAlive(): Boolean = cur > 0
+
 }

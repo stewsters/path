@@ -56,6 +56,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
                 name = "Player",
                 chunk = getMapAt(xFocus, yFocus),
                 pos = Point2i(MapGenerator.chunkSize / 2, MapGenerator.chunkSize / 2),
+                faction = Faction.HUMAN,
                 turnTaker = TurnTaker(0, { _, _ -> null }),
                 life = Life(10),
                 doorOpener = true,
@@ -81,6 +82,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
                 char = 'h',
                 chunk = player.chunk,
                 pos = Point2i(player.pos.x + 2, player.pos.y),
+                faction = Faction.HUMAN,
                 turnTaker = TurnTaker(0, { chunk, entity ->
                     val playerX = player.globalX()
                     val playerY = player.globalY()
@@ -102,8 +104,8 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
 
         for (mapChunk in tiles) {
             for (i in 1..5) {
-                val x = MatUtils.getIntInRange(0, mapChunk.xSize-1)
-                val y = MatUtils.getIntInRange(0, mapChunk.ySize-1)
+                val x = MatUtils.getIntInRange(0, mapChunk.xSize - 1)
+                val y = MatUtils.getIntInRange(0, mapChunk.ySize - 1)
 
                 if (mapChunk.at(x, y).type.blocks)
                     continue
@@ -117,20 +119,27 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
                         char = 'w',
                         chunk = player.chunk,
                         pos = Point2i(x, y),
+                        life = Life(1),
+                        faction = Faction.MONSTER,
                         turnTaker = TurnTaker(0, { chunk, entity ->
                             val playerX = player.globalX()
                             val playerY = player.globalY()
                             val xPos = entity.globalX()
                             val yPos = entity.globalY()
 
-                            if (player.pos.getChebyshevDistance(entity.pos) > 5) {
-                                WalkAction(entity, Point2i(
-                                        MatUtils.limit(playerX - xPos, -1, 1),
-                                        MatUtils.limit(playerY - yPos, -1, 1)))
-                            } else
-                                RestAction(entity)
+                            WalkAction(entity, Point2i(
+                                    MatUtils.limit(playerX - xPos, -1, 1),
+                                    MatUtils.limit(playerY - yPos, -1, 1)))
                         }),
-                        life = Life(1)
+                        deathFunction = {
+                            println("${it.name} died.")
+
+                            it.turnTaker = null
+                            it.faction = null
+                            it.life = null
+                            it.char = '%'
+                            it.chunk.update(it)
+                        }
                 )
                 mapChunk.addPawn(wolf)
 
@@ -161,6 +170,13 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
                 return
 
             var currentTurnTaker: TurnTaker = map.pawnQueue.peek()
+
+            if (currentTurnTaker.parent?.turnTaker == null) {
+                // Clear out the dead, easier to do it in one location
+                map.pawnQueue.remove(currentTurnTaker)
+                println ("Auto clearing")
+                continue
+            }
 
             var action: Action? = currentTurnTaker.nextAction(map, currentTurnTaker.parent!!)
 

@@ -15,6 +15,7 @@ class Entity(
         var color: Color = Color.WHITE,
 
         var turnTaker: TurnTaker? = null,
+        var faction: Faction?=null,
 
         var life: Life? = null,
         var deathFunction: (Entity) -> Unit = {},
@@ -48,6 +49,10 @@ class Entity(
 
     fun globalY(): Int {
         return chunk.y * chunk.ySize + pos.y
+    }
+
+    fun isAlive(): Boolean {
+        return if(life!=null){life?.cur?:0 >= 0} else false// (life?.cur) ? (true) : false
     }
 
 }

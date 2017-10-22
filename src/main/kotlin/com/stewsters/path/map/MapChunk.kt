@@ -56,4 +56,8 @@ class MapChunk(val world: World, val x: Int, val y: Int,
         TODO("Not implemented yet")
     }
 
+    fun update(pawn: Entity) {
+
+    }
+
 }

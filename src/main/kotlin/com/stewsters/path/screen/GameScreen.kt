@@ -1,6 +1,6 @@
 package com.stewsters.path.screen
 
-import com.stewsters.path.action.WalkAction
+import com.stewsters.path.action.*
 import com.stewsters.path.map.World
 import com.stewsters.util.math.Point2i
 import com.valkryst.VTerminal.Panel
@@ -52,33 +52,43 @@ class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
 
     override fun keyTyped(e: KeyEvent) {}
 
-    override fun keyPressed(e: KeyEvent) {}
-
-    override fun keyReleased(e: KeyEvent) {
-        var dx = 0
-        var dy = 0
-
+    override fun keyPressed(e: KeyEvent) {
+        var action: Action? = null
         when (e.keyCode) {
             KeyEvent.VK_UP, KeyEvent.VK_W -> {
-                dy = -1
+                action = WalkAction(world.player, Point2i(0, -1))
             }
             KeyEvent.VK_DOWN, KeyEvent.VK_S -> {
-                dy = 1
+                action = WalkAction(world.player, Point2i(0, 1))
             }
             KeyEvent.VK_LEFT, KeyEvent.VK_A -> {
-                dx = -1
+                action = WalkAction(world.player, Point2i(-1, 0))
             }
             KeyEvent.VK_RIGHT, KeyEvent.VK_D -> {
-                dx = 1
+                action = WalkAction(world.player, Point2i(1, 0))
+            }
+            KeyEvent.VK_C -> {
+                action = CloseAdjacentDoors(world.player)
+            }
+            KeyEvent.VK_H -> {
+                action = HarvestAction(world.player)
+            }
+            KeyEvent.VK_M -> {
+                action = MountAction(world.player)
+            }
+            KeyEvent.VK_U -> {
+                action = DismountAction(world.player)
             }
         }
 
-        println("$dx $dy loc")
-        world.player.turnTaker?.setNextAction(WalkAction(world.player, Point2i(dx, dy)))
+        world.player.turnTaker?.setNextAction(action)
         world.update()
 
         display()
 
+    }
+
+    override fun keyReleased(e: KeyEvent) {
     }
 
     private fun display() {
@@ -102,7 +112,7 @@ class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
                     character.backgroundColor = type.background
 
 //                    character.isHidden = true
-                    character.shadeBackgroundColor(y.toDouble() / 32)
+                    character.shadeBackgroundColor(world.player.pos.getChebyshevDistance(x, y).toDouble() / 32)
                 }
             }
         }

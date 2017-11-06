@@ -1,11 +1,14 @@
-package com.stewsters.path.map
+package com.stewsters.path.map.generator
 
+import com.stewsters.path.map.MapChunk
+import com.stewsters.path.map.TileType
+import com.stewsters.path.map.World
 import com.stewsters.util.noise.OpenSimplexNoise
 
 object MapGenerator {
     val chunkSize = 32
 
-    fun generateChunk(world: World, chunkX: Int, chunkY: Int, seed: Long): MapChunk {
+    fun generateChunk(world: World, shapeMods: List<(x: Int, y: Int) -> Double>, chunkX: Int, chunkY: Int, seed: Long): MapChunk {
 
         val chunk = MapChunk(world, chunkX, chunkY, chunkSize, chunkSize)
         val el = OpenSimplexNoise(seed);
@@ -22,16 +25,20 @@ object MapGenerator {
 
                 var elevation = Math.max(fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 200.0, 1.0, 2.0, 0.5), ridginess)
 
-//                for (mod in shapeMods) {
-//                    elevation += mod.modify(nx, ny)
-//                }
+                for (mod in shapeMods) {
+                    elevation += mod(nx, ny)
+                }
 
-                var type = TileType.GRASS
-                if (elevation < 0) {
-                    type = TileType.WATER_OCEAN
+                var type: TileType
+                if (elevation < -0.2) {
+                    type = TileType.WATER_LAKE
+
+                } else if (elevation < 0) {
+                    type = TileType.WATER_SWAMP
+
                 } else if (elevation < 0.50) {
 
-                    if (el.eval(nx.toDouble(), ny.toDouble()) < elevation + 0.5) {
+                    if (el.eval(nx.toDouble(), ny.toDouble()) < elevation - 0.4) {
                         type = TileType.TREE
                     } else
                         type = TileType.GRASS
@@ -40,14 +47,7 @@ object MapGenerator {
                     type = TileType.WALL
                 }
 
-                if (x == 6 && y <= 10 && y >= 6) {
-                    if (y == 8)
-                        type = TileType.CLOSED_DOOR
-                    else
-                        type = TileType.WALL
-                }
                 chunk.at(x, y).type = type
-
             }
         }
 

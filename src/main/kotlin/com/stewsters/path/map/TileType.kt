@@ -13,5 +13,6 @@ enum class TileType(val word: String, val blocks: Boolean, val char: Char, val f
     OPEN_DOOR("open door", false, '-', Color.BLACK, Color.LIGHT_GRAY),
     CLOSED_DOOR("closed door", true, '+', Color.BLACK, Color.LIGHT_GRAY),
 
-    WATER_OCEAN("ocean", false, '~', Color.CYAN, Color.BLUE)
+    WATER_SWAMP("swamp", false, ';', Color(255, 222, 173), Color(160, 82, 45)),
+    WATER_LAKE("lake", false, '~', Color.CYAN, Color.BLUE)
 }

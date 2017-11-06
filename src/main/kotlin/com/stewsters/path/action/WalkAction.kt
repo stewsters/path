@@ -33,7 +33,9 @@ class WalkAction(pawn: Entity, val offset: Point2i) : Action(pawn) {
             for (target in targetList) {
                 if (target == pawn) {
                     continue
-                } else if ((pawn.turnTaker != null) != (target.turnTaker != null))
+                } else if ((pawn.faction == target.faction) && target.mountable && pawn.mount == null) {
+                    return ActionResult(MountAction(pawn))
+                } else if ((pawn.faction != target.faction) && target.isAlive())
                     return ActionResult(AttackAction(pawn, target))
                 else
                     return ActionResult.FAILURE

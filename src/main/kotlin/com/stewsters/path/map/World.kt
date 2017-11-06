@@ -132,13 +132,15 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
                                     MatUtils.limit(playerY - yPos, -1, 1)))
                         }),
                         deathFunction = {
-                            println("${it.name} died.")
+                            with(it){
+                                println("${name} died.")
+                                turnTaker = null
+                                faction = null
+                                life = null
+                                char = '%'
+                                chunk.update(it)
+                            }
 
-                            it.turnTaker = null
-                            it.faction = null
-                            it.life = null
-                            it.char = '%'
-                            it.chunk.update(it)
                         }
                 )
                 mapChunk.addPawn(wolf)

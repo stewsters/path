@@ -1,21 +1,21 @@
 package com.stewsters.path.entity
 
 import com.stewsters.path.map.MapChunk
-import com.stewsters.util.math.Point2i
+import veclib.Vec2
 import java.awt.Color
 
 class Entity(
         var chunk: MapChunk,
-        var pos: Point2i,
+        var pos: Vec2,
 
         var name: String,
-        var description:String?=null,
+        var description: String? = null,
 
         var char: Char = '@',
         var color: Color = Color.WHITE,
 
         var turnTaker: TurnTaker? = null,
-        var faction: Faction?=null,
+        var faction: Faction? = null,
 
         var life: Life? = null,
         var deathFunction: (Entity) -> Unit = {},
@@ -44,15 +44,17 @@ class Entity(
     }
 
     fun globalX(): Int {
-        return chunk.x * chunk.xSize + pos.x
+        return chunk.x * chunk.highX + pos.x
     }
 
     fun globalY(): Int {
-        return chunk.y * chunk.ySize + pos.y
+        return chunk.y * chunk.highY + pos.y
     }
 
     fun isAlive(): Boolean {
-        return if(life!=null){life?.cur?:0 >= 0} else false// (life?.cur) ? (true) : false
+        return if (life != null) {
+            life?.cur ?: 0 >= 0
+        } else false// (life?.cur) ? (true) : false
     }
 
 }

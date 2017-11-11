@@ -2,10 +2,10 @@ package com.stewsters.path.screen
 
 import com.stewsters.path.action.*
 import com.stewsters.path.map.World
-import com.stewsters.util.math.Point2i
 import com.valkryst.VTerminal.Panel
 import com.valkryst.VTerminal.builder.component.ScreenBuilder
 import com.valkryst.VTerminal.component.Screen
+import veclib.Vec2
 import java.awt.Color
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
@@ -56,16 +56,16 @@ class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
         var action: Action? = null
         when (e.keyCode) {
             KeyEvent.VK_UP, KeyEvent.VK_W -> {
-                action = WalkAction(world.player, Point2i(0, -1))
+                action = WalkAction(world.player, Vec2.get(0, -1))
             }
             KeyEvent.VK_DOWN, KeyEvent.VK_S -> {
-                action = WalkAction(world.player, Point2i(0, 1))
+                action = WalkAction(world.player, Vec2.get(0, 1))
             }
             KeyEvent.VK_LEFT, KeyEvent.VK_A -> {
-                action = WalkAction(world.player, Point2i(-1, 0))
+                action = WalkAction(world.player, Vec2.get(-1, 0))
             }
             KeyEvent.VK_RIGHT, KeyEvent.VK_D -> {
-                action = WalkAction(world.player, Point2i(1, 0))
+                action = WalkAction(world.player, Vec2.get(1, 0))
             }
             KeyEvent.VK_C -> {
                 action = CloseAdjacentDoors(world.player)
@@ -112,7 +112,8 @@ class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
                     character.backgroundColor = type.background
 
 //                    character.isHidden = true
-                    character.shadeBackgroundColor(world.player.pos.getChebyshevDistance(x, y).toDouble() / 32)
+                    //TODO: add shaders
+//                    character.shadeBackgroundColor(world.player.pos.getChebyshevDistance(x, y).toDouble() / 32)
                 }
             }
         }

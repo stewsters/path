@@ -10,16 +10,19 @@ class VecTests {
     fun testPoints() {
         for (x in -2..34) {
             for (y in -2..34) {
-                Vec2.get(x, y)
+                val vec2 = Vec2.get(x, y)
+
+                if (vec2.x != x && vec2.y != y) {
+                    println("$x:${vec2.x} $y:${vec2.y}")
+                    assert(false)
+                }
             }
         }
     }
 
     @Test
     fun testMoving() {
-        val location = Vec2.get(0, 0)
-                .move(Facing2d.EAST)
-                .move(Facing2d.NORTH)
+        val location = Vec2.get(0, 0) + Facing2d.EAST + Facing2d.NORTH
 
         location.x == 1
         location.y == 1

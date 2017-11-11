@@ -2,9 +2,9 @@ package com.stewsters.path.action
 
 import com.stewsters.path.entity.Entity
 import com.stewsters.path.map.TileType
-import com.stewsters.util.math.Point2i
+import veclib.Vec2
 
-class WalkAction(pawn: Entity, val offset: Point2i) : Action(pawn) {
+class WalkAction(pawn: Entity, val offset: Vec2) : Action(pawn) {
 
 
     override fun onPerform(): ActionResult {
@@ -45,7 +45,7 @@ class WalkAction(pawn: Entity, val offset: Point2i) : Action(pawn) {
         // Open Door
         val targetTileType = chunkMap.at(xPos, yPos).type
         if (targetTileType === TileType.CLOSED_DOOR) {
-            return ActionResult(OpenDoorAction(pawn, Point2i(xPos, yPos)))
+            return ActionResult(OpenDoorAction(pawn, Vec2.get(xPos, yPos)))
         }
 
 //        if (targetTileType === TileType.GLASS) {

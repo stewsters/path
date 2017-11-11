@@ -2,8 +2,8 @@ package com.stewsters.path.map
 
 import com.stewsters.path.entity.Entity
 import com.stewsters.path.entity.TurnTaker
-import com.stewsters.path.util.Box
-import com.stewsters.util.math.Point2i
+import veclib.Box
+import veclib.Vec2
 import java.util.*
 
 class MapChunk(val world: World, val x: Int, val y: Int,
@@ -14,21 +14,18 @@ class MapChunk(val world: World, val x: Int, val y: Int,
 
     private val spatialHash: SpatialHash = SpatialHash(xSize, ySize)
 
-    fun at(p: Point2i): Tile = at(p.x, p.y)
+    fun at(p: Vec2): Tile = at(p.x, p.y)
     fun at(x: Int, y: Int): Tile {
-        return tiles.get(x + y * xSize)
+        return tiles.get(x + y * highX)
     }
 
     fun updatePawnPos(pawn: Entity, xPos: Int, yPos: Int) {
         spatialHash.remove(pawn)
-        pawn.pos.x = xPos
-        pawn.pos.y = yPos
+        pawn.pos = Vec2.get(xPos, yPos)
         spatialHash.add(pawn)
     }
 
-    fun pawnInSquare(p: Point2i): List<Entity> {
-        return pawnInSquare(p.x, p.y)
-    }
+    fun pawnInSquare(p: Vec2): List<Entity> = pawnInSquare(p.x, p.y)
 
     fun pawnInSquare(xPos: Int, yPos: Int, xPos2: Int = xPos, yPos2: Int = yPos): List<Entity> {
         return spatialHash.findEntitiesInSquare(xPos, yPos, xPos2, yPos2)

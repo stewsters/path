@@ -6,9 +6,10 @@ import com.stewsters.path.action.RestAction
 import com.stewsters.path.action.WalkAction
 import com.stewsters.path.entity.*
 import com.stewsters.path.map.generator.MapGenerator
-import com.stewsters.path.util.Box
 import com.stewsters.util.math.MatUtils
-import com.stewsters.util.math.Point2i
+import veclib.Box
+import veclib.Vec2
+import veclib.getChebyshevDistance
 
 
 class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize) {
@@ -55,7 +56,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
         player = Entity(
                 name = "Player",
                 chunk = getMapAt(xFocus, yFocus),
-                pos = Point2i(MapGenerator.chunkSize / 2, MapGenerator.chunkSize / 2),
+                pos = Vec2.get(MapGenerator.chunkSize / 2, MapGenerator.chunkSize / 2),
                 faction = Faction.HUMAN,
                 turnTaker = TurnTaker(0, { _, _ -> null }),
                 life = Life(10),
@@ -81,7 +82,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
                 name = "Roach",
                 char = 'h',
                 chunk = player.chunk,
-                pos = Point2i(player.pos.x + 2, player.pos.y),
+                pos = Vec2.get(player.pos.x + 2, player.pos.y),
                 faction = Faction.HUMAN,
                 turnTaker = TurnTaker(0, { chunk, entity ->
                     val playerX = player.globalX()
@@ -89,8 +90,8 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
                     val horseX = entity.globalX()
                     val horseY = entity.globalY()
 
-                    if (player.pos.getChebyshevDistance(entity.pos) > 5) {
-                        WalkAction(entity, Point2i(
+                    if (getChebyshevDistance(player.pos, entity.pos) > 5) {
+                        WalkAction(entity, Vec2.get(
                                 MatUtils.limit(playerX - horseX, -1, 1),
                                 MatUtils.limit(playerY - horseY, -1, 1)))
                     } else
@@ -104,8 +105,8 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
 
         for (mapChunk in tiles) {
             for (i in 1..5) {
-                val x = MatUtils.getIntInRange(0, mapChunk.xSize - 1)
-                val y = MatUtils.getIntInRange(0, mapChunk.ySize - 1)
+                val x = MatUtils.getIntInRange(0, mapChunk.highX - 1)
+                val y = MatUtils.getIntInRange(0, mapChunk.highY - 1)
 
                 if (mapChunk.at(x, y).type.blocks)
                     continue
@@ -118,7 +119,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
                         name = "Wolf",
                         char = 'w',
                         chunk = player.chunk,
-                        pos = Point2i(x, y),
+                        pos = Vec2.get(x, y),
                         life = Life(1),
                         faction = Faction.MONSTER,
                         turnTaker = TurnTaker(0, { chunk, entity ->
@@ -127,12 +128,12 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
                             val xPos = entity.globalX()
                             val yPos = entity.globalY()
 
-                            WalkAction(entity, Point2i(
+                            WalkAction(entity, Vec2.get(
                                     MatUtils.limit(playerX - xPos, -1, 1),
                                     MatUtils.limit(playerY - yPos, -1, 1)))
                         }),
                         deathFunction = {
-                            with(it){
+                            with(it) {
                                 println("${name} died.")
                                 turnTaker = null
                                 faction = null
@@ -149,20 +150,11 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
 
         }
 
-//        for(tile in tiles){
-//
-//        }
-
     }
 
-    fun getCurrentMap(): MapChunk {
-        return player.chunk
+    fun getCurrentMap(): MapChunk = player.chunk
 
-    }
-
-    fun getMapAt(x: Int, y: Int): MapChunk {
-        return tiles[x + y * xSize]
-    }
+    fun getMapAt(x: Int, y: Int): MapChunk = tiles[x + y * highX]
 
     fun update() {
         val map: MapChunk = getCurrentMap()
@@ -176,7 +168,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
             if (currentTurnTaker.parent?.turnTaker == null) {
                 // Clear out the dead, easier to do it in one location
                 map.pawnQueue.remove(currentTurnTaker)
-                println ("Auto clearing")
+                println("Auto clearing")
                 continue
             }
 

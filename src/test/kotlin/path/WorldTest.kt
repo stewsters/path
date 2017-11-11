@@ -3,8 +3,8 @@ package path
 import com.stewsters.path.action.WalkAction
 import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
-import com.stewsters.util.math.Point2i
 import org.junit.Test
+import veclib.Vec2
 
 class WorldTest {
 
@@ -13,7 +13,7 @@ class WorldTest {
 
         val world = World(8, 8, 4, 4)
 
-        world.player.turnTaker?.setNextAction(WalkAction(world.player, Point2i(1, 0)))
+        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(1, 0)))
 
         assert(world.player.pos.x == 16)
         assert(world.player.pos.y == 16)
@@ -25,7 +25,7 @@ class WorldTest {
         assert(world.player.pos.x == 17)
         assert(world.player.pos.y == 16)
 
-        world.player.turnTaker?.setNextAction(WalkAction(world.player, Point2i(0, 1)))
+        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(0, 1)))
 
         for (i in 1..10) {
             world.update()
@@ -46,14 +46,14 @@ class WorldTest {
         world.getCurrentMap().at(18, 16).type = TileType.WALL
 
         println("Start walking")
-        world.player.turnTaker?.setNextAction(WalkAction(world.player, Point2i(1, 0)))
+        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(1, 0)))
         world.update()
 
         assert(world.player.pos.x == 17)
         assert(world.player.pos.y == 16)
 
         println("Walking into wall")
-        world.player.turnTaker?.setNextAction(WalkAction(world.player, Point2i(1, 0)))
+        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(1, 0)))
         world.update()
 
         assert(world.player.pos.x == 17)
@@ -72,13 +72,13 @@ class WorldTest {
         world.getCurrentMap().at(17, 16).type = TileType.CLOSED_DOOR
 
         println("Start walking")
-        world.player.turnTaker?.setNextAction(WalkAction(world.player, Point2i(1, 0)))
+        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(1, 0)))
         world.update()
 
         assert(world.getCurrentMap().at(17, 16).type == TileType.OPEN_DOOR)
 
         println("Continue walking")
-        world.player.turnTaker?.setNextAction(WalkAction(world.player, Point2i(1, 0)))
+        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(1, 0)))
         world.update()
 
         assert(world.player.pos.x == 17)
@@ -93,7 +93,7 @@ class WorldTest {
         assert(world.player.chunk.y == 2)
 
         for (x in (16..32)) {
-            world.player.turnTaker?.setNextAction(WalkAction(world.player, Point2i(1, 0)))
+            world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(1, 0)))
             world.update()
         }
         assert(world.player.chunk.x == 3)

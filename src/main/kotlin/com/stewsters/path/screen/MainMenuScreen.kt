@@ -15,7 +15,6 @@ class MainMenuScreen(panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
         // Construct menu options:
         val builder = ButtonBuilder()
         builder.text = "New Game"
-        builder.radio = panel.radio
         builder.columnIndex = panel.widthInCharacters / 3
         builder.rowIndex = panel.heightInCharacters / 3
         buttonNewGame = builder.build()

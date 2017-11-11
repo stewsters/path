@@ -1,7 +1,6 @@
 package com.stewsters.path
 
 import com.stewsters.path.screen.MainMenuScreen
-import com.valkryst.VRadio.Radio
 import com.valkryst.VTerminal.builder.PanelBuilder
 import com.valkryst.VTerminal.builder.component.ScreenBuilder
 import com.valkryst.VTerminal.font.FontLoader
@@ -26,7 +25,6 @@ object Game {
         val screenBuilder = ScreenBuilder()
         screenBuilder.width = panelBuilder.widthInCharacters
         screenBuilder.height = panelBuilder.heightInCharacters
-        screenBuilder.radio = Radio<String>()
 
         panel.swapScreen(MainMenuScreen(panel, screenBuilder))
 

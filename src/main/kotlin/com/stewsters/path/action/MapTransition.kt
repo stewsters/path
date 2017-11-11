@@ -1,9 +1,9 @@
 package com.stewsters.path.action
 
 import com.stewsters.path.entity.Entity
-import com.stewsters.util.math.Point2i
+import veclib.Vec2
 
-class MapTransition(entity: Entity, var movement: Point2i) : Action(entity) {
+class MapTransition(entity: Entity, var movement: Vec2) : Action(entity) {
 
     override fun onPerform(): ActionResult {
 
@@ -33,21 +33,20 @@ class MapTransition(entity: Entity, var movement: Point2i) : Action(entity) {
 
         chunkMap.removePawn(pawn)
         if (movement.x < 0) {
-            pawn.pos.x = newChunk.xSize - 1
+            pawn.pos = Vec2.get(newChunk.highX - 1, pawn.pos.y)
         } else if (movement.x > 0) {
-            pawn.pos.x = 0
+            pawn.pos = Vec2.get(0, pawn.pos.y)
         }
 
         if (movement.y < 0) {
-            pawn.pos.y = newChunk.ySize - 1
+            pawn.pos = Vec2.get(pawn.pos.x, newChunk.highY - 1)
         } else if (movement.y > 0) {
-            pawn.pos.y = 0
+            pawn.pos = Vec2.get(pawn.pos.x, 0)
         }
 
         newChunk.addPawn(pawn)
 
         return ActionResult.SUCCESS
-
 
     }
 

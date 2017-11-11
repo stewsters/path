@@ -2,10 +2,10 @@ package com.stewsters.path.action
 
 import com.stewsters.path.entity.Entity
 import com.stewsters.path.map.TileType
-import com.stewsters.util.math.Point2i
+import veclib.Vec2
 
 
-class OpenDoorAction(pawn: Entity, private val pos: Point2i) : Action(pawn) {
+class OpenDoorAction(pawn: Entity, private val pos: Vec2) : Action(pawn) {
 
     override fun onPerform(): ActionResult {
 

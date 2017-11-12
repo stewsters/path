@@ -10,12 +10,12 @@ import java.awt.Color
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 
-class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screenBuilder), KeyListener {
+class GameScreen(private var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screenBuilder), KeyListener {
 
-    val world = World(16, 16, 8, 8)
+    private val world = World(16, 16, 8, 8)
 
     //    var messageBox: TextArea
-    val worldArea: WorldArea
+    private val worldArea: WorldArea
 
     init {
         panel.addKeyListener(this)
@@ -101,7 +101,7 @@ class GameScreen(var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screen
         for ((y, row) in worldArea.strings.withIndex()) {
             for ((x, character) in row.characters.withIndex()) {
                 val entities = map.pawnInSquare(x, y)
-                if (entities.size > 0) {
+                if (entities.isNotEmpty()) {
                     character.character = entities.first().char
                     character.foregroundColor = entities.first().color
                     character.backgroundColor = Color.BLACK

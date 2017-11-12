@@ -12,14 +12,14 @@ import veclib.Vec2
 import veclib.getChebyshevDistance
 
 
-class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize) {
+class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = false) : Box(xSize, ySize) {
 
     private val tiles: Array<MapChunk>
     var player: Entity
 
     init {
-        assert(xFocus < xSize && xFocus >= 0)
-        assert(yFocus < ySize && yFocus >= 0)
+        assert(xFocus in 0..(xSize - 1))
+        assert(yFocus in 0..(ySize - 1))
 
 //        val r: Random = Random(2323)
         val seed = "candy".hashCode().toLong() //  r.nextLong()
@@ -33,25 +33,26 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
             maxOf(xPercent * xPercent, yPercent * yPercent)
         })
 
-        tiles = Array<MapChunk>(xSize * ySize, { index ->
-            MapGenerator.generateChunk(this, shapes, index % xSize, index / ySize, seed)
+        tiles = Array(xSize * ySize, { index ->
+            MapGenerator.generateChunk(this, shapes, Vec2.get(index % xSize, index / ySize), seed, skip)
         })
 
-        // Construction
-        for (tile in tiles) {
-            for (x in 0..MapGenerator.chunkSize - 1) {
-                for (y in 0..MapGenerator.chunkSize - 1) {
+        if (!skip) {
+            // Construction
+            for (tile in tiles) {
+                for (x in 0 until MapGenerator.chunkSize) {
+                    for (y in 0 until MapGenerator.chunkSize) {
 
-                    if (x == 6 && y <= 10 && y >= 6) {
-                        if (y == 8)
-                            tile.at(x, y).type = TileType.CLOSED_DOOR
-                        else
-                            tile.at(x, y).type = TileType.WALL
+                        if (x == 6 && y <= 10 && y >= 6) {
+                            if (y == 8)
+                                tile.at(x, y).type = TileType.CLOSED_DOOR
+                            else
+                                tile.at(x, y).type = TileType.WALL
+                        }
                     }
                 }
             }
         }
-
 
         player = Entity(
                 name = "Player",
@@ -102,58 +103,59 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
         )
         getCurrentMap().addPawn(horse)
 
+        if (!skip) {
+            for (mapChunk in tiles) {
+                for (i in 1..5) {
+                    val x = MatUtils.getIntInRange(0, mapChunk.highX - 1)
+                    val y = MatUtils.getIntInRange(0, mapChunk.highY - 1)
 
-        for (mapChunk in tiles) {
-            for (i in 1..5) {
-                val x = MatUtils.getIntInRange(0, mapChunk.highX - 1)
-                val y = MatUtils.getIntInRange(0, mapChunk.highY - 1)
+                    if (mapChunk.at(x, y).type.blocks)
+                        continue
 
-                if (mapChunk.at(x, y).type.blocks)
-                    continue
-
-                if (mapChunk.pawnInSquare(x, y).size > 0)
-                    continue
+                    if (mapChunk.pawnInSquare(x, y).isNotEmpty())
+                        continue
 
 
-                val wolf = Entity(
-                        name = "Wolf",
-                        char = 'w',
-                        chunk = player.chunk,
-                        pos = Vec2.get(x, y),
-                        life = Life(1),
-                        faction = Faction.MONSTER,
-                        turnTaker = TurnTaker(0, { chunk, entity ->
-                            val playerX = player.globalX()
-                            val playerY = player.globalY()
-                            val xPos = entity.globalX()
-                            val yPos = entity.globalY()
+                    val wolf = Entity(
+                            name = "Wolf",
+                            char = 'w',
+                            chunk = player.chunk,
+                            pos = Vec2.get(x, y),
+                            life = Life(1),
+                            faction = Faction.MONSTER,
+                            turnTaker = TurnTaker(0, { chunk, entity ->
+                                val playerX = player.globalX()
+                                val playerY = player.globalY()
+                                val xPos = entity.globalX()
+                                val yPos = entity.globalY()
 
-                            WalkAction(entity, Vec2.get(
-                                    MatUtils.limit(playerX - xPos, -1, 1),
-                                    MatUtils.limit(playerY - yPos, -1, 1)))
-                        }),
-                        deathFunction = {
-                            with(it) {
-                                println("${name} died.")
-                                turnTaker = null
-                                faction = null
-                                life = null
-                                char = '%'
-                                chunk.update(it)
+                                WalkAction(entity, Vec2.get(
+                                        MatUtils.limit(playerX - xPos, -1, 1),
+                                        MatUtils.limit(playerY - yPos, -1, 1)))
+                            }),
+                            deathFunction = {
+                                with(it) {
+                                    println("$name died.")
+                                    turnTaker = null
+                                    faction = null
+                                    life = null
+                                    char = '%'
+//                                    chunk.update(it)
+                                }
+
                             }
+                    )
+                    mapChunk.addPawn(wolf)
 
-                        }
-                )
-                mapChunk.addPawn(wolf)
+                }
 
             }
-
         }
-
     }
 
     fun getCurrentMap(): MapChunk = player.chunk
 
+    fun getMapAt(pos: Vec2): MapChunk = getMapAt(pos.x, pos.y)
     fun getMapAt(x: Int, y: Int): MapChunk = tiles[x + y * highX]
 
     fun update() {
@@ -168,7 +170,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
             if (currentTurnTaker.parent?.turnTaker == null) {
                 // Clear out the dead, easier to do it in one location
                 map.pawnQueue.remove(currentTurnTaker)
-                println("Auto clearing")
+                println("Auto clearing ${currentTurnTaker.parent?.name}")
                 continue
             }
 
@@ -187,7 +189,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
 
 
                 if (!result.succeeded) {
-                    println("${action.pawn.name} failed at ${action}")
+                    println("${action.pawn.name} failed at $action")
                     if (currentTurnTaker.parent == player) {
                         // player, they need time to select a new move
                         // cancel action, Do nothing
@@ -199,11 +201,11 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int) : Box(xSize, ySize
 
                 if (result.alternative != null) {
                     // Alternative actions we should try
-                    println("${action.pawn.name} is trying ${result.alternative} instead of ${action}")
+                    println("${action.pawn.name} is trying ${result.alternative} instead of $action")
                     action = result.alternative
 
                 } else {
-                    println("${action.pawn.name} did ${action}${if (result.nextAction != null) ". Trying ${result.nextAction} next." else ""}")
+                    println("${action.pawn.name} did $action${if (result.nextAction != null) ". Trying ${result.nextAction} next." else ""}")
                     // We should automatically do another action after this one
                     currentTurnTaker.setNextAction(result.nextAction)
                     break

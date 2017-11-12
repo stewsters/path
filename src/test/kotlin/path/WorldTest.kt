@@ -11,7 +11,7 @@ class WorldTest {
     @Test
     fun walkThroughWorldTest() {
 
-        val world = World(8, 8, 4, 4)
+        val world = World(8, 8, 4, 4, true)
 
         world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(1, 0)))
 
@@ -81,27 +81,20 @@ class WorldTest {
         world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(1, 0)))
         world.update()
 
-        assert(world.player.pos.x == 17)
-        assert(world.player.pos.y == 16)
-
+        assert(world.player.pos == Vec2.get(17, 16))
     }
 
     @Test
     fun testAreaTransition() {
-        val world = World(8, 8, 2, 2)
-        assert(world.player.chunk.x == 2)
-        assert(world.player.chunk.y == 2)
+        val world = World(8, 8, 2, 2, true)
+        assert(world.player.chunk.pos == Vec2.get(2, 2))
 
         for (x in (16..32)) {
             world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(1, 0)))
             world.update()
         }
-        assert(world.player.chunk.x == 3)
-        assert(world.player.chunk.y == 2)
-
-        // this would be 1, but mounting the horse took a move.
-        assert(world.player.pos.x == 0)
-        assert(world.player.pos.y == 16)
+        assert(world.player.chunk.pos == Vec2.get(3, 2))
+        assert(world.player.pos == Vec2.get(0, 16))
     }
 
 
@@ -112,8 +105,7 @@ class WorldTest {
         for (x in (0..7)) {
             for (y in (0..7)) {
                 val chunk = world.getMapAt(x, y)
-                assert(chunk.x == x)
-                assert(chunk.y == y)
+                assert(chunk.pos == Vec2.get(x, y))
             }
         }
 

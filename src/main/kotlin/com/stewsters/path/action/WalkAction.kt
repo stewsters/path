@@ -4,7 +4,7 @@ import com.stewsters.path.entity.Entity
 import com.stewsters.path.map.TileType
 import veclib.Vec2
 
-class WalkAction(pawn: Entity, val offset: Vec2) : Action(pawn) {
+class WalkAction(pawn: Entity, private val offset: Vec2) : Action(pawn) {
 
 
     override fun onPerform(): ActionResult {
@@ -13,22 +13,19 @@ class WalkAction(pawn: Entity, val offset: Vec2) : Action(pawn) {
             return ActionResult(RestAction(pawn))
         }
 
-        val xCur = pawn.pos.x
-        val yCur = pawn.pos.y
-        // val zCur = pawn.pos.z
+        val curPos = pawn.pos
+        val nextPos = curPos + offset
 
-        val xPos = xCur + offset.x
-        val yPos = yCur + offset.y
-        // val zPos = zCur
-
-        if (chunkMap.outside(xPos, yPos)) {
+        if (chunkMap.outside(nextPos)) {
             return ActionResult(MapTransition(pawn, offset))
         }
 
         //See if there is an actor there
-        val targetList = chunkMap.pawnInSquare(xPos, yPos, xPos + pawn.xSize - 1, yPos + pawn.ySize - 1)
+        val targetList = chunkMap.pawnInSquare(
+                nextPos.x, nextPos.y,
+                nextPos.x + pawn.xSize - 1, nextPos.y + pawn.ySize - 1)
 
-        if (targetList.size > 0) {
+        if (targetList.isNotEmpty()) {
 
             for (target in targetList) {
                 if (target == pawn) {
@@ -43,9 +40,9 @@ class WalkAction(pawn: Entity, val offset: Vec2) : Action(pawn) {
         }
 
         // Open Door
-        val targetTileType = chunkMap.at(xPos, yPos).type
+        val targetTileType = chunkMap.at(nextPos).type
         if (targetTileType === TileType.CLOSED_DOOR) {
-            return ActionResult(OpenDoorAction(pawn, Vec2.get(xPos, yPos)))
+            return ActionResult(OpenDoorAction(pawn, nextPos))
         }
 
 //        if (targetTileType === TileType.GLASS) {
@@ -53,15 +50,14 @@ class WalkAction(pawn: Entity, val offset: Vec2) : Action(pawn) {
 //        }
 
         // See if we can walk there.
-        if (!pawn.canTraverse(xCur, yCur, xPos, yPos)) {
+        if (!pawn.canTraverse(curPos.x, curPos.y, nextPos.x, nextPos.y)) {
             return ActionResult.FAILURE
         }
 
-        println("move from ${pawn.globalX()},${pawn.globalY()}")
+//        println("move from ${pawn.globalX()},${pawn.globalY()}")
 
         // At this point we know that we can walk, lets do it
-        pawn.chunk.updatePawnPos(pawn, xPos, yPos)
-
+        pawn.chunk.updatePawnPos(pawn, nextPos.x, nextPos.y)
 
         // See if the hero stepped on anything interesting that would cause them to react.
 //        if (targetTileType === TileType.UP_STAIR) {

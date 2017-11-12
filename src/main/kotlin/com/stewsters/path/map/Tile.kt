@@ -1,3 +1,3 @@
 package com.stewsters.path.map
 
-public class Tile(var type: TileType)
+class Tile(var type: TileType)

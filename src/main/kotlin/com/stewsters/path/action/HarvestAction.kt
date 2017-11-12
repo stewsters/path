@@ -11,11 +11,11 @@ class HarvestAction(pawn: Entity) : Action(pawn) {
             return ActionResult(DismountAction(pawn))
         }
 
-        var others = pawn.chunk.pawnInSquare(pawn.pos).filter {
+        val others = pawn.chunk.pawnInSquare(pawn.pos).filter {
             it != pawn && it.inventory != null
         }
 
-        if (others.size == 0) {
+        if (others.isEmpty()) {
             return ActionResult.FAILURE
         }
 

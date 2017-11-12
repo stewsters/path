@@ -13,7 +13,7 @@ class MountAction(pawn: Entity) : Action(pawn) {
         val entities: List<Entity> = chunkMap.pawnInSquare(pawn.pos.x - 1, pawn.pos.y - 1, pawn.pos.x + 1, pawn.pos.y + 1)
         println(entities)
 
-        val mount = entities.filter { it.mountable }.firstOrNull()
+        val mount = entities.firstOrNull { it.mountable }
         println(mount)
 
         if (mount == null) {

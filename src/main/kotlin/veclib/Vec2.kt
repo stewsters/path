@@ -14,26 +14,29 @@ data class Vec2(override val x: Int, override val y: Int) : Vec2Immutable {
 
     companion object {
         private val size: Int = 32
-        private val pool = Array<Vec2>(size * size, { i -> Vec2(i % size, i / size) })
+        private val pool = Array(size * size, { i -> Vec2(i % size, i / size) })
 
         fun get(x: Int, y: Int): Vec2 {
-            if (x >= 0 && x < size && y >= 0 && y < size) {
-                return pool[size * y + x]
+            return if (x >= 0 && x < size && y >= 0 && y < size) {
+                pool[size * y + x]
             } else {
                 // return a generated one
                 println("new $x $y")
-                return Vec2(x, y); // maybe cache in hashtable?
+                Vec2(x, y) // maybe cache in hashtable?
             }
-
         }
     }
 
-    fun mooreNeighborhood(): List<Vec2> = List<Vec2>(8, { index ->
+    fun mooreNeighborhood(): List<Vec2> = List(8, { index ->
         if (index >= 5)
             Vec2.get((index + 1) % 3 - 1, (index + 1) / 3)
         else
             Vec2.get(index % 3 - 1, index / 3)
     })
+
+    override fun toString(): String {
+        return "($x, $y)"
+    }
 }
 
 fun getChebyshevDistance(pos1: Vec2, pos2: Vec2): Int = getChebyshevDistance(pos1.x, pos1.y, pos2.x, pos2.y)

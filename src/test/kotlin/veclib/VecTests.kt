@@ -24,7 +24,7 @@ class VecTests {
     fun testMoving() {
         val location = Vec2.get(0, 0) + Facing2d.EAST + Facing2d.NORTH
 
-        location.x == 1
-        location.y == 1
+        assert(location.x == 1)
+        assert(location.y == 1)
     }
 }

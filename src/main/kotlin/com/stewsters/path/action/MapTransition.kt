@@ -3,31 +3,28 @@ package com.stewsters.path.action
 import com.stewsters.path.entity.Entity
 import veclib.Vec2
 
-class MapTransition(entity: Entity, var movement: Vec2) : Action(entity) {
+class MapTransition(entity: Entity, private var movement: Vec2) : Action(entity) {
 
     override fun onPerform(): ActionResult {
 
         // if we are on an edge, and moving off the map
-        val xCur = pawn.pos.x
-        val yCur = pawn.pos.y
-        // val zCur = pawn.pos.z
+        val currentPos = pawn.pos
 
-        val xPos = xCur + movement.x
-        val yPos = yCur + movement.y
-        // val zPos = zCur
+        val nextPos = currentPos + movement
 
-        if (chunkMap.contains(xPos, yPos)) {
-            return ActionResult.FAILURE // could also just walk
+        if (chunkMap.contains(nextPos)) {
+            return ActionResult.FAILURE // could also just walk, but they should get from walk to here
         }
 
         val world = chunkMap.world
-        if (world.outside(chunkMap.x + movement.x, chunkMap.y + movement.y)) {
+        val nextChunkCoord = chunkMap.pos + movement
+        if (world.outside(nextChunkCoord)) {
             return ActionResult.FAILURE
         }
 
-        val newChunk = world.getMapAt(chunkMap.x + movement.x, chunkMap.y + movement.y)
+        val newChunk = world.getMapAt(nextChunkCoord)
 
-        println("transition from ${pawn.chunk.x},${pawn.chunk.y} to ${newChunk.x},${newChunk.y}")
+        println("transition from ${pawn.chunk.pos} to ${newChunk.pos}")
 
         pawn.chunk = newChunk
 

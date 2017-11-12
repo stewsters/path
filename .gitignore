@@ -1,10 +1,10 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Gradle template
 .gradle
-/build/
+build/
 .idea
 *.iml
-old/
+out/
 
 # Ignore Gradle GUI config
 gradle-app.setting

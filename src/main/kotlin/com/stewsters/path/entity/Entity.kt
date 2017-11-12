@@ -44,11 +44,11 @@ class Entity(
     }
 
     fun globalX(): Int {
-        return chunk.x * chunk.highX + pos.x
+        return chunk.pos.x * chunk.highX + pos.x
     }
 
     fun globalY(): Int {
-        return chunk.y * chunk.highY + pos.y
+        return chunk.pos.y * chunk.highY + pos.y
     }
 
     fun isAlive(): Boolean {

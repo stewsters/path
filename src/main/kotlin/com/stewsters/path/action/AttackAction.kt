@@ -1,8 +1,8 @@
-package com.stewsters.path.action;
+package com.stewsters.path.action
 
 import com.stewsters.path.entity.Entity
 
-class AttackAction(pawn: Entity, internal var target: Entity) : Action(pawn) {
+class AttackAction(pawn: Entity, private var target: Entity) : Action(pawn) {
 
     override fun onPerform(): ActionResult {
 

@@ -15,7 +15,7 @@ class CloseAdjacentDoors(pawn: Entity) : Action(pawn) {
             for (y in pawn.pos.y - 1..pawn.pos.y + 1) {
                 if (chunkMap.at(x, y).type == TileType.OPEN_DOOR
                         // && !chunkMap.pawnInSquare(x,y).any { it.blocks }
-                        && chunkMap.pawnInSquare(x, y).size == 0) {
+                        && chunkMap.pawnInSquare(x, y).isEmpty()) {
 
                     chunkMap.at(x, y).type = TileType.CLOSED_DOOR
                     return ActionResult.SUCCESS

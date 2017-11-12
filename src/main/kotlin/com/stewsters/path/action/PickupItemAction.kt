@@ -11,7 +11,7 @@ class PickupItemAction(pawn: Entity) : Action(pawn) {
 
         val items = chunkMap.pawnInSquare(pawn.pos.x, pawn.pos.y).filter { it.item != null }
 
-        if (items.size == 0)
+        if (items.isEmpty())
             return ActionResult.FAILURE
 
         for (item in items) {

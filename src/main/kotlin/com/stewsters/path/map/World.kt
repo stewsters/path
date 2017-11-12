@@ -59,6 +59,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
                 chunk = getMapAt(xFocus, yFocus),
                 pos = Vec2.get(MapGenerator.chunkSize / 2, MapGenerator.chunkSize / 2),
                 faction = Faction.HUMAN,
+                displayOrder = DisplayOrder.PLAYER,
                 turnTaker = TurnTaker(0, { _, _ -> null }),
                 life = Life(10),
                 doorOpener = true,
@@ -72,6 +73,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
                 chunk = player.chunk,
                 pos = player.pos,
                 char = '/',
+                displayOrder = DisplayOrder.ITEM,
                 item = Item(
                         weapon = Weapon(damage = 5),
                         equipment = Equipment(Slot.WEAPON, isEquipped = true)
@@ -82,6 +84,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
         val horse = Entity(
                 name = "Roach",
                 char = 'h',
+                displayOrder = DisplayOrder.ALLY,
                 chunk = player.chunk,
                 pos = Vec2.get(player.pos.x + 2, player.pos.y),
                 faction = Faction.HUMAN,
@@ -123,6 +126,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
                             pos = Vec2.get(x, y),
                             life = Life(1),
                             faction = Faction.MONSTER,
+                            displayOrder = DisplayOrder.OPPONENT,
                             turnTaker = TurnTaker(0, { chunk, entity ->
                                 val playerX = player.globalX()
                                 val playerY = player.globalY()
@@ -137,9 +141,11 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
                                 with(it) {
                                     println("$name died.")
                                     turnTaker = null
+                                    displayOrder = DisplayOrder.BODY
                                     faction = null
                                     life = null
                                     char = '%'
+                                    blocks = false
 //                                    chunk.update(it)
                                 }
 
@@ -160,7 +166,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
 
     fun update() {
         val map: MapChunk = getCurrentMap()
-        while (player.life?.cur ?: 0 > 0) {
+        while (player.isAlive()) {
             // Break early if there is no one to work on
             if (map.pawnQueue.size <= 0)
                 return
@@ -221,6 +227,8 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
             currentTurnTaker.gameTurn += action?.costInTurns ?: 0
             map.pawnQueue.add(currentTurnTaker)
         }
+
+
     }
 
 

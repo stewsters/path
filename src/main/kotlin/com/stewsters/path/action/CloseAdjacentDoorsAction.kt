@@ -3,7 +3,7 @@ package com.stewsters.path.action
 import com.stewsters.path.entity.Entity
 import com.stewsters.path.map.TileType
 
-class CloseAdjacentDoors(pawn: Entity) : Action(pawn) {
+class CloseAdjacentDoorsAction(pawn: Entity) : Action(pawn) {
 
     override fun onPerform(): ActionResult {
 

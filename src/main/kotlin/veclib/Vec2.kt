@@ -38,10 +38,10 @@ data class Vec2(override val x: Int, override val y: Int) : Vec2Immutable {
     }
 
     fun mooreNeighborhood(): List<Vec2> = List(8, { index ->
-        if (index >= 5)
-            Vec2.get((index + 1) % 3 - 1, (index + 1) / 3)
+        if (index >= 4)
+            Vec2.get((index + 1) % 3 - 1 + x, (index + 1) / 3  -1 + y)
         else
-            Vec2.get(index % 3 - 1, index / 3)
+            Vec2.get(index % 3 - 1 + x, index / 3 -1 + y)
     })
 
     override fun toString(): String {

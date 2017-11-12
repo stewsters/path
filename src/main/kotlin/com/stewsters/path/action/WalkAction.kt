@@ -17,7 +17,12 @@ class WalkAction(pawn: Entity, private val offset: Vec2) : Action(pawn) {
         val nextPos = curPos + offset
 
         if (chunkMap.outside(nextPos)) {
-            return ActionResult(MapTransition(pawn, offset))
+            if(pawn.chunk.world.player == pawn) {
+                return ActionResult(MapTransitionAction(pawn, offset))
+            }else{
+
+                return ActionResult.FAILURE
+            }
         }
 
         //See if there is an actor there
@@ -34,8 +39,10 @@ class WalkAction(pawn: Entity, private val offset: Vec2) : Action(pawn) {
                     return ActionResult(MountAction(pawn))
                 } else if ((pawn.faction != target.faction) && target.isAlive())
                     return ActionResult(AttackAction(pawn, target))
-                else
+                else if (pawn.blocks) {
+                    // I hope this doesnt happen
                     return ActionResult.FAILURE
+                }
             }
         }
 

@@ -2,6 +2,7 @@ package veclib
 
 import com.stewsters.util.math.Facing2d
 import org.junit.Test
+import java.util.*
 
 class VecTests {
 
@@ -26,5 +27,28 @@ class VecTests {
 
         assert(location.x == 1)
         assert(location.y == 1)
+    }
+
+    @Test
+    fun testNeighborhood() {
+
+        val center = Vec2.get(5, 5)
+        val neighbors = center.mooreNeighborhood()
+
+        assert(neighbors.size == 8)
+
+        neighbors.forEach { println(it) }
+
+        assert(neighbors.containsAll(Arrays.asList(
+                Vec2.get(4, 4),
+                Vec2.get(5, 4),
+                Vec2.get(6, 4),
+                Vec2.get(4, 5),
+                Vec2.get(6, 5),
+                Vec2.get(4, 6),
+                Vec2.get(5, 6),
+                Vec2.get(6, 6)
+        ))
+        )
     }
 }

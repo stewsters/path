@@ -1,6 +1,7 @@
 package com.stewsters.path.action
 
 import com.stewsters.path.entity.Entity
+import java.util.*
 
 class DismountAction(pawn: Entity) : Action(pawn) {
 
@@ -10,11 +11,13 @@ class DismountAction(pawn: Entity) : Action(pawn) {
         }
 
         //find a clear spot to put it
-        val possible = pawn.pos.mooreNeighborhood().find {
-            pawn.chunk.contains(it) &&
-                    !pawn.chunk.at(it).type.blocks &&
-                    pawn.chunk.pawnInSquare(it).none { it.blocks }
-        }
+        val possible = pawn.pos.mooreNeighborhood()
+                .filter {
+                    pawn.chunk.contains(it)
+                            && !pawn.chunk.at(it).type.blocks
+                            && pawn.chunk.pawnInSquare(it).none { it.blocks }
+                }
+                .random()
 
         if (possible == null) {
             // Cannot dismount in crowded environments
@@ -31,3 +34,7 @@ class DismountAction(pawn: Entity) : Action(pawn) {
         return ActionResult.SUCCESS
     }
 }
+
+private fun <E> List<E>.random(): E = this[Random().nextInt(this.size)]
+private fun <E> List<E>.random(seed: Long): E = this[Random(seed).nextInt(this.size)]
+

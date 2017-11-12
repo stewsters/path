@@ -13,6 +13,7 @@ class Entity(
 
         var char: Char = '@',
         var color: Color = Color.WHITE,
+        var displayOrder: DisplayOrder = DisplayOrder.LAST,
 
         var turnTaker: TurnTaker? = null,
         var faction: Faction? = null,
@@ -31,7 +32,7 @@ class Entity(
         val xSize: Int = 1,
         val ySize: Int = 1,
 
-        val blocks: Boolean = false
+        var blocks: Boolean = false
 ) {
 
     init {
@@ -51,10 +52,7 @@ class Entity(
         return chunk.pos.y * chunk.highY + pos.y
     }
 
-    fun isAlive(): Boolean {
-        return if (life != null) {
-            life?.cur ?: 0 >= 0
-        } else false// (life?.cur) ? (true) : false
-    }
+    fun isAlive(): Boolean = life?.isAlive() ?: false
+
 
 }

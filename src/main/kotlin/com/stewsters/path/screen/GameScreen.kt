@@ -10,7 +10,7 @@ import java.awt.Color
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 
-class GameScreen(private var panel: Panel, screenBuilder: ScreenBuilder) : Screen(screenBuilder), KeyListener {
+class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuilder) : Screen(screenBuilder), KeyListener {
 
     private val world = World(16, 16, 8, 8)
 
@@ -68,7 +68,7 @@ class GameScreen(private var panel: Panel, screenBuilder: ScreenBuilder) : Scree
                 action = WalkAction(world.player, Vec2.get(1, 0))
             }
             KeyEvent.VK_C -> {
-                action = CloseAdjacentDoors(world.player)
+                action = CloseAdjacentDoorsAction(world.player)
             }
             KeyEvent.VK_H -> {
                 action = HarvestAction(world.player)
@@ -83,6 +83,10 @@ class GameScreen(private var panel: Panel, screenBuilder: ScreenBuilder) : Scree
 
         world.player.turnTaker?.setNextAction(action)
         world.update()
+        if (!world.player.isAlive()) {
+            panel.removeListener(this)
+            panel.swapScreen(DeathScreen(panel, screenBuilder))
+        }
 
         display()
 
@@ -102,7 +106,7 @@ class GameScreen(private var panel: Panel, screenBuilder: ScreenBuilder) : Scree
             for ((x, character) in row.characters.withIndex()) {
                 val entities = map.pawnInSquare(x, y)
                 if (entities.isNotEmpty()) {
-                    character.character = entities.first().char
+                    character.character = entities.minBy { it.displayOrder }?.char ?: '?'
                     character.foregroundColor = entities.first().color
                     character.backgroundColor = Color.BLACK
                 } else {

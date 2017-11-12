@@ -3,7 +3,7 @@ package com.stewsters.path.action
 import com.stewsters.path.entity.Entity
 import veclib.Vec2
 
-class MapTransition(entity: Entity, private var movement: Vec2) : Action(entity) {
+class MapTransitionAction(entity: Entity, private var movement: Vec2) : Action(entity) {
 
     override fun onPerform(): ActionResult {
 
@@ -29,6 +29,11 @@ class MapTransition(entity: Entity, private var movement: Vec2) : Action(entity)
         pawn.chunk = newChunk
 
         chunkMap.removePawn(pawn)
+
+        // find next turn
+        pawn.turnTaker?.gameTurn = (newChunk.pawnQueue.peek()?.gameTurn ?: 1) - 1
+
+        // Update positions
         if (movement.x < 0) {
             pawn.pos = Vec2.get(newChunk.highX - 1, pawn.pos.y)
         } else if (movement.x > 0) {

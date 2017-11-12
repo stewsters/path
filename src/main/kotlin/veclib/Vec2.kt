@@ -13,16 +13,26 @@ data class Vec2(override val x: Int, override val y: Int) : Vec2Immutable {
     operator fun minus(dir: Vec2): Vec2 = get(x - dir.x, y - dir.y)
 
     companion object {
+
+        // how far off the standard size we will have cached.
+        // These happen if you get negative movements or move off the board
+        private val offset = 4
         private val size: Int = 32
-        private val pool = Array(size * size, { i -> Vec2(i % size, i / size) })
+        private val actualSize = size + 2 * offset
+        private val pool = Array((actualSize * actualSize), { i -> Vec2(i % actualSize - offset, i / actualSize - offset) })
 
         fun get(x: Int, y: Int): Vec2 {
-            return if (x >= 0 && x < size && y >= 0 && y < size) {
-                pool[size * y + x]
+
+            val xA = x + offset
+            val yA = y + offset
+
+            return if (xA >= 0 && xA < actualSize && yA >= 0 && yA < actualSize) {
+                pool[actualSize * yA + xA]
             } else {
-                // return a generated one
+                // return a generated one.  This should not happen in practice, but its nice not to throw a bug for the
+                // occasional one.  May want to actually error once this gets going
                 println("new $x $y")
-                Vec2(x, y) // maybe cache in hashtable?
+                Vec2(x, y)
             }
         }
     }

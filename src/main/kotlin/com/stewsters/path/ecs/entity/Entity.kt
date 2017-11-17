@@ -1,5 +1,11 @@
-package com.stewsters.path.entity
+package com.stewsters.path.ecs.entity
 
+import com.stewsters.path.ecs.component.Inventory
+import com.stewsters.path.ecs.component.Item
+import com.stewsters.path.ecs.component.Life
+import com.stewsters.path.ecs.component.TurnTaker
+import com.stewsters.path.ecs.component.enums.DisplayOrder
+import com.stewsters.path.ecs.component.enums.Faction
 import com.stewsters.path.map.MapChunk
 import veclib.Vec2
 import java.awt.Color

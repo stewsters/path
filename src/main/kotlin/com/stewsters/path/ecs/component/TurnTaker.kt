@@ -1,6 +1,7 @@
-package com.stewsters.path.entity
+package com.stewsters.path.ecs.component
 
 import com.stewsters.path.action.Action
+import com.stewsters.path.ecs.entity.Entity
 import com.stewsters.path.map.MapChunk
 
 // This controls Entities that do stuff on turns

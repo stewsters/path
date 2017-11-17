@@ -30,30 +30,7 @@ object Game {
         screenBuilder.height = panelBuilder.heightInCharacters
 
         panel.swapScreen(MainMenuScreen(panel, screenBuilder))
-
-        // Render loop:
-        //while (true) {
-        //  panel.screen.update()
         panel.draw()
-        //    Thread.sleep(100)
-        //}
-
-//        for (y in 0..panel.getHeightInCharacters() - 1) {
-//            val string = panel.getScreen().getString(y)
-//
-//            for (x in 0..panel.getWidthInCharacters() - 1) {
-//
-//                chunk.at(x, y).ifPresent {
-//                    string.setForegroundColor(it.type.foreground)
-//                    string.setBackgroundColor(it.type.background)
-//                    string.setCharacter(x, it.type.char)
-//
-//                }
-//
-//            }
-//        }
-//
-        //panel.draw()
     }
 
 }

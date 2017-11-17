@@ -4,7 +4,10 @@ import com.stewsters.path.action.Action
 import com.stewsters.path.action.ActionResult
 import com.stewsters.path.action.RestAction
 import com.stewsters.path.action.WalkAction
-import com.stewsters.path.entity.*
+import com.stewsters.path.ecs.component.*
+import com.stewsters.path.ecs.component.enums.DisplayOrder
+import com.stewsters.path.ecs.component.enums.Faction
+import com.stewsters.path.ecs.entity.*
 import com.stewsters.path.map.generator.MapGenerator
 import com.stewsters.util.math.MatUtils
 import veclib.Box

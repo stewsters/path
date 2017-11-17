@@ -1,4 +1,6 @@
-package com.stewsters.path.entity
+package com.stewsters.path.ecs.component
+
+import com.stewsters.path.ecs.component.enums.Slot
 
 data class Item(
         val weight: Int = 0,
@@ -11,8 +13,3 @@ data class Item(
 data class Weapon(val damage: Int)
 data class Armor(val armor: Int)
 data class Equipment(val slot: Slot, var isEquipped: Boolean = false)
-
-enum class Slot {
-    WEAPON,
-    CLOAK,
-}

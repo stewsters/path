@@ -1,4 +1,4 @@
-package com.stewsters.path.entity
+package com.stewsters.path.ecs.component
 
 // Damage we can take before dying
 data class Life(var max: Int, var cur: Int = max) {

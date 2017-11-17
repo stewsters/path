@@ -1,6 +1,6 @@
 package com.stewsters.path.map
 
-import com.stewsters.path.entity.Entity
+import com.stewsters.path.ecs.entity.Entity
 
 class SpatialHash(private val xSize: Int, private val ySize: Int) {
 

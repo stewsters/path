@@ -1,6 +1,6 @@
 package com.stewsters.path.action
 
-import com.stewsters.path.entity.Entity
+import com.stewsters.path.ecs.entity.Entity
 import veclib.Vec2
 
 class MapTransitionAction(entity: Entity, private var movement: Vec2) : Action(entity) {

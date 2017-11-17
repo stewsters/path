@@ -1,8 +1,8 @@
 package com.stewsters.path.map
 
 import com.stewsters.path.Game.saveFolder
-import com.stewsters.path.entity.Entity
-import com.stewsters.path.entity.TurnTaker
+import com.stewsters.path.ecs.entity.Entity
+import com.stewsters.path.ecs.component.TurnTaker
 import veclib.Box
 import veclib.Vec2
 import java.io.File

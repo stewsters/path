@@ -17,9 +17,9 @@ class WalkAction(pawn: Entity, private val offset: Vec2) : Action(pawn) {
         val nextPos = curPos + offset
 
         if (chunkMap.outside(nextPos)) {
-            if(pawn.chunk.world.player == pawn) {
+            if (pawn.chunk.world.player == pawn) {
                 return ActionResult(MapTransitionAction(pawn, offset))
-            }else{
+            } else {
 
                 return ActionResult.FAILURE
             }

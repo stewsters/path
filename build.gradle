@@ -28,6 +28,8 @@ dependencies {
     compile "com.github.Valkryst:VTerminal:2.17.0-BETA"
     compile "com.stewsters.util:stewsters-util:0.18"
     testCompile 'junit:junit:4.12'
+
+    compile 'com.github.salomonbrys.kodein:kodein-conf:4.1.0'
 }
 
 compileKotlin {

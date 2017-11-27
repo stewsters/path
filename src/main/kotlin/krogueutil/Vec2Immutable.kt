@@ -1,4 +1,4 @@
-package veclib
+package krogueutil
 
 interface Vec2Immutable {
     val x: Int

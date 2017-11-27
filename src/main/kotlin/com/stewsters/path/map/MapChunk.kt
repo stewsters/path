@@ -1,10 +1,9 @@
 package com.stewsters.path.map
 
-import com.stewsters.path.Game.saveFolder
 import com.stewsters.path.ecs.component.TurnTaker
 import com.stewsters.path.ecs.entity.Entity
-import veclib.Box
-import veclib.Vec2
+import krogueutil.Box
+import krogueutil.Vec2
 import java.io.File
 import java.util.*
 
@@ -47,20 +46,28 @@ class MapChunk(val world: World, val pos: Vec2,
         }
     }
 
-    fun writeToDisk() {
-        File(saveFolder, "${pos.x}:${pos.y}.map")
-                .writeBytes(tiles.map { it.type.ordinal as Byte }.toByteArray())
+    fun writeToDisk(gameSaveFolder: File) {
+        // Save map
+        File(gameSaveFolder, "${pos.x}:${pos.y}.map")
+                .writeBytes(tiles.map { it.type.ordinal.toByte() }.toByteArray())
 
-        // TODO: serialize data
+        val entitySave = File(gameSaveFolder, "${pos.x}:${pos.y}.ent")
+
+        // TODO: serialize Entities:
+        spatialHash.findEntitiesInSquare(0, 0, highX - 1, highY - 1).forEach {
+            //            entitySave.writeText(JSON.Companion.stringify(it))
+        }
 
     }
 
-    fun restoreFromDisk() {
+    fun restoreFromDisk(gameSaveFolder: File) {
         val values = TileType.values()
-        File(saveFolder, "${pos.x}:${pos.y}.map")
+        File(gameSaveFolder, "${pos.x}:${pos.y}.map")
                 .readBytes()
-                .map { values[it as Int] }
-                .forEachIndexed { index, tileType -> tiles[index].type = tileType }
+                .map { values[it.toInt()] }
+                .forEachIndexed { index, tileType ->
+                    tiles[index].type = tileType
+                }
 
         // TODO: restore entities
     }

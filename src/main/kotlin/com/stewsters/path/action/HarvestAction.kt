@@ -8,7 +8,7 @@ class HarvestAction(pawn: Entity) : Action(pawn) {
 
         if (pawn.mount != null) {
             //on horse, dismount?
-            return ActionResult(DismountAction(pawn))
+            return ActionResult(alternative = DismountAction(pawn))
         }
 
         val others = pawn.chunk.pawnInSquare(pawn.pos).filter {

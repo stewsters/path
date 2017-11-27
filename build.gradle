@@ -3,9 +3,11 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     ext.kotlin_version = '1.1.60'
+    ext.jackson_version = '2.9.0'
 
     repositories {
         mavenCentral()
+        maven { url "https://kotlin.bintray.com/kotlinx" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -25,8 +27,11 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version"
+
     compile "com.github.Valkryst:VTerminal:2.17.0-BETA"
     compile "com.stewsters.util:stewsters-util:0.18"
+
     testCompile 'junit:junit:4.12'
 }
 

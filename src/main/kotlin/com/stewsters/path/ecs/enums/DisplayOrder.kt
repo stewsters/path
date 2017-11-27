@@ -1,4 +1,4 @@
-package com.stewsters.path.ecs.component.enums
+package com.stewsters.path.ecs.enums
 
 enum class DisplayOrder {
     PLAYER,

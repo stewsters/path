@@ -1,22 +1,28 @@
 package com.stewsters.path.map
 
+import com.stewsters.path.Game.saveFolder
 import com.stewsters.path.action.Action
 import com.stewsters.path.action.ActionResult
 import com.stewsters.path.action.RestAction
 import com.stewsters.path.action.WalkAction
 import com.stewsters.path.ecs.component.*
-import com.stewsters.path.ecs.component.enums.DisplayOrder
-import com.stewsters.path.ecs.component.enums.Faction
-import com.stewsters.path.ecs.component.enums.Slot
 import com.stewsters.path.ecs.entity.Entity
-import com.stewsters.path.map.generator.MapGenerator
+import com.stewsters.path.ecs.enums.DisplayOrder
+import com.stewsters.path.ecs.enums.Faction
+import com.stewsters.path.ecs.enums.Slot
+import com.stewsters.path.map.generator.TerrainGenerator
 import com.stewsters.util.math.MatUtils
-import veclib.Box
-import veclib.Vec2
-import veclib.getChebyshevDistance
+import krogueutil.Box
+import krogueutil.Vec2
+import krogueutil.getChebyshevDistance
+import java.io.File
+import java.util.*
 
 
-class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = false) : Box(xSize, ySize) {
+class World(xSize: Int, ySize: Int,
+            xFocus: Int, yFocus: Int,
+            val gameName: String = UUID.randomUUID().toString(),
+            skip: Boolean = false) : Box(xSize, ySize) {
 
     private val tiles: Array<MapChunk>
     var player: Entity
@@ -25,10 +31,9 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
         assert(xFocus in 0..(xSize - 1))
         assert(yFocus in 0..(ySize - 1))
 
-//        val r: Random = Random(2323)
-        val seed = "candy".hashCode().toLong() //  r.nextLong()
+        val seed = gameName.hashCode().toLong()
 
-        val worldWidth: Double = (MapGenerator.chunkSize * xSize).toDouble()
+        val worldWidth: Double = (TerrainGenerator.chunkSize * xSize).toDouble()
 
         val shapes = listOf({ x: Int, y: Int ->
             val xPercent = ((x / worldWidth) - 0.5) * 2
@@ -38,14 +43,14 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
         })
 
         tiles = Array(xSize * ySize, { index ->
-            MapGenerator.generateChunk(this, shapes, Vec2.get(index % xSize, index / ySize), seed, skip)
+            TerrainGenerator.generateChunk(this, shapes, Vec2.get(index % xSize, index / ySize), seed, skip)
         })
 
         if (!skip) {
             // Construction
             for (tile in tiles) {
-                for (x in 0 until MapGenerator.chunkSize) {
-                    for (y in 0 until MapGenerator.chunkSize) {
+                for (x in 0 until TerrainGenerator.chunkSize) {
+                    for (y in 0 until TerrainGenerator.chunkSize) {
 
                         if (x == 6 && y <= 10 && y >= 6) {
                             if (y == 8)
@@ -58,10 +63,11 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
             }
         }
 
+        val currentMap = getMapAt(xFocus, yFocus)
         player = Entity(
                 name = "Player",
-                chunk = getMapAt(xFocus, yFocus),
-                pos = Vec2.get(MapGenerator.chunkSize / 2, MapGenerator.chunkSize / 2),
+                chunk = currentMap,
+                pos = Vec2.get(TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2),
                 faction = Faction.HUMAN,
                 displayOrder = DisplayOrder.PLAYER,
                 turnTaker = TurnTaker(0, { _, _ -> null }),
@@ -69,7 +75,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
                 doorOpener = true,
                 inventory = Inventory(ArrayList())
         )
-        getCurrentMap().addPawn(player)
+        currentMap.addPawn(player)
 
         player.inventory?.items?.add(Entity(
                 name = "Rusted Saber",
@@ -92,7 +98,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
                 chunk = player.chunk,
                 pos = Vec2.get(player.pos.x + 2, player.pos.y),
                 faction = Faction.HUMAN,
-                turnTaker = TurnTaker(0, { chunk, entity ->
+                turnTaker = TurnTaker(1, { _, entity ->
                     val playerX = player.globalX()
                     val playerY = player.globalY()
                     val horseX = entity.globalX()
@@ -108,7 +114,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
                 life = Life(100),
                 mountable = true
         )
-        getCurrentMap().addPawn(horse)
+        currentMap.addPawn(horse)
 
         if (!skip) {
             for (mapChunk in tiles) {
@@ -126,12 +132,12 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
                     val wolf = Entity(
                             name = "Wolf",
                             char = 'w',
-                            chunk = player.chunk,
+                            chunk = mapChunk,
                             pos = Vec2.get(x, y),
                             life = Life(1),
                             faction = Faction.MONSTER,
                             displayOrder = DisplayOrder.OPPONENT,
-                            turnTaker = TurnTaker(0, { chunk, entity ->
+                            turnTaker = TurnTaker(2 + i, { _, entity ->
                                 val playerX = player.globalX()
                                 val playerY = player.globalY()
                                 val xPos = entity.globalX()
@@ -163,14 +169,18 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
         }
     }
 
-    fun getCurrentMap(): MapChunk = player.chunk
+//    fun getCurrentMap(): MapChunk = player.chunk
 
     fun getMapAt(pos: Vec2): MapChunk = getMapAt(pos.x, pos.y)
     fun getMapAt(x: Int, y: Int): MapChunk = tiles[x + y * highX]
 
     fun update() {
-        val map: MapChunk = getCurrentMap()
+
         while (player.isAlive()) {
+
+            val map: MapChunk = player.chunk
+
+            println("processing for ${map.pos}")
             // Break early if there is no one to work on
             if (map.pawnQueue.size <= 0)
                 return
@@ -197,6 +207,7 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
 
                 val result: ActionResult = action.onPerform()
 
+                print("${action.pawn.chunk.pos}: ")
 
                 if (!result.succeeded) {
                     println("${action.pawn.name} failed at $action")
@@ -213,6 +224,10 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
                     // Alternative actions we should try
                     println("${action.pawn.name} is trying ${result.alternative} instead of $action")
                     action = result.alternative
+
+                } else if (result.breakout) {
+                    println("Brokeout ${action.pawn.name}")
+                    return
 
                 } else {
                     println("${action.pawn.name} did $action${if (result.nextAction != null) ". Trying ${result.nextAction} next." else ""}")
@@ -235,5 +250,11 @@ class World(xSize: Int, ySize: Int, xFocus: Int, yFocus: Int, skip: Boolean = fa
 
     }
 
+    fun saveGame(saveDir: File) {
+        val gameSaveFolder = File(saveFolder, gameName)
+        tiles.forEach {
+            it.writeToDisk(gameSaveFolder)
+        }
+    }
 
 }

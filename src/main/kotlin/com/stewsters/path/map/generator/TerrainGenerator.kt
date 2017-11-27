@@ -4,9 +4,9 @@ import com.stewsters.path.map.MapChunk
 import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
 import com.stewsters.util.noise.OpenSimplexNoise
-import veclib.Vec2
+import krogueutil.Vec2
 
-object MapGenerator {
+object TerrainGenerator {
     val chunkSize = 32
 
     fun generateChunk(world: World, shapeMods: List<(x: Int, y: Int) -> Double>, chunkPos: Vec2, seed: Long, skip: Boolean): MapChunk {

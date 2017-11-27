@@ -1,7 +1,7 @@
 package com.stewsters.path.action
 
 import com.stewsters.path.ecs.entity.Entity
-import veclib.Vec2
+import krogueutil.Vec2
 
 class MapTransitionAction(entity: Entity, private var movement: Vec2) : Action(entity) {
 
@@ -24,7 +24,7 @@ class MapTransitionAction(entity: Entity, private var movement: Vec2) : Action(e
 
         val newChunk = world.getMapAt(nextChunkCoord)
 
-        println("transition from ${pawn.chunk.pos} to ${newChunk.pos}")
+        println("world transition from ${pawn.chunk.pos} to ${newChunk.pos}")
 
         pawn.chunk = newChunk
 
@@ -48,7 +48,7 @@ class MapTransitionAction(entity: Entity, private var movement: Vec2) : Action(e
 
         newChunk.addPawn(pawn)
 
-        return ActionResult.SUCCESS
+        return ActionResult.BREAKOUT
 
     }
 

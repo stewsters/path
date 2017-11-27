@@ -1,11 +1,12 @@
 package com.stewsters.path.screen
 
+import com.stewsters.path.Game.saveFolder
 import com.stewsters.path.action.*
 import com.stewsters.path.map.World
 import com.valkryst.VTerminal.Panel
 import com.valkryst.VTerminal.builder.component.ScreenBuilder
 import com.valkryst.VTerminal.component.Screen
-import veclib.Vec2
+import krogueutil.Vec2
 import java.awt.Color
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
@@ -89,6 +90,7 @@ class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuil
         }
 
         display()
+        world.player.chunk.writeToDisk(saveFolder)
 
     }
 
@@ -99,7 +101,7 @@ class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuil
 //        setForegroundColor(Color(255, 20, 20, 255))
 //        setBackgroundColor(Color(0, 0, 0, 255))
 
-        val map = world.getCurrentMap()
+        val map = world.player.chunk
 
         // Random Characters, Flips, and Underlines:
         for ((y, row) in worldArea.strings.withIndex()) {

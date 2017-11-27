@@ -1,4 +1,4 @@
-package veclib
+package krogueutil
 
 import com.stewsters.util.math.Point2i
 

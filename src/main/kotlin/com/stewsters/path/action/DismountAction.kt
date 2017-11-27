@@ -2,6 +2,7 @@ package com.stewsters.path.action
 
 import com.stewsters.path.ecs.entity.Entity
 import java.util.*
+import java.util.concurrent.ThreadLocalRandom
 
 class DismountAction(pawn: Entity) : Action(pawn) {
 
@@ -35,6 +36,6 @@ class DismountAction(pawn: Entity) : Action(pawn) {
     }
 }
 
-private fun <E> List<E>.random(): E = this[Random().nextInt(this.size)]
+private fun <E> List<E>.random(): E = this[ThreadLocalRandom.current().nextInt(this.size)]
 private fun <E> List<E>.random(seed: Long): E = this[Random(seed).nextInt(this.size)]
 

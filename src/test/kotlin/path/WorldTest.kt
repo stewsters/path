@@ -4,14 +4,15 @@ import com.stewsters.path.action.WalkAction
 import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
 import org.junit.Test
-import veclib.Vec2
+import krogueutil.Vec2
+import java.io.File
 
 class WorldTest {
 
     @Test
     fun walkThroughWorldTest() {
 
-        val world = World(8, 8, 4, 4, true)
+        val world = World(xSize = 8, ySize = 8, xFocus = 4, yFocus = 4, skip = true)
 
         world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(1, 0)))
 
@@ -43,7 +44,7 @@ class WorldTest {
         assert(world.player.pos.x == 16)
         assert(world.player.pos.y == 16)
 
-        world.getCurrentMap().at(18, 16).type = TileType.WALL
+        world.player.chunk.at(18, 16).type = TileType.WALL
 
         println("Start walking")
         world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(1, 0)))
@@ -69,13 +70,13 @@ class WorldTest {
         assert(world.player.pos.y == 16)
 
 
-        world.getCurrentMap().at(17, 16).type = TileType.CLOSED_DOOR
+        world.player.chunk.at(17, 16).type = TileType.CLOSED_DOOR
 
         println("Start walking")
         world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(1, 0)))
         world.update()
 
-        assert(world.getCurrentMap().at(17, 16).type == TileType.OPEN_DOOR)
+        assert(world.player.chunk.at(17, 16).type == TileType.OPEN_DOOR)
 
         println("Continue walking")
         world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2.get(1, 0)))
@@ -86,7 +87,7 @@ class WorldTest {
 
     @Test
     fun testAreaTransition() {
-        val world = World(8, 8, 2, 2, true)
+        val world = World(xSize = 8, ySize = 8, xFocus = 2, yFocus = 2, skip = true)
         assert(world.player.chunk.pos == Vec2.get(2, 2))
 
         for (x in (16..32)) {
@@ -111,5 +112,13 @@ class WorldTest {
 
     }
 
+    @Test
+    fun saveWorld() {
 
+        val world = World(8, 8, 2, 2)
+        val saveDir = File.createTempFile("pathTest-", "")
+
+        world.saveGame(saveDir)
+
+    }
 }

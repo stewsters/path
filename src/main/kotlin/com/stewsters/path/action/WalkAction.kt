@@ -2,7 +2,7 @@ package com.stewsters.path.action
 
 import com.stewsters.path.ecs.entity.Entity
 import com.stewsters.path.map.TileType
-import veclib.Vec2
+import krogueutil.Vec2
 
 class WalkAction(pawn: Entity, private val offset: Vec2) : Action(pawn) {
 
@@ -10,7 +10,7 @@ class WalkAction(pawn: Entity, private val offset: Vec2) : Action(pawn) {
     override fun onPerform(): ActionResult {
 
         if (offset.x == 0 && offset.y == 0) {
-            return ActionResult(RestAction(pawn))
+            return ActionResult(alternative = RestAction(pawn))
         }
 
         val curPos = pawn.pos
@@ -18,7 +18,7 @@ class WalkAction(pawn: Entity, private val offset: Vec2) : Action(pawn) {
 
         if (chunkMap.outside(nextPos)) {
             if (pawn.chunk.world.player == pawn) {
-                return ActionResult(MapTransitionAction(pawn, offset))
+                return ActionResult(alternative = MapTransitionAction(pawn, offset))
             } else {
 
                 return ActionResult.FAILURE
@@ -36,9 +36,9 @@ class WalkAction(pawn: Entity, private val offset: Vec2) : Action(pawn) {
                 if (target == pawn) {
                     continue
                 } else if ((pawn.faction == target.faction) && target.mountable && pawn.mount == null) {
-                    return ActionResult(MountAction(pawn))
+                    return ActionResult(alternative = MountAction(pawn))
                 } else if ((pawn.faction != target.faction) && target.isAlive())
-                    return ActionResult(AttackAction(pawn, target))
+                    return ActionResult(alternative = AttackAction(pawn, target))
                 else if (pawn.blocks) {
                     // I hope this doesnt happen
                     return ActionResult.FAILURE
@@ -49,7 +49,7 @@ class WalkAction(pawn: Entity, private val offset: Vec2) : Action(pawn) {
         // Open Door
         val targetTileType = chunkMap.at(nextPos).type
         if (targetTileType === TileType.CLOSED_DOOR) {
-            return ActionResult(OpenDoorAction(pawn, nextPos))
+            return ActionResult(alternative = OpenDoorAction(pawn, nextPos))
         }
 
 //        if (targetTileType === TileType.GLASS) {

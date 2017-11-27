@@ -1,4 +1,4 @@
-package veclib
+package krogueutil
 
 import com.stewsters.util.math.Facing2d
 import org.junit.Test
@@ -51,4 +51,5 @@ class VecTests {
         ))
         )
     }
+
 }

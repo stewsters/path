@@ -168,9 +168,7 @@ class World(xSize: Int, ySize: Int,
             }
         }
     }
-
-//    fun getCurrentMap(): MapChunk = player.chunk
-
+    
     fun getMapAt(pos: Vec2): MapChunk = getMapAt(pos.x, pos.y)
     fun getMapAt(x: Int, y: Int): MapChunk = tiles[x + y * highX]
 

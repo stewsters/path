@@ -12,8 +12,7 @@ class SerializationTests {
     fun testComponentSerialization() {
 
         val armor = Armor(5)
-        val mapper = jacksonObjectMapper()
-        val output = mapper.writeValueAsString(armor)
+        val output = jacksonObjectMapper().writeValueAsString(armor)
 
         assert(output == "{\"armor\":5}")
     }
@@ -21,8 +20,7 @@ class SerializationTests {
     @Test
     fun testComponentDeserialization() {
 
-        val mapper = jacksonObjectMapper()
-        val armor: Armor = mapper.readValue("{\"armor\":5}")
+        val armor: Armor = jacksonObjectMapper().readValue("{\"armor\":5}")
 
         assert(armor.armor == 5)
     }

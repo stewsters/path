@@ -15,6 +15,7 @@ import com.stewsters.util.math.MatUtils
 import krogueutil.Box
 import krogueutil.Vec2
 import krogueutil.getChebyshevDistance
+import java.awt.Color
 import java.io.File
 import java.util.*
 
@@ -156,6 +157,7 @@ class World(xSize: Int, ySize: Int,
                                     life = null
                                     char = '%'
                                     blocks = false
+                                    color = Color.RED
 //                                    chunk.update(it)
                                 }
 

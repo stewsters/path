@@ -108,8 +108,10 @@ class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuil
             for ((x, character) in row.characters.withIndex()) {
                 val entities = map.pawnInSquare(x, y)
                 if (entities.isNotEmpty()) {
-                    character.character = entities.minBy { it.displayOrder }?.char ?: '?'
-                    character.foregroundColor = entities.first().color
+
+                    val entity = entities.minBy { it.displayOrder }
+                    character.character = entity?.char ?: '?'
+                    character.foregroundColor = entity?.color
                     character.backgroundColor = Color.BLACK
                 } else {
                     val type = map.at(x, y).type

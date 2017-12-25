@@ -3,8 +3,8 @@ package path
 import com.stewsters.path.action.WalkAction
 import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
-import org.junit.Test
 import krogueutil.two.Vec2
+import org.junit.Test
 import java.io.File
 
 class WorldTest {

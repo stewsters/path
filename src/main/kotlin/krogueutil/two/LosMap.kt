@@ -9,7 +9,7 @@ public class LosMap(val xSize: Int, val ySize: Int) {
         return map[vec.y * xSize + vec.x]
     }
 
-    public fun recalcuate(){
+    public fun recalcuate() {
 
     }
 

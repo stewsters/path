@@ -17,9 +17,7 @@ class MapChunk(val world: World, val pos: Vec2,
     private val spatialHash: SpatialHash = SpatialHash(xSize, ySize)
 
     fun at(p: Vec2): Tile = at(p.x, p.y)
-    fun at(x: Int, y: Int): Tile {
-        return tiles[x, y]
-    }
+    fun at(x: Int, y: Int): Tile = tiles[x, y]
 
     fun updatePawnPos(pawn: Entity, xPos: Int, yPos: Int) {
         spatialHash.remove(pawn)

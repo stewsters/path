@@ -30,9 +30,10 @@ class DeathScreen(private val panel: Panel, private val screenBuilder: ScreenBui
         panel.swapScreen(this)
 
         buttonBackToMain.setOnClickFunction({
-
             panel.swapScreen(MainMenuScreen(panel, screenBuilder))
         })
+
+        buttonExitGame.setOnClickFunction({ System.exit(0) })
 
         // Add components to Screen VIA Panel functions:
         panel.addComponents(buttonBackToMain, buttonExitGame)

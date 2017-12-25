@@ -3,6 +3,7 @@ package com.stewsters.path.map
 import com.stewsters.path.ecs.component.TurnTaker
 import com.stewsters.path.ecs.entity.Entity
 import krogueutil.two.Box
+import krogueutil.two.Matrix2d
 import krogueutil.two.Vec2
 import java.io.File
 import java.util.*
@@ -10,14 +11,14 @@ import java.util.*
 class MapChunk(val world: World, val pos: Vec2,
                xSize: Int, ySize: Int) : Box(xSize, ySize) {
 
-    private val tiles = Array(xSize * ySize, { Tile(TileType.GRASS) })
+    private val tiles = Matrix2d<Tile>(xSize, ySize, { x, y -> Tile(TileType.GRASS) })
     val pawnQueue: PriorityQueue<TurnTaker> = PriorityQueue()
 
     private val spatialHash: SpatialHash = SpatialHash(xSize, ySize)
 
     fun at(p: Vec2): Tile = at(p.x, p.y)
     fun at(x: Int, y: Int): Tile {
-        return tiles[x + y * highX]
+        return tiles[x, y]
     }
 
     fun updatePawnPos(pawn: Entity, xPos: Int, yPos: Int) {
@@ -49,7 +50,7 @@ class MapChunk(val world: World, val pos: Vec2,
     fun writeToDisk(gameSaveFolder: File) {
         // Save map
         File(gameSaveFolder, "${pos.x}:${pos.y}.map")
-                .writeBytes(tiles.map { it.type.ordinal.toByte() }.toByteArray())
+                .writeBytes(tiles.data.map { it.type.ordinal.toByte() }.toByteArray())
 
         val entitySave = File(gameSaveFolder, "${pos.x}:${pos.y}.ent")
 
@@ -66,7 +67,7 @@ class MapChunk(val world: World, val pos: Vec2,
                 .readBytes()
                 .map { values[it.toInt()] }
                 .forEachIndexed { index, tileType ->
-                    tiles[index].type = tileType
+                    tiles.data[index].type = tileType
                 }
 
         // TODO: restore entities

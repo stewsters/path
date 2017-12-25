@@ -6,7 +6,7 @@ import com.stewsters.path.map.World
 import com.valkryst.VTerminal.Panel
 import com.valkryst.VTerminal.builder.component.ScreenBuilder
 import com.valkryst.VTerminal.component.Screen
-import krogueutil.Vec2
+import krogueutil.two.Vec2
 import java.awt.Color
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
@@ -57,16 +57,16 @@ class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuil
         var action: Action? = null
         when (e.keyCode) {
             KeyEvent.VK_UP, KeyEvent.VK_W -> {
-                action = WalkAction(world.player, Vec2.get(0, -1))
+                action = WalkAction(world.player, Vec2[0, -1])
             }
             KeyEvent.VK_DOWN, KeyEvent.VK_S -> {
-                action = WalkAction(world.player, Vec2.get(0, 1))
+                action = WalkAction(world.player, Vec2[0, 1])
             }
             KeyEvent.VK_LEFT, KeyEvent.VK_A -> {
-                action = WalkAction(world.player, Vec2.get(-1, 0))
+                action = WalkAction(world.player, Vec2[-1, 0])
             }
             KeyEvent.VK_RIGHT, KeyEvent.VK_D -> {
-                action = WalkAction(world.player, Vec2.get(1, 0))
+                action = WalkAction(world.player, Vec2[1, 0])
             }
             KeyEvent.VK_C -> {
                 action = CloseAdjacentDoorsAction(world.player)
@@ -111,7 +111,7 @@ class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuil
 
                     val entity = entities.minBy { it.displayOrder }
                     character.character = entity?.char ?: '?'
-                    character.foregroundColor = entity?.color
+                    character.foregroundColor = entity?.color ?: Color.WHITE
                     character.backgroundColor = Color.BLACK
                 } else {
                     val type = map.at(x, y).type

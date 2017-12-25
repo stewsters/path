@@ -1,4 +1,4 @@
-package krogueutil
+package krogueutil.two
 
 import com.stewsters.util.math.Facing2d
 
@@ -21,7 +21,7 @@ data class Vec2(override val x: Int, override val y: Int) : Vec2Immutable {
         private val actualSize = size + 2 * offset
         private val pool = Array((actualSize * actualSize), { i -> Vec2(i % actualSize - offset, i / actualSize - offset) })
 
-        fun get(x: Int, y: Int): Vec2 {
+        operator fun get(x: Int, y: Int): Vec2 {
 
             val xA = x + offset
             val yA = y + offset
@@ -39,9 +39,9 @@ data class Vec2(override val x: Int, override val y: Int) : Vec2Immutable {
 
     fun mooreNeighborhood(): List<Vec2> = List(8, { index ->
         if (index >= 4)
-            Vec2.get((index + 1) % 3 - 1 + x, (index + 1) / 3 - 1 + y)
+            Vec2[(index + 1) % 3 - 1 + x, (index + 1) / 3 - 1 + y]
         else
-            Vec2.get(index % 3 - 1 + x, index / 3 - 1 + y)
+            Vec2[index % 3 - 1 + x, index / 3 - 1 + y]
     })
 
     override fun toString(): String {

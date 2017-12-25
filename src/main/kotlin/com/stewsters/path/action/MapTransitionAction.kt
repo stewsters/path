@@ -1,7 +1,7 @@
 package com.stewsters.path.action
 
 import com.stewsters.path.ecs.entity.Entity
-import krogueutil.Vec2
+import krogueutil.two.Vec2
 
 class MapTransitionAction(entity: Entity, private var movement: Vec2) : Action(entity) {
 
@@ -35,15 +35,15 @@ class MapTransitionAction(entity: Entity, private var movement: Vec2) : Action(e
 
         // Update positions
         if (movement.x < 0) {
-            pawn.pos = Vec2.get(newChunk.highX - 1, pawn.pos.y)
+            pawn.pos = Vec2[newChunk.highX - 1, pawn.pos.y]
         } else if (movement.x > 0) {
-            pawn.pos = Vec2.get(0, pawn.pos.y)
+            pawn.pos = Vec2[0, pawn.pos.y]
         }
 
         if (movement.y < 0) {
-            pawn.pos = Vec2.get(pawn.pos.x, newChunk.highY - 1)
+            pawn.pos = Vec2[pawn.pos.x, newChunk.highY - 1]
         } else if (movement.y > 0) {
-            pawn.pos = Vec2.get(pawn.pos.x, 0)
+            pawn.pos = Vec2[pawn.pos.x, 0]
         }
 
         newChunk.addPawn(pawn)

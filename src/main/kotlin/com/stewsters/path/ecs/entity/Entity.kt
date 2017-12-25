@@ -7,7 +7,7 @@ import com.stewsters.path.ecs.component.TurnTaker
 import com.stewsters.path.ecs.enums.DisplayOrder
 import com.stewsters.path.ecs.enums.Faction
 import com.stewsters.path.map.MapChunk
-import krogueutil.Vec2
+import krogueutil.two.Vec2
 import java.awt.Color
 
 class Entity(

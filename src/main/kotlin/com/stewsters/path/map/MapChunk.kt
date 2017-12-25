@@ -2,8 +2,8 @@ package com.stewsters.path.map
 
 import com.stewsters.path.ecs.component.TurnTaker
 import com.stewsters.path.ecs.entity.Entity
-import krogueutil.Box
-import krogueutil.Vec2
+import krogueutil.two.Box
+import krogueutil.two.Vec2
 import java.io.File
 import java.util.*
 
@@ -22,7 +22,7 @@ class MapChunk(val world: World, val pos: Vec2,
 
     fun updatePawnPos(pawn: Entity, xPos: Int, yPos: Int) {
         spatialHash.remove(pawn)
-        pawn.pos = Vec2.get(xPos, yPos)
+        pawn.pos = Vec2[xPos, yPos]
         spatialHash.add(pawn)
     }
 

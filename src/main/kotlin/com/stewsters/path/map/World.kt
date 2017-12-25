@@ -12,9 +12,9 @@ import com.stewsters.path.ecs.enums.Faction
 import com.stewsters.path.ecs.enums.Slot
 import com.stewsters.path.map.generator.TerrainGenerator
 import com.stewsters.util.math.MatUtils
-import krogueutil.Box
-import krogueutil.Vec2
-import krogueutil.getChebyshevDistance
+import krogueutil.two.Box
+import krogueutil.two.Vec2
+import krogueutil.two.getChebyshevDistance
 import java.awt.Color
 import java.io.File
 import java.util.*
@@ -44,7 +44,7 @@ class World(xSize: Int, ySize: Int,
         })
 
         tiles = Array(xSize * ySize, { index ->
-            TerrainGenerator.generateChunk(this, shapes, Vec2.get(index % xSize, index / ySize), seed, skip)
+            TerrainGenerator.generateChunk(this, shapes, Vec2[index % xSize, index / ySize], seed, skip)
         })
 
         if (!skip) {
@@ -68,7 +68,7 @@ class World(xSize: Int, ySize: Int,
         player = Entity(
                 name = "Player",
                 chunk = currentMap,
-                pos = Vec2.get(TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2),
+                pos = Vec2[TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2],
                 faction = Faction.HUMAN,
                 displayOrder = DisplayOrder.PLAYER,
                 turnTaker = TurnTaker(0, { _, _ -> null }),
@@ -97,7 +97,7 @@ class World(xSize: Int, ySize: Int,
                 char = 'h',
                 displayOrder = DisplayOrder.ALLY,
                 chunk = player.chunk,
-                pos = Vec2.get(player.pos.x + 2, player.pos.y),
+                pos = Vec2[player.pos.x + 2, player.pos.y],
                 faction = Faction.HUMAN,
                 turnTaker = TurnTaker(1, { _, entity ->
                     val playerX = player.globalX()
@@ -106,9 +106,10 @@ class World(xSize: Int, ySize: Int,
                     val horseY = entity.globalY()
 
                     if (getChebyshevDistance(player.pos, entity.pos) > 5) {
-                        WalkAction(entity, Vec2.get(
+                        WalkAction(entity, Vec2[
                                 MatUtils.limit(playerX - horseX, -1, 1),
-                                MatUtils.limit(playerY - horseY, -1, 1)))
+                                MatUtils.limit(playerY - horseY, -1, 1)]
+                        )
                     } else
                         RestAction(entity)
                 }),
@@ -134,7 +135,7 @@ class World(xSize: Int, ySize: Int,
                             name = "Wolf",
                             char = 'w',
                             chunk = mapChunk,
-                            pos = Vec2.get(x, y),
+                            pos = Vec2[x, y],
                             life = Life(1),
                             faction = Faction.MONSTER,
                             displayOrder = DisplayOrder.OPPONENT,
@@ -144,9 +145,10 @@ class World(xSize: Int, ySize: Int,
                                 val xPos = entity.globalX()
                                 val yPos = entity.globalY()
 
-                                WalkAction(entity, Vec2.get(
+                                WalkAction(entity, Vec2[
                                         MatUtils.limit(playerX - xPos, -1, 1),
-                                        MatUtils.limit(playerY - yPos, -1, 1)))
+                                        MatUtils.limit(playerY - yPos, -1, 1)]
+                                )
                             }),
                             deathFunction = {
                                 with(it) {
@@ -252,6 +254,7 @@ class World(xSize: Int, ySize: Int,
 
     fun saveGame(saveDir: File) {
         val gameSaveFolder = File(saveFolder, gameName)
+        gameSaveFolder.mkdirs()
         tiles.forEach {
             it.writeToDisk(gameSaveFolder)
         }

@@ -1,12 +1,19 @@
 package com.stewsters.path.screen
 
 import com.stewsters.path.Game.saveFolder
-import com.stewsters.path.action.*
+import com.stewsters.path.action.Action
+import com.stewsters.path.action.CloseAdjacentDoorsAction
+import com.stewsters.path.action.DismountAction
+import com.stewsters.path.action.HarvestAction
+import com.stewsters.path.action.MountAction
+import com.stewsters.path.action.WalkAction
 import com.stewsters.path.map.World
 import com.valkryst.VTerminal.Panel
 import com.valkryst.VTerminal.builder.component.ScreenBuilder
+import com.valkryst.VTerminal.builder.component.TextAreaBuilder
 import com.valkryst.VTerminal.component.Screen
-import krogueutil.two.Vec2
+import com.valkryst.VTerminal.component.TextArea
+import kaiju.math.Vec2
 import java.awt.Color
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
@@ -15,7 +22,7 @@ class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuil
 
     private val world = World(16, 16, 8, 8)
 
-    //    var messageBox: TextArea
+    private var messageBox: TextArea
     private val worldArea: WorldArea
 
     init {
@@ -38,17 +45,19 @@ class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuil
         ))
         addComponent(worldArea)
 
+        val builder = TextAreaBuilder()
+        builder.columnIndex = 32
+        builder.rowIndex = 0
+        builder.width = 32
+        builder.height = 10
+        builder.isEditable = false
+        messageBox = builder.build()
+        messageBox.appendText("Testing")
+
+        addComponent(messageBox)
+
         display()
-//        val builder = TextAreaBuilder()
-//        builder.radio = panel.radio
-//        builder.columnIndex = 0
-//        builder.rowIndex = 30
-//        builder.width = 80
-//        builder.height = 10
-//        builder.isEditable = false
-//        messageBox = builder.build()
-//
-//        addComponent(messageBox)
+
     }
 
     override fun keyTyped(e: KeyEvent) {}
@@ -81,6 +90,7 @@ class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuil
                 action = DismountAction(world.player)
             }
         }
+        messageBox.appendText(action.toString())
 
         world.player.turnTaker?.setNextAction(action)
         world.update()

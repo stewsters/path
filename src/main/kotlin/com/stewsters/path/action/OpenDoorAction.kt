@@ -2,7 +2,7 @@ package com.stewsters.path.action
 
 import com.stewsters.path.ecs.entity.Entity
 import com.stewsters.path.map.TileType
-import krogueutil.two.Vec2
+import kaiju.math.Vec2
 
 
 class OpenDoorAction(pawn: Entity, private val pos: Vec2) : Action(pawn) {

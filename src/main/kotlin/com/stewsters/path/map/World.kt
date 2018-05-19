@@ -5,16 +5,21 @@ import com.stewsters.path.action.Action
 import com.stewsters.path.action.ActionResult
 import com.stewsters.path.action.RestAction
 import com.stewsters.path.action.WalkAction
-import com.stewsters.path.ecs.component.*
+import com.stewsters.path.ecs.component.Equipment
+import com.stewsters.path.ecs.component.Inventory
+import com.stewsters.path.ecs.component.Item
+import com.stewsters.path.ecs.component.Life
+import com.stewsters.path.ecs.component.TurnTaker
+import com.stewsters.path.ecs.component.Weapon
 import com.stewsters.path.ecs.entity.Entity
 import com.stewsters.path.ecs.enums.DisplayOrder
 import com.stewsters.path.ecs.enums.Faction
 import com.stewsters.path.ecs.enums.Slot
 import com.stewsters.path.map.generator.TerrainGenerator
 import com.stewsters.util.math.MatUtils
-import krogueutil.two.Box
-import krogueutil.two.Vec2
-import krogueutil.two.getChebyshevDistance
+import kaiju.math.Rectangle
+import kaiju.math.Vec2
+import kaiju.math.getChebyshevDistance
 import java.awt.Color
 import java.io.File
 import java.util.*
@@ -23,7 +28,7 @@ import java.util.*
 class World(xSize: Int, ySize: Int,
             xFocus: Int, yFocus: Int,
             val gameName: String = UUID.randomUUID().toString(),
-            skip: Boolean = false) : Box(xSize, ySize) {
+            skip: Boolean = false) : Rectangle(Vec2[0, 0], Vec2[xSize, ySize]) {
 
     private val tiles: Array<MapChunk>
     var player: Entity
@@ -121,8 +126,8 @@ class World(xSize: Int, ySize: Int,
         if (!skip) {
             for (mapChunk in tiles) {
                 for (i in 1..5) {
-                    val x = MatUtils.getIntInRange(0, mapChunk.highX - 1)
-                    val y = MatUtils.getIntInRange(0, mapChunk.highY - 1)
+                    val x = MatUtils.getIntInRange(0, mapChunk.upper.x - 1)
+                    val y = MatUtils.getIntInRange(0, mapChunk.upper.y - 1)
 
                     if (mapChunk.at(x, y).type.blocks)
                         continue
@@ -174,7 +179,7 @@ class World(xSize: Int, ySize: Int,
     }
 
     fun getMapAt(pos: Vec2): MapChunk = getMapAt(pos.x, pos.y)
-    fun getMapAt(x: Int, y: Int): MapChunk = tiles[x + y * highX]
+    fun getMapAt(x: Int, y: Int): MapChunk = tiles[x + y * upper.x]
 
     fun update() {
 

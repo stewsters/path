@@ -14,7 +14,7 @@ class DismountAction(pawn: Entity) : Action(pawn) {
         //find a clear spot to put it
         val possible = pawn.pos.mooreNeighborhood()
                 .filter {
-                    pawn.chunk.contains(it)
+                    pawn.chunk.inside(it)
                             && !pawn.chunk.at(it).type.blocks
                             && pawn.chunk.pawnInSquare(it).none { it.blocks }
                 }

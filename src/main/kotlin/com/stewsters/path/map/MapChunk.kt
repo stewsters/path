@@ -2,14 +2,15 @@ package com.stewsters.path.map
 
 import com.stewsters.path.ecs.component.TurnTaker
 import com.stewsters.path.ecs.entity.Entity
-import krogueutil.two.Box
-import krogueutil.two.Matrix2d
-import krogueutil.two.Vec2
+import kaiju.math.Matrix2d
+import kaiju.math.Rectangle
+import kaiju.math.Vec2
+
 import java.io.File
 import java.util.*
 
 class MapChunk(val world: World, val pos: Vec2,
-               xSize: Int, ySize: Int) : Box(xSize, ySize) {
+               xSize: Int, ySize: Int) : Rectangle(Vec2[0, 0], Vec2[xSize - 1, ySize - 1]) {
 
     private val tiles = Matrix2d<Tile>(xSize, ySize, { x, y -> Tile(TileType.GRASS) })
     val pawnQueue: PriorityQueue<TurnTaker> = PriorityQueue()
@@ -47,13 +48,13 @@ class MapChunk(val world: World, val pos: Vec2,
 
     fun writeToDisk(gameSaveFolder: File) {
         // Save map
-        File(gameSaveFolder, "${pos.x}:${pos.y}.map")
-                .writeBytes(tiles.data.map { it.type.ordinal.toByte() }.toByteArray())
+//        File(gameSaveFolder, "${pos.x}:${pos.y}.map")
+//                .writeBytes(tiles.data.map { it.type.ordinal.toByte() }.toByteArray())
 
         val entitySave = File(gameSaveFolder, "${pos.x}:${pos.y}.ent")
 
         // TODO: serialize Entities:
-        spatialHash.findEntitiesInSquare(0, 0, highX - 1, highY - 1).forEach {
+        spatialHash.findEntitiesInSquare(0, 0, upper.x - 1, upper.y - 1).forEach {
             //            entitySave.writeText(JSON.Companion.stringify(it))
         }
 
@@ -61,12 +62,12 @@ class MapChunk(val world: World, val pos: Vec2,
 
     fun restoreFromDisk(gameSaveFolder: File) {
         val values = TileType.values()
-        File(gameSaveFolder, "${pos.x}:${pos.y}.map")
-                .readBytes()
-                .map { values[it.toInt()] }
-                .forEachIndexed { index, tileType ->
-                    tiles.data[index].type = tileType
-                }
+//        File(gameSaveFolder, "${pos.x}:${pos.y}.map")
+//                .readBytes()
+//                .map { values[it.toInt()] }
+//                .forEachIndexed { index, tileType ->
+//                    tiles.data[index].type = tileType
+//                }
 
         // TODO: restore entities
     }

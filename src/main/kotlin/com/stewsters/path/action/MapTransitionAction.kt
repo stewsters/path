@@ -1,7 +1,7 @@
 package com.stewsters.path.action
 
 import com.stewsters.path.ecs.entity.Entity
-import krogueutil.two.Vec2
+import kaiju.math.Vec2
 
 class MapTransitionAction(entity: Entity, private var movement: Vec2) : Action(entity) {
 
@@ -12,7 +12,7 @@ class MapTransitionAction(entity: Entity, private var movement: Vec2) : Action(e
 
         val nextPos = currentPos + movement
 
-        if (chunkMap.contains(nextPos)) {
+        if (chunkMap.inside(nextPos)) {
             return ActionResult.FAILURE // could also just walk, but they should get from walk to here
         }
 
@@ -35,13 +35,13 @@ class MapTransitionAction(entity: Entity, private var movement: Vec2) : Action(e
 
         // Update positions
         if (movement.x < 0) {
-            pawn.pos = Vec2[newChunk.highX - 1, pawn.pos.y]
+            pawn.pos = Vec2[newChunk.upper.x - 1, pawn.pos.y]
         } else if (movement.x > 0) {
             pawn.pos = Vec2[0, pawn.pos.y]
         }
 
         if (movement.y < 0) {
-            pawn.pos = Vec2[pawn.pos.x, newChunk.highY - 1]
+            pawn.pos = Vec2[pawn.pos.x, newChunk.upper.y - 1]
         } else if (movement.y > 0) {
             pawn.pos = Vec2[pawn.pos.x, 0]
         }

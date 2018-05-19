@@ -7,7 +7,7 @@ import com.stewsters.path.ecs.component.TurnTaker
 import com.stewsters.path.ecs.enums.DisplayOrder
 import com.stewsters.path.ecs.enums.Faction
 import com.stewsters.path.map.MapChunk
-import krogueutil.two.Vec2
+import kaiju.math.Vec2
 import java.awt.Color
 
 class Entity(
@@ -51,11 +51,11 @@ class Entity(
     }
 
     fun globalX(): Int {
-        return chunk.pos.x * chunk.highX + pos.x
+        return chunk.pos.x * chunk.upper.x + pos.x
     }
 
     fun globalY(): Int {
-        return chunk.pos.y * chunk.highY + pos.y
+        return chunk.pos.y * chunk.upper.y + pos.y
     }
 
     fun isAlive(): Boolean = life?.isAlive() ?: false

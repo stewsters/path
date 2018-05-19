@@ -4,7 +4,7 @@ import com.stewsters.path.map.MapChunk
 import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
 import com.stewsters.util.noise.OpenSimplexNoise
-import krogueutil.two.Vec2
+import kaiju.math.Vec2
 
 object TerrainGenerator {
     val chunkSize = 32

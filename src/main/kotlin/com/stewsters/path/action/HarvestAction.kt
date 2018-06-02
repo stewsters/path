@@ -1,5 +1,6 @@
 package com.stewsters.path.action
 
+import com.stewsters.path.ecs.Msg
 import com.stewsters.path.ecs.entity.Entity
 
 class HarvestAction(pawn: Entity) : Action(pawn) {
@@ -16,16 +17,25 @@ class HarvestAction(pawn: Entity) : Action(pawn) {
         }
 
         if (others.isEmpty()) {
+            // nothing there
             return ActionResult.FAILURE
         }
 
-        val itemsPickedUp: List<Entity>? = others.first().inventory?.items
+        val inventoryToEmpty = others.first().inventory
+        if (inventoryToEmpty == null) {
+            return ActionResult.FAILURE
+        }
+
+        val itemsPickedUp: List<Entity> = inventoryToEmpty.items
+
+
+        if (itemsPickedUp.isEmpty()) {
+            return ActionResult.FAILURE
+        }
+
         others.first().inventory?.items?.clear()
-
-        if (itemsPickedUp != null)
-            pawn.inventory?.items?.addAll(itemsPickedUp)
-
-
+        pawn.inventory?.items?.addAll(itemsPickedUp)
+        Msg.log("Harvested ${itemsPickedUp.map { it.name }.joinToString(", ")}")
         return ActionResult.SUCCESS
     }
 }

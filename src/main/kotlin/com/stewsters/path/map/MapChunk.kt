@@ -5,11 +5,12 @@ import com.stewsters.path.ecs.entity.Entity
 import kaiju.math.Matrix2d
 import kaiju.math.Rectangle
 import kaiju.math.Vec2
+import kaiju.math.Vec3
 
 import java.io.File
 import java.util.*
 
-class MapChunk(val world: World, val pos: Vec2,
+class MapChunk(val world: World, val pos: Vec3,
                xSize: Int, ySize: Int) : Rectangle(Vec2[0, 0], Vec2[xSize - 1, ySize - 1]) {
 
     private val tiles = Matrix2d<Tile>(xSize, ySize, { x, y -> Tile(TileType.GRASS) })

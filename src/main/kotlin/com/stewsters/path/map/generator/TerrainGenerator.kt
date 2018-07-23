@@ -5,11 +5,12 @@ import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
 import com.stewsters.util.noise.OpenSimplexNoise
 import kaiju.math.Vec2
+import kaiju.math.Vec3
 
 object TerrainGenerator {
     val chunkSize = 32
 
-    fun generateChunk(world: World, shapeMods: List<(x: Int, y: Int) -> Double>, chunkPos: Vec2, seed: Long, skip: Boolean): MapChunk {
+    fun generateChunk(world: World, shapeMods: List<(x: Int, y: Int) -> Double>, chunkPos: Vec3, seed: Long, skip: Boolean): MapChunk {
 
         val chunk = MapChunk(world, chunkPos, chunkSize, chunkSize)
         val el = OpenSimplexNoise(seed)

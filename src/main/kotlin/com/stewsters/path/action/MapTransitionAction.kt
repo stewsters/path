@@ -2,8 +2,9 @@ package com.stewsters.path.action
 
 import com.stewsters.path.ecs.entity.Entity
 import kaiju.math.Vec2
+import kaiju.math.Vec3
 
-class MapTransitionAction(entity: Entity, private var movement: Vec2) : Action(entity) {
+class MapTransitionAction(entity: Entity, private var movement: Vec3) : Action(entity) {
 
     override fun onPerform(): ActionResult {
 

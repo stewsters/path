@@ -19,13 +19,14 @@ import com.stewsters.path.map.generator.TerrainGenerator
 import com.stewsters.util.math.MatUtils
 import kaiju.math.Rectangle
 import kaiju.math.Vec2
+import kaiju.math.Vec3
 import kaiju.math.getChebyshevDistance
 import java.awt.Color
 import java.io.File
 import java.util.*
 
 
-class World(xSize: Int, ySize: Int,
+class World(xSize: Int, ySize: Int, zSize:Int,
             xFocus: Int, yFocus: Int,
             val gameName: String = UUID.randomUUID().toString(),
             skip: Boolean = false) : Rectangle(Vec2[0, 0], Vec2[xSize, ySize]) {
@@ -178,8 +179,8 @@ class World(xSize: Int, ySize: Int,
         }
     }
 
-    fun getMapAt(pos: Vec2): MapChunk = getMapAt(pos.x, pos.y)
-    fun getMapAt(x: Int, y: Int): MapChunk = tiles[x + y * upper.x]
+    fun getMapAt(pos: Vec3): MapChunk = getMapAt(pos.x, pos.y, pos.z)
+    fun getMapAt(x: Int, y: Int, z:Int): MapChunk = tiles[x + y * upper.x]
 
     fun update() {
 

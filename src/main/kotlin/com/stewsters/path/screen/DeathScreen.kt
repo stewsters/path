@@ -1,14 +1,13 @@
 package com.stewsters.path.screen
 
-import com.valkryst.VTerminal.Panel
-import com.valkryst.VTerminal.builder.component.ButtonBuilder
-import com.valkryst.VTerminal.builder.component.ScreenBuilder
+
+import com.valkryst.VTerminal.Screen
+import com.valkryst.VTerminal.builder.ButtonBuilder
 import com.valkryst.VTerminal.component.Button
-import com.valkryst.VTerminal.component.Screen
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 
-class DeathScreen(private val panel: Panel, private val screenBuilder: ScreenBuilder) : Screen(screenBuilder), KeyListener {
+class DeathScreen(private val screen: Screen) : View(screen), KeyListener {
 
 
     val buttonBackToMain: Button
@@ -18,25 +17,26 @@ class DeathScreen(private val panel: Panel, private val screenBuilder: ScreenBui
         // Construct menu options:
         val builder = ButtonBuilder()
         builder.text = "Back to Main"
-        builder.columnIndex = panel.widthInCharacters / 3
-        builder.rowIndex = panel.heightInCharacters / 3
+        builder.xPosition = screen.width / 3
+        builder.yPosition = screen.height / 3
         buttonBackToMain = builder.build()
 
         builder.text = "Exit"
-        builder.rowIndex = builder.rowIndex + 1
+        builder.yPosition = builder.yPosition + 1
         buttonExitGame = builder.build()
 
         // Swap Screen:
-        panel.swapScreen(this)
+//        panel.swapScreen(this)
 
         buttonBackToMain.setOnClickFunction({
-            panel.swapScreen(MainMenuScreen(panel, screenBuilder))
+// TODO           panel.swapScreen(MainMenuScreen(panel, screenBuilder))
         })
 
         buttonExitGame.setOnClickFunction({ System.exit(0) })
 
         // Add components to Screen VIA Panel functions:
-        panel.addComponents(buttonBackToMain, buttonExitGame)
+        screen.addComponent(buttonBackToMain)
+        screen.addComponent(buttonExitGame)
 
     }
 

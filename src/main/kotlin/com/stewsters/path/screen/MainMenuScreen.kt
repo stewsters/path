@@ -1,41 +1,44 @@
 package com.stewsters.path.screen
 
-import com.valkryst.VTerminal.Panel
-import com.valkryst.VTerminal.builder.component.ButtonBuilder
-import com.valkryst.VTerminal.builder.component.ScreenBuilder
+
+import com.valkryst.VTerminal.Screen
+import com.valkryst.VTerminal.builder.ButtonBuilder
+
 import com.valkryst.VTerminal.component.Button
-import com.valkryst.VTerminal.component.Screen
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 
-class MainMenuScreen(val panel: Panel, val screenBuilder: ScreenBuilder) : Screen(screenBuilder), KeyListener {
+class MainMenuScreen(val screen:Screen) : View(screen), KeyListener {
     val buttonNewGame: Button
     val buttonExitGame: Button
 
     init {
 
-        panel.addKeyListener(this)
+        screen.addListener(this)
+//        panel.addKeyListener(this)
         // Construct menu options:
         val builder = ButtonBuilder()
         builder.text = "New Game"
-        builder.columnIndex = panel.widthInCharacters / 3
-        builder.rowIndex = panel.heightInCharacters / 3
+        builder.xPosition = screen.width / 3
+        builder.yPosition = screen.height / 3
         buttonNewGame = builder.build()
 
         builder.text = "Exit"
-        builder.rowIndex = builder.rowIndex + 1
+        builder.yPosition = builder.yPosition + 1
         buttonExitGame = builder.build()
 
         // Swap Screen:
-        panel.swapScreen(this)
+//        screen.swapScreen(this)
 
         buttonNewGame.setOnClickFunction({
-            panel.swapScreen(GameScreen(panel, screenBuilder))
+
+            screen.addComponent(GameScreen(screen))
         })
         buttonExitGame.setOnClickFunction({ System.exit(0) })
 
         // Add components to Screen VIA Panel functions:
-        panel.addComponents(buttonNewGame, buttonExitGame)
+        screen.addComponent(buttonNewGame)
+        screen.addComponent( buttonExitGame)
 
     }
 
@@ -45,11 +48,11 @@ class MainMenuScreen(val panel: Panel, val screenBuilder: ScreenBuilder) : Scree
     override fun keyPressed(e: KeyEvent) {
         when (e.keyCode) {
             KeyEvent.VK_N, KeyEvent.VK_SPACE -> {
-                panel.removeListener(this)
-                panel.swapScreen(GameScreen(panel, screenBuilder))
+                screen.removeListener(this)
+                // todo: swap panel.swapScreen(GameScreen(panel, screenBuilder))
             }
             KeyEvent.VK_X -> {
-                panel.removeListener(this)
+                screen.removeListener(this)
                 System.exit(0)
             }
         }

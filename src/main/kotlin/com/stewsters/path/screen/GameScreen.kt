@@ -8,17 +8,15 @@ import com.stewsters.path.action.HarvestAction
 import com.stewsters.path.action.MountAction
 import com.stewsters.path.action.WalkAction
 import com.stewsters.path.map.World
-import com.valkryst.VTerminal.Panel
-import com.valkryst.VTerminal.builder.component.ScreenBuilder
-import com.valkryst.VTerminal.builder.component.TextAreaBuilder
-import com.valkryst.VTerminal.component.Screen
+import com.valkryst.VTerminal.Screen
+import com.valkryst.VTerminal.builder.TextAreaBuilder
 import com.valkryst.VTerminal.component.TextArea
 import kaiju.math.Vec2
 import java.awt.Color
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 
-class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuilder) : Screen(screenBuilder), KeyListener {
+class GameScreen(private val screen: Screen) : View(screen), KeyListener {
 
     private val world = World(16, 16, 8, 8)
 
@@ -26,7 +24,7 @@ class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuil
     private val worldArea: WorldArea
 
     init {
-        panel.addKeyListener(this)
+        screen.addListener(this)
 
 //        val printer = RectanglePrinter()
 //        printer.width = 40
@@ -46,13 +44,15 @@ class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuil
         addComponent(worldArea)
 
         val builder = TextAreaBuilder()
-        builder.columnIndex = 32
-        builder.rowIndex = 0
+        builder.xPosition = 32
+        builder.yPosition = 0
+//        builder.columnIndex = 32
+//        builder.rowIndex = 0
         builder.width = 32
         builder.height = 10
         builder.isEditable = false
         messageBox = builder.build()
-        messageBox.appendText("Testing")
+//        messageBox.appendText("Testing")
 
         addComponent(messageBox)
 
@@ -90,13 +90,13 @@ class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuil
                 action = DismountAction(world.player)
             }
         }
-        messageBox.appendText(action.toString())
+      //  messageBox.appendText(action.toString())
 
         world.player.turnTaker?.setNextAction(action)
         world.update()
         if (!world.player.isAlive()) {
-            panel.removeListener(this)
-            panel.swapScreen(DeathScreen(panel, screenBuilder))
+            screen.removeListener(this)
+          // todo swap  screen.swapScreen(DeathScreen(panel, screenBuilder))
         }
 
         display()
@@ -114,20 +114,26 @@ class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuil
         val map = world.player.chunk
 
         // Random Characters, Flips, and Underlines:
-        for ((y, row) in worldArea.strings.withIndex()) {
-            for ((x, character) in row.characters.withIndex()) {
+
+        for (y in (0 .. worldArea.tiles.height)) {
+            for (x in (0..worldArea.tiles.width)) {
                 val entities = map.pawnInSquare(x, y)
                 if (entities.isNotEmpty()) {
 
                     val entity = entities.minBy { it.displayOrder }
-                    character.character = entity?.char ?: '?'
-                    character.foregroundColor = entity?.color ?: Color.WHITE
-                    character.backgroundColor = Color.BLACK
+                    with(worldArea.tiles.getTileAt(x,y)){
+                        character = entity?.char ?: '?'
+                        foregroundColor = entity?.color ?: Color.WHITE
+                        backgroundColor = Color.BLACK
+                    }
+
                 } else {
                     val type = map.at(x, y).type
-                    character.character = type.char
-                    character.foregroundColor = type.foreground
-                    character.backgroundColor = type.background
+                    with(worldArea.tiles.getTileAt(x,y)){
+                        character = type.char
+                        foregroundColor = type.foreground
+                        backgroundColor = type.background
+                    }
 
 //                    character.isHidden = true
                     //TODO: add shaders
@@ -136,7 +142,7 @@ class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuil
             }
         }
 
-        panel.draw()
+        screen.draw()
 
     }
 

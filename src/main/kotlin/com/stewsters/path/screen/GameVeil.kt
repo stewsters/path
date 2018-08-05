@@ -1,5 +1,6 @@
 package com.stewsters.path.screen
 
+import com.stewsters.path.Game
 import com.stewsters.path.Game.saveFolder
 import com.stewsters.path.action.Action
 import com.stewsters.path.action.CloseAdjacentDoorsAction
@@ -8,61 +9,21 @@ import com.stewsters.path.action.HarvestAction
 import com.stewsters.path.action.MountAction
 import com.stewsters.path.action.WalkAction
 import com.stewsters.path.map.World
+import com.stewsters.path.map.generator.TerrainGenerator
 import com.valkryst.VTerminal.Screen
-import com.valkryst.VTerminal.builder.TextAreaBuilder
-import com.valkryst.VTerminal.component.TextArea
+import kaiju.math.Rectangle
 import kaiju.math.Vec2
 import java.awt.Color
 import java.awt.event.KeyEvent
-import java.awt.event.KeyListener
 
-class GameScreen(private val screen: Screen) : View(screen), KeyListener {
-
-    private val world = World(16, 16, 8, 8)
-
-    private var messageBox: TextArea
-    private val worldArea: WorldArea
-
+class GameVeil : Veil {
     init {
-        screen.addListener(this)
-
-//        val printer = RectanglePrinter()
-//        printer.width = 40
-//        printer.height = 4
-//        printer.title = "Player"
-//        printer.print(this, 33, 1)
-//
-//        printer.width = 40
-//        printer.height = 4
-//        printer.title = "Target"
-//        printer.print(this, 33, 6)
-
-        worldArea = WorldArea(WorldBuilder(
-                width = 32,
-                height = 32
-        ))
-        addComponent(worldArea)
-
-        val builder = TextAreaBuilder()
-        builder.xPosition = 32
-        builder.yPosition = 0
-//        builder.columnIndex = 32
-//        builder.rowIndex = 0
-        builder.width = 32
-        builder.height = 10
-        builder.isEditable = false
-        messageBox = builder.build()
-//        messageBox.appendText("Testing")
-
-        addComponent(messageBox)
-
-        display()
-
     }
 
-    override fun keyTyped(e: KeyEvent) {}
+    private val world = World(16, 16, 8, 8)
+    private val worldArea = Rectangle(Vec2[0, 0], Vec2[TerrainGenerator.chunkSize-1, TerrainGenerator.chunkSize-1])
 
-    override fun keyPressed(e: KeyEvent) {
+    override fun keyboard(e: KeyEvent, game: Game) {
         var action: Action? = null
         when (e.keyCode) {
             KeyEvent.VK_UP, KeyEvent.VK_W -> {
@@ -90,60 +51,79 @@ class GameScreen(private val screen: Screen) : View(screen), KeyListener {
                 action = DismountAction(world.player)
             }
         }
-      //  messageBox.appendText(action.toString())
+        //  messageBox.appendText(action.toString())
 
         world.player.turnTaker?.setNextAction(action)
         world.update()
         if (!world.player.isAlive()) {
-            screen.removeListener(this)
-          // todo swap  screen.swapScreen(DeathScreen(panel, screenBuilder))
+            game.currentVeil = DeathVeil()
         }
 
-        display()
         world.player.chunk.writeToDisk(saveFolder)
 
     }
 
-    override fun keyReleased(e: KeyEvent) {
-    }
-
-    private fun display() {
-//        setForegroundColor(Color(255, 20, 20, 255))
-//        setBackgroundColor(Color(0, 0, 0, 255))
+    override fun draw(screen: Screen) {
 
         val map = world.player.chunk
 
         // Random Characters, Flips, and Underlines:
 
-        for (y in (0 .. worldArea.tiles.height)) {
-            for (x in (0..worldArea.tiles.width)) {
-                val entities = map.pawnInSquare(x, y)
-                if (entities.isNotEmpty()) {
 
+        for (sy in (0..worldArea.getYSize())) {
+            for (sx in (0..worldArea.getXSize())) {
+                val x = sx - worldArea.lower.x
+                val y = sy - worldArea.lower.y
+
+                val entities = map.pawnInSquare(x, y)
+                if (entities.isNotEmpty()) { // Render that entity
                     val entity = entities.minBy { it.displayOrder }
-                    with(worldArea.tiles.getTileAt(x,y)){
+                    with(screen.getTileAt(x, y)) {
                         character = entity?.char ?: '?'
                         foregroundColor = entity?.color ?: Color.WHITE
                         backgroundColor = Color.BLACK
                     }
 
-                } else {
+                } else { // render ground
                     val type = map.at(x, y).type
-                    with(worldArea.tiles.getTileAt(x,y)){
+                    with(screen.getTileAt(x, y)) {
                         character = type.char
                         foregroundColor = type.foreground
                         backgroundColor = type.background
                     }
 
-//                    character.isHidden = true
-                    //TODO: add shaders
-//                    character.shadeBackgroundColor(world.player.pos.getChebyshevDistance(x, y).toDouble() / 32)
                 }
             }
         }
 
-        screen.draw()
-
+        Game.screen.draw()
     }
+
+
+//        screen.addListener(this)
+
+//        val printer = RectanglePrinter()
+//        printer.width = 40
+//        printer.height = 4
+//        printer.title = "Player"
+//        printer.print(this, 33, 1)
+//
+//        printer.width = 40
+//        printer.height = 4
+//        printer.title = "Target"
+//        printer.print(this, 33, 6)
+//        addComponent(worldArea)
+
+//        val builder = TextAreaBuilder()
+//        builder.xPosition = 32
+//        builder.yPosition = 0
+////        builder.columnIndex = 32
+////        builder.rowIndex = 0
+//        builder.width = 32
+//        builder.height = 10
+//        builder.isEditable = false
+//        messageBox = builder.build()
+//        messageBox.appendText("Testing")
+
 
 }

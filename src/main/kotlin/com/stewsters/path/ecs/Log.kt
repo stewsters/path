@@ -1,11 +1,11 @@
 package com.stewsters.path.ecs
 
-private data class Message(val text:String)
+private data class Message(val text: String)
 
-object Msg{
+object Msg {
     private val state = mutableListOf<Message>()
 
-    fun log(message:String){
+    fun log(message: String) {
         state += Message(message);
     }
 

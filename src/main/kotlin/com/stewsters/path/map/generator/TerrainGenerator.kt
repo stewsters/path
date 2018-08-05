@@ -7,7 +7,7 @@ import com.stewsters.util.noise.OpenSimplexNoise
 import kaiju.math.Vec2
 
 object TerrainGenerator {
-    val chunkSize = 32
+    const val chunkSize = 32
 
     fun generateChunk(world: World, shapeMods: List<(x: Int, y: Int) -> Double>, chunkPos: Vec2, seed: Long, skip: Boolean): MapChunk {
 

@@ -2,7 +2,7 @@ group 'com.stewsters.path'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.2.51'
+    ext.kotlin_version = '1.2.60'
     //ext.jackson_version = '2.9.0'
 
     repositories {
@@ -36,7 +36,7 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 
-    implementation 'com.github.stewsters:kaiju:master-SNAPSHOT'
+    implementation 'com.github.stewsters:kaiju:master'
 }
 
 compileKotlin {

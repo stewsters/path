@@ -12,7 +12,7 @@ object Game : KeyListener {
 
     val saveFolder = File("saves")
     val screen: Screen = Screen(
-            80, 40,
+            100, 64,
             FontLoader.loadFontFromJar("Fonts/DejaVu Sans Mono/18pt/bitmap.png", "Fonts/DejaVu Sans Mono/18pt/data.fnt", 1.0)
     )
     var currentVeil: Veil = MainMenuVeil()

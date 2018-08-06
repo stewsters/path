@@ -21,7 +21,7 @@ class GameVeil : Veil {
     }
 
     private val world = World(16, 16, 8, 8)
-    private val worldArea = Rectangle(Vec2[0, 0], Vec2[TerrainGenerator.chunkSize-1, TerrainGenerator.chunkSize-1])
+    private val displayArea = Rectangle(Vec2[32, 1], Vec2[32 + TerrainGenerator.chunkSize - 1, TerrainGenerator.chunkSize])
 
     override fun keyboard(e: KeyEvent, game: Game) {
         var action: Action? = null
@@ -65,20 +65,24 @@ class GameVeil : Veil {
 
     override fun draw(screen: Screen) {
 
+        screen.clear()
         val map = world.player.chunk
 
         // Random Characters, Flips, and Underlines:
+        screen.horizontalLine(0, char = ' ', background = Color.GRAY)
+        screen.horizontalLine(33, char = ' ', background = Color.GRAY)
+        screen.verticalLine(x = 31, y2 = 32, char = ' ', background = Color.GRAY)
+        screen.verticalLine(64, y2 = 32, char = ' ', background = Color.GRAY)
 
-
-        for (sy in (0..worldArea.getYSize())) {
-            for (sx in (0..worldArea.getXSize())) {
-                val x = sx - worldArea.lower.x
-                val y = sy - worldArea.lower.y
+        for (sy in (displayArea.lower.y..displayArea.upper.y)) {
+            for (sx in (displayArea.lower.x..displayArea.upper.x)) {
+                val x = sx - displayArea.lower.x
+                val y = sy - displayArea.lower.y
 
                 val entities = map.pawnInSquare(x, y)
                 if (entities.isNotEmpty()) { // Render that entity
                     val entity = entities.minBy { it.displayOrder }
-                    with(screen.getTileAt(x, y)) {
+                    with(screen.getTileAt(sx, sy)) {
                         character = entity?.char ?: '?'
                         foregroundColor = entity?.color ?: Color.WHITE
                         backgroundColor = Color.BLACK
@@ -86,7 +90,7 @@ class GameVeil : Veil {
 
                 } else { // render ground
                     val type = map.at(x, y).type
-                    with(screen.getTileAt(x, y)) {
+                    with(screen.getTileAt(sx, sy)) {
                         character = type.char
                         foregroundColor = type.foreground
                         backgroundColor = type.background

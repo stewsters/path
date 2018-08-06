@@ -3,9 +3,6 @@ package com.stewsters.path.screen
 
 import com.stewsters.path.Game
 import com.valkryst.VTerminal.Screen
-import com.valkryst.VTerminal.builder.ButtonBuilder
-
-import com.valkryst.VTerminal.component.Button
 import java.awt.event.KeyEvent
 
 class MainMenuVeil : Veil {

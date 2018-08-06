@@ -6,7 +6,7 @@ object Msg {
     private val state = mutableListOf<Message>()
 
     fun log(message: String) {
-        state += Message(message);
+        state += Message(message)
     }
 
 }

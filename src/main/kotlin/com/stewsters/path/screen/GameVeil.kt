@@ -68,6 +68,16 @@ class GameVeil : Veil {
         screen.clear()
         val map = world.player.chunk
 
+        screen.drawString("Name: ${world.player.name}", 0, 1)
+
+        val life = world.player.life
+        if (life != null) {
+            screen.drawString("Hp: ${life.cur}/${life.max}", 0, 2)
+        }
+        val mounted = world.player.mount
+        if (mounted != null)
+            screen.drawString("Mounted on ${mounted.name}", 0, 3)
+
         // Random Characters, Flips, and Underlines:
         screen.horizontalLine(0, char = ' ', background = Color.GRAY)
         screen.horizontalLine(33, char = ' ', background = Color.GRAY)
@@ -131,3 +141,4 @@ class GameVeil : Veil {
 
 
 }
+

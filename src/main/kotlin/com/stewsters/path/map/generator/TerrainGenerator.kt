@@ -7,7 +7,7 @@ import com.stewsters.util.noise.OpenSimplexNoise
 import kaiju.math.Vec2
 
 object TerrainGenerator {
-    val chunkSize = 32
+    const val chunkSize = 32
 
     fun generateChunk(world: World, shapeMods: List<(x: Int, y: Int) -> Double>, chunkPos: Vec2, seed: Long, skip: Boolean): MapChunk {
 
@@ -27,21 +27,14 @@ object TerrainGenerator {
                 val elevation = Math.max(fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 200.0, 1.0, 2.0, 0.5), ridginess) + shapeMods.sumByDouble { it(nx, ny) }
 
                 var type: TileType
-                if (elevation < -0.2) {
-                    type = TileType.WATER_LAKE
-
-                } else if (elevation < 0) {
-                    type = TileType.WATER_SWAMP
-
-                } else if (elevation < 0.50) {
-
-                    type = if (el.eval(nx.toDouble(), ny.toDouble()) < elevation - 0.4) {
+                when {
+                    elevation < -0.2 -> type = TileType.WATER_LAKE
+                    elevation < 0 -> type = TileType.WATER_SWAMP
+                    elevation < 0.50 -> type = if (el.eval(nx.toDouble(), ny.toDouble()) < elevation - 0.4) {
                         TileType.TREE
                     } else
                         TileType.GRASS
-
-                } else {
-                    type = TileType.WALL
+                    else -> type = TileType.WALL
                 }
 
                 if (skip) {

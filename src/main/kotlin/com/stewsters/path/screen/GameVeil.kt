@@ -13,6 +13,7 @@ import com.stewsters.path.map.generator.TerrainGenerator
 import com.valkryst.VTerminal.Screen
 import kaiju.math.Rectangle
 import kaiju.math.Vec2
+import kaiju.math.Vec3
 import java.awt.Color
 import java.awt.event.KeyEvent
 
@@ -20,23 +21,23 @@ class GameVeil : Veil {
     init {
     }
 
-    private val world = World(16, 16, 8, 8)
+    private val world = World(16, 16,1, 8, 8,0)
     private val displayArea = Rectangle(Vec2[32, 1], Vec2[32 + TerrainGenerator.chunkSize - 1, TerrainGenerator.chunkSize])
 
     override fun keyboard(e: KeyEvent, game: Game) {
         var action: Action? = null
         when (e.keyCode) {
             KeyEvent.VK_UP, KeyEvent.VK_W -> {
-                action = WalkAction(world.player, Vec2[0, -1])
+                action = WalkAction(world.player, Vec3[0, -1, 0])
             }
             KeyEvent.VK_DOWN, KeyEvent.VK_S -> {
-                action = WalkAction(world.player, Vec2[0, 1])
+                action = WalkAction(world.player, Vec3[0, 1, 0])
             }
             KeyEvent.VK_LEFT, KeyEvent.VK_A -> {
-                action = WalkAction(world.player, Vec2[-1, 0])
+                action = WalkAction(world.player, Vec3[-1, 0, 0])
             }
             KeyEvent.VK_RIGHT, KeyEvent.VK_D -> {
-                action = WalkAction(world.player, Vec2[1, 0])
+                action = WalkAction(world.player, Vec3[1, 0, 0])
             }
             KeyEvent.VK_C -> {
                 action = CloseAdjacentDoorsAction(world.player)
@@ -88,8 +89,9 @@ class GameVeil : Veil {
             for (sx in (displayArea.lower.x..displayArea.upper.x)) {
                 val x = sx - displayArea.lower.x
                 val y = sy - displayArea.lower.y
+                val z = world.player.pos.z
 
-                val entities = map.pawnInSquare(x, y)
+                val entities = map.pawnInSquare(x, y, z)
                 if (entities.isNotEmpty()) { // Render that entity
                     val entity = entities.minBy { it.displayOrder }
                     with(screen.getTileAt(sx, sy)) {
@@ -99,7 +101,7 @@ class GameVeil : Veil {
                     }
 
                 } else { // render ground
-                    val type = map.at(x, y).type
+                    val type = map.at(x, y, z).type
                     with(screen.getTileAt(sx, sy)) {
                         character = type.char
                         foregroundColor = type.foreground

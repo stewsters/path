@@ -18,7 +18,6 @@ import com.stewsters.path.ecs.enums.Slot
 import com.stewsters.path.map.generator.TerrainGenerator
 import com.stewsters.util.math.MatUtils
 import kaiju.math.RectangularPrism
-import kaiju.math.Vec2
 import kaiju.math.Vec3
 import kaiju.math.getChebyshevDistance
 import java.awt.Color
@@ -27,7 +26,7 @@ import java.util.*
 
 
 class World(xSize: Int, ySize: Int, zSize: Int,
-            xFocus: Int, yFocus: Int, zFocus:Int,
+            xFocus: Int, yFocus: Int, zFocus: Int,
             val gameName: String = UUID.randomUUID().toString(),
             skip: Boolean = false) : RectangularPrism(Vec3[0, 0, 0], Vec3[xSize, ySize, zSize]) {
 
@@ -49,10 +48,10 @@ class World(xSize: Int, ySize: Int, zSize: Int,
             maxOf(xPercent * xPercent, yPercent * yPercent)
         })
 
-        tiles = Array(xSize * ySize * zSize, { index ->
+        tiles = Array(xSize * ySize * zSize) { index ->
             // todo:3d
             TerrainGenerator.generateChunk(this, shapes, Vec3[index % xSize, index / ySize], seed, skip) // TODO: z
-        })
+        }
 
         if (!skip) {
             // Construction
@@ -106,7 +105,7 @@ class World(xSize: Int, ySize: Int, zSize: Int,
                 char = 'h',
                 displayOrder = DisplayOrder.ALLY,
                 chunk = player.chunk,
-                pos = player.pos + Vec3[2,0,0],
+                pos = player.pos + Vec3[2, 0, 0],
                 faction = Faction.HUMAN,
                 turnTaker = TurnTaker(1, { _, entity ->
                     val playerX = player.globalX()
@@ -115,9 +114,11 @@ class World(xSize: Int, ySize: Int, zSize: Int,
                     val horseY = entity.globalY()
 
                     if (getChebyshevDistance(player.pos, entity.pos) > 5) {
-                        WalkAction(entity, Vec2[
+                        WalkAction(entity, Vec3[
                                 MatUtils.limit(playerX - horseX, -1, 1),
-                                MatUtils.limit(playerY - horseY, -1, 1)]
+                                MatUtils.limit(playerY - horseY, -1, 1),
+                                0
+                        ]
                         )
                     } else
                         RestAction(entity)
@@ -134,10 +135,10 @@ class World(xSize: Int, ySize: Int, zSize: Int,
                     val y = MatUtils.getIntInRange(0, mapChunk.upper.y - 1)
                     val z = MatUtils.getIntInRange(0, mapChunk.upper.z - 1)
 
-                    if (mapChunk.at(x, y,z).type.blocks)
+                    if (mapChunk.at(x, y, z).type.blocks)
                         continue
 
-                    if (mapChunk.pawnInSquare(x, y,z).isNotEmpty())
+                    if (mapChunk.pawnInSquare(x, y, z).isNotEmpty())
                         continue
 
 
@@ -145,7 +146,7 @@ class World(xSize: Int, ySize: Int, zSize: Int,
                             name = "Wolf",
                             char = 'w',
                             chunk = mapChunk,
-                            pos = Vec3[x, y,z],
+                            pos = Vec3[x, y, z],
                             life = Life(1),
                             faction = Faction.MONSTER,
                             displayOrder = DisplayOrder.OPPONENT,
@@ -155,10 +156,11 @@ class World(xSize: Int, ySize: Int, zSize: Int,
                                 val xPos = entity.globalX()
                                 val yPos = entity.globalY()
 
-                                WalkAction(entity, Vec2[
+                                WalkAction(entity, Vec3[
                                         MatUtils.limit(playerX - xPos, -1, 1),
-                                        MatUtils.limit(playerY - yPos, -1, 1)]
-                                )
+                                        MatUtils.limit(playerY - yPos, -1, 1),
+                                        0
+                                ])
                             }),
                             deathFunction = {
                                 with(it) {

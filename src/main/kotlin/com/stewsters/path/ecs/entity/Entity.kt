@@ -46,6 +46,8 @@ class Entity(
     }
 
     // TODO: this should probably be moved to a function
+    fun canTraverse(cur: Vec3, next: Vec3) = canTraverse(cur.x, cur.y, cur.z, next.x, next.y, next.z)
+
     fun canTraverse(xCur: Int, yCur: Int, zCur: Int, xPos: Int, yPos: Int, zPos: Int): Boolean {
         return !chunk.at(xPos, yPos, zPos).type.blocks
     }

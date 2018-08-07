@@ -4,7 +4,6 @@ import com.stewsters.path.map.MapChunk
 import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
 import com.stewsters.util.noise.OpenSimplexNoise
-import kaiju.math.Vec2
 import kaiju.math.Vec3
 
 object TerrainGenerator {
@@ -12,7 +11,7 @@ object TerrainGenerator {
 
     fun generateChunk(world: World, shapeMods: List<(x: Int, y: Int) -> Double>, chunkPos: Vec3, seed: Long, skip: Boolean): MapChunk {
 
-        val chunk = MapChunk(world, chunkPos, chunkSize, chunkSize)
+        val chunk = MapChunk(world, chunkPos, chunkSize, chunkSize, chunkSize)
         val el = OpenSimplexNoise(seed)
 
         // Map type
@@ -28,16 +27,16 @@ object TerrainGenerator {
 
                     val elevation = Math.max(fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 200.0, 1.0, 2.0, 0.5), ridginess) + shapeMods.sumByDouble { it(nx, ny) }
 
-                var type: TileType
-                when {
-                    elevation < -0.2 -> type = TileType.WATER_LAKE
-                    elevation < 0 -> type = TileType.WATER_SWAMP
-                    elevation < 0.50 -> type = if (el.eval(nx.toDouble(), ny.toDouble()) < elevation - 0.4) {
-                        TileType.TREE
-                    } else
-                        TileType.GRASS
-                    else -> type = TileType.WALL
-                }
+                    var type: TileType
+                    when {
+                        elevation < -0.2 -> type = TileType.WATER_LAKE
+                        elevation < 0 -> type = TileType.WATER_SWAMP
+                        elevation < 0.50 -> type = if (el.eval(nx.toDouble(), ny.toDouble()) < elevation - 0.4) {
+                            TileType.TREE
+                        } else
+                            TileType.GRASS
+                        else -> type = TileType.WALL
+                    }
 
                     if (skip) {
                         type = TileType.GRASS

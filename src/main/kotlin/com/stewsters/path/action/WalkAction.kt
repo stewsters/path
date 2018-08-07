@@ -58,7 +58,7 @@ class WalkAction(pawn: Entity, private val offset: Vec3) : Action(pawn) {
 //        }
 
         // See if we can walk there.
-        if (!pawn.canTraverse(curPos.x, curPos.y, nextPos.x, nextPos.y)) {
+        if (!pawn.canTraverse(curPos, nextPos)) {
             return ActionResult.FAILURE
         }
 

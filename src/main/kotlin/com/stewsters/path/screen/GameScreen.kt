@@ -20,7 +20,7 @@ import java.awt.event.KeyListener
 
 class GameScreen(private val panel: Panel, private val screenBuilder: ScreenBuilder) : Screen(screenBuilder), KeyListener {
 
-    private val world = World(16, 16, 1, 8, 8)
+    private val world = World(16, 16, 1, 8, 8,1)
 
     private var messageBox: TextArea
     private val worldArea: WorldArea

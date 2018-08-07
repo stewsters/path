@@ -18,37 +18,39 @@ object TerrainGenerator {
         // Map type
         for (x in 0 until chunkSize) {
             for (y in 0 until chunkSize) {
+                for (z in 0 until chunkSize) {
 
-                val nx: Int = chunkPos.x * chunkSize + x
-                val ny: Int = chunkPos.y * chunkSize + y
+                    val nx: Int = chunkPos.x * chunkSize + x
+                    val ny: Int = chunkPos.y * chunkSize + y
 
-                var ridginess = fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 320.0, 1.0, 2.0, 0.5)
-                ridginess = Math.abs(ridginess) * -1
+                    var ridginess = fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 320.0, 1.0, 2.0, 0.5)
+                    ridginess = Math.abs(ridginess) * -1
 
-                val elevation = Math.max(fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 200.0, 1.0, 2.0, 0.5), ridginess) + shapeMods.sumByDouble { it(nx, ny) }
+                    val elevation = Math.max(fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 200.0, 1.0, 2.0, 0.5), ridginess) + shapeMods.sumByDouble { it(nx, ny) }
 
-                var type: TileType
-                if (elevation < -0.2) {
-                    type = TileType.WATER_LAKE
+                    var type: TileType
+                    if (elevation < -0.2) {
+                        type = TileType.WATER_LAKE
 
-                } else if (elevation < 0) {
-                    type = TileType.WATER_SWAMP
+                    } else if (elevation < 0) {
+                        type = TileType.WATER_SWAMP
 
-                } else if (elevation < 0.50) {
+                    } else if (elevation < 0.50) {
 
-                    type = if (el.eval(nx.toDouble(), ny.toDouble()) < elevation - 0.4) {
-                        TileType.TREE
-                    } else
-                        TileType.GRASS
+                        type = if (el.eval(nx.toDouble(), ny.toDouble()) < elevation - 0.4) {
+                            TileType.TREE
+                        } else
+                            TileType.GRASS
 
-                } else {
-                    type = TileType.WALL
+                    } else {
+                        type = TileType.WALL
+                    }
+
+                    if (skip) {
+                        type = TileType.GRASS
+                    }
+                    chunk.at(x, y, z).type = type
                 }
-
-                if (skip) {
-                    type = TileType.GRASS
-                }
-                chunk.at(x, y).type = type
             }
         }
 

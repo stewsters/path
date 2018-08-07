@@ -36,15 +36,15 @@ class MapTransitionAction(entity: Entity, private var movement: Vec3) : Action(e
 
         // Update positions
         if (movement.x < 0) {
-            pawn.pos = Vec2[newChunk.upper.x - 1, pawn.pos.y]
+            pawn.pos = Vec3[newChunk.upper.x - 1, pawn.pos.y,pawn.pos.z]
         } else if (movement.x > 0) {
-            pawn.pos = Vec2[0, pawn.pos.y]
+            pawn.pos = Vec3[0, pawn.pos.y,pawn.pos.z]
         }
 
         if (movement.y < 0) {
-            pawn.pos = Vec2[pawn.pos.x, newChunk.upper.y - 1]
+            pawn.pos = Vec3[pawn.pos.x, newChunk.upper.y - 1,pawn.pos.z]
         } else if (movement.y > 0) {
-            pawn.pos = Vec2[pawn.pos.x, 0]
+            pawn.pos = Vec3[pawn.pos.x, 0,pawn.pos.z]
         }
 
         newChunk.addPawn(pawn)

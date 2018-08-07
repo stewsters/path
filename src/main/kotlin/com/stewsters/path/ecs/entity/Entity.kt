@@ -7,12 +7,12 @@ import com.stewsters.path.ecs.component.TurnTaker
 import com.stewsters.path.ecs.enums.DisplayOrder
 import com.stewsters.path.ecs.enums.Faction
 import com.stewsters.path.map.MapChunk
-import kaiju.math.Vec2
+import kaiju.math.Vec3
 import java.awt.Color
 
 class Entity(
         var chunk: MapChunk,
-        var pos: Vec2,
+        var pos: Vec3,
 
         var name: String,
         var description: String? = null,
@@ -46,8 +46,8 @@ class Entity(
     }
 
     // TODO: this should probably be moved to a function
-    fun canTraverse(xCur: Int, yCur: Int, xPos: Int, yPos: Int): Boolean {
-        return !chunk.at(xPos, yPos).type.blocks
+    fun canTraverse(xCur: Int, yCur: Int, zCur: Int, xPos: Int, yPos: Int, zPos: Int): Boolean {
+        return !chunk.at(xPos, yPos, zPos).type.blocks
     }
 
     fun globalX(): Int {

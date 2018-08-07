@@ -17,7 +17,7 @@ import com.stewsters.path.ecs.enums.Faction
 import com.stewsters.path.ecs.enums.Slot
 import com.stewsters.path.map.generator.TerrainGenerator
 import com.stewsters.util.math.MatUtils
-import kaiju.math.Rectangle
+import kaiju.math.RectangularPrism
 import kaiju.math.Vec2
 import kaiju.math.Vec3
 import kaiju.math.getChebyshevDistance
@@ -26,10 +26,10 @@ import java.io.File
 import java.util.*
 
 
-class World(xSize: Int, ySize: Int, zSize:Int,
-            xFocus: Int, yFocus: Int,
+class World(xSize: Int, ySize: Int, zSize: Int,
+            xFocus: Int, yFocus: Int, zFocus:Int,
             val gameName: String = UUID.randomUUID().toString(),
-            skip: Boolean = false) : Rectangle(Vec2[0, 0], Vec2[xSize, ySize]) {
+            skip: Boolean = false) : RectangularPrism(Vec3[0, 0, 0], Vec3[xSize, ySize, zSize]) {
 
     private val tiles: Array<MapChunk>
     var player: Entity
@@ -49,8 +49,9 @@ class World(xSize: Int, ySize: Int, zSize:Int,
             maxOf(xPercent * xPercent, yPercent * yPercent)
         })
 
-        tiles = Array(xSize * ySize, { index ->
-            TerrainGenerator.generateChunk(this, shapes, Vec2[index % xSize, index / ySize], seed, skip)
+        tiles = Array(xSize * ySize * zSize, { index ->
+            // todo:3d
+            TerrainGenerator.generateChunk(this, shapes, Vec3[index % xSize, index / ySize], seed, skip) // TODO: z
         })
 
         if (!skip) {
@@ -58,23 +59,25 @@ class World(xSize: Int, ySize: Int, zSize:Int,
             for (tile in tiles) {
                 for (x in 0 until TerrainGenerator.chunkSize) {
                     for (y in 0 until TerrainGenerator.chunkSize) {
+                        for (z in 0 until TerrainGenerator.chunkSize) {
 
-                        if (x == 6 && y <= 10 && y >= 6) {
-                            if (y == 8)
-                                tile.at(x, y).type = TileType.CLOSED_DOOR
-                            else
-                                tile.at(x, y).type = TileType.WALL
+                            if (x == 6 && y <= 10 && y >= 6) {
+                                if (y == 8)
+                                    tile.at(x, y, z).type = TileType.CLOSED_DOOR
+                                else
+                                    tile.at(x, y, z).type = TileType.WALL
+                            }
                         }
                     }
                 }
             }
         }
 
-        val currentMap = getMapAt(xFocus, yFocus)
+        val currentMap = getMapAt(xFocus, yFocus, zFocus)
         player = Entity(
                 name = "Player",
                 chunk = currentMap,
-                pos = Vec2[TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2],
+                pos = Vec3[TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2],
                 faction = Faction.HUMAN,
                 displayOrder = DisplayOrder.PLAYER,
                 turnTaker = TurnTaker(0, { _, _ -> null }),
@@ -103,7 +106,7 @@ class World(xSize: Int, ySize: Int, zSize:Int,
                 char = 'h',
                 displayOrder = DisplayOrder.ALLY,
                 chunk = player.chunk,
-                pos = Vec2[player.pos.x + 2, player.pos.y],
+                pos = player.pos + Vec3[2,0,0],
                 faction = Faction.HUMAN,
                 turnTaker = TurnTaker(1, { _, entity ->
                     val playerX = player.globalX()
@@ -129,11 +132,12 @@ class World(xSize: Int, ySize: Int, zSize:Int,
                 for (i in 1..5) {
                     val x = MatUtils.getIntInRange(0, mapChunk.upper.x - 1)
                     val y = MatUtils.getIntInRange(0, mapChunk.upper.y - 1)
+                    val z = MatUtils.getIntInRange(0, mapChunk.upper.z - 1)
 
-                    if (mapChunk.at(x, y).type.blocks)
+                    if (mapChunk.at(x, y,z).type.blocks)
                         continue
 
-                    if (mapChunk.pawnInSquare(x, y).isNotEmpty())
+                    if (mapChunk.pawnInSquare(x, y,z).isNotEmpty())
                         continue
 
 
@@ -141,7 +145,7 @@ class World(xSize: Int, ySize: Int, zSize:Int,
                             name = "Wolf",
                             char = 'w',
                             chunk = mapChunk,
-                            pos = Vec2[x, y],
+                            pos = Vec3[x, y,z],
                             life = Life(1),
                             faction = Faction.MONSTER,
                             displayOrder = DisplayOrder.OPPONENT,
@@ -180,7 +184,7 @@ class World(xSize: Int, ySize: Int, zSize:Int,
     }
 
     fun getMapAt(pos: Vec3): MapChunk = getMapAt(pos.x, pos.y, pos.z)
-    fun getMapAt(x: Int, y: Int, z:Int): MapChunk = tiles[x + y * upper.x]
+    fun getMapAt(x: Int, y: Int, z: Int): MapChunk = tiles[x + y * upper.x]  // todo z
 
     fun update() {
 

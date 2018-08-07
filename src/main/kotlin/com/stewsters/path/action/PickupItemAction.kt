@@ -9,7 +9,7 @@ class PickupItemAction(pawn: Entity) : Action(pawn) {
         if (pawn.inventory == null)
             return ActionResult.FAILURE
 
-        val items = chunkMap.pawnInSquare(pawn.pos.x, pawn.pos.y).filter { it.item != null }
+        val items = chunkMap.pawnInSquare(pawn.pos).filter { it.item != null }
 
         if (items.isEmpty())
             return ActionResult.FAILURE

@@ -35,7 +35,7 @@ class HarvestAction(pawn: Entity) : Action(pawn) {
 
         others.first().inventory?.items?.clear()
         pawn.inventory?.items?.addAll(itemsPickedUp)
-        Msg.log("Harvested ${itemsPickedUp.map { it.name }.joinToString(", ")}")
+        Msg.log("Harvested ${itemsPickedUp.joinToString(", ") { it.name }}")
         return ActionResult.SUCCESS
     }
 }

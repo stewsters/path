@@ -17,32 +17,51 @@ object TerrainGenerator {
         // Map type
         for (x in 0 until chunkSize) {
             for (y in 0 until chunkSize) {
+
+
+                val nx: Int = chunkPos.x * chunkSize + x
+                val ny: Int = chunkPos.y * chunkSize + y
+
+                var ridginess = fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 320.0, 1.0, 2.0, 0.5)
+                ridginess = Math.abs(ridginess) * -1
+
+                val elevation = Math.max(fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 200.0, 1.0, 2.0, 0.5), ridginess) + shapeMods.sumByDouble { it(nx, ny) }
+
+                val groundHeight = (elevation * chunkSize).toInt()
+
+                var type: TileType = TileType.AIR
+
                 for (z in 0 until chunkSize) {
 
-                    val nx: Int = chunkPos.x * chunkSize + x
-                    val ny: Int = chunkPos.y * chunkSize + y
+                    if (z < elevation) {
+                        type = TileType.WALL
 
-                    var ridginess = fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 320.0, 1.0, 2.0, 0.5)
-                    ridginess = Math.abs(ridginess) * -1
+                    } else if (z == groundHeight) {
 
-                    val elevation = Math.max(fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 200.0, 1.0, 2.0, 0.5), ridginess) + shapeMods.sumByDouble { it(nx, ny) }
+                        when {
+                            elevation < -0.2 -> type = TileType.WATER_LAKE
+                            elevation < 0 -> type = TileType.WATER_SWAMP
+                            elevation < 0.50 -> type = if (el.eval(nx.toDouble(), ny.toDouble()) < elevation - 0.4) {
+                                TileType.TREE
+                            } else
+                                TileType.GRASS
+                            else -> type = TileType.WALL
+                        }
 
-                    var type: TileType
-                    when {
-                        elevation < -0.2 -> type = TileType.WATER_LAKE
-                        elevation < 0 -> type = TileType.WATER_SWAMP
-                        elevation < 0.50 -> type = if (el.eval(nx.toDouble(), ny.toDouble()) < elevation - 0.4) {
-                            TileType.TREE
-                        } else
-                            TileType.GRASS
-                        else -> type = TileType.WALL
+                    } else {
+                        type = TileType.AIR
                     }
 
-                    if (skip) {
-                        type = TileType.GRASS
-                    }
                     chunk.at(x, y, z).type = type
                 }
+
+//                if (skip) {
+//                    type = TileType.GRASS
+//                }
+
+
+
+
             }
         }
 

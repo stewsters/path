@@ -17,6 +17,7 @@ import com.stewsters.path.ecs.enums.Faction
 import com.stewsters.path.ecs.enums.Slot
 import com.stewsters.path.map.generator.TerrainGenerator
 import com.stewsters.util.math.MatUtils
+import kaiju.math.Matrix3d
 import kaiju.math.RectangularPrism
 import kaiju.math.Vec3
 import kaiju.math.getChebyshevDistance
@@ -30,7 +31,7 @@ class World(xSize: Int, ySize: Int, zSize: Int,
             val gameName: String = UUID.randomUUID().toString(),
             skip: Boolean = false) : RectangularPrism(Vec3[0, 0, 0], Vec3[xSize, ySize, zSize]) {
 
-    private val tiles: Array<MapChunk>
+    private val tiles: Matrix3d<MapChunk>
     var player: Entity
 
     init {
@@ -48,23 +49,33 @@ class World(xSize: Int, ySize: Int, zSize: Int,
             maxOf(xPercent * xPercent, yPercent * yPercent)
         })
 
-        tiles = Array(xSize * ySize * zSize) { index ->
-            // todo:3d
-            TerrainGenerator.generateChunk(this, shapes, Vec3[index % xSize, index / ySize], seed, skip) // TODO: z
+        tiles = Matrix3d(xSize , ySize , zSize) { x,y,z ->
+            TerrainGenerator.generateChunk(this, shapes, Vec3[x,y,z], seed, skip)
         }
 
+        var currentMap = getMapAt(xFocus, yFocus, zFocus)
+        var playerStart = Vec3[TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2]
         if (!skip) {
-            // Construction
-            for (tile in tiles) {
+
+           val townTiles = tiles.sortedBy {
+               it.statsTilesOfType(TileType.GRASS)
+           }
+
+            // TODO
+            currentMap = townTiles.first()
+
+
+            townTiles.subList(0,5).forEach{
+
                 for (x in 0 until TerrainGenerator.chunkSize) {
                     for (y in 0 until TerrainGenerator.chunkSize) {
                         for (z in 0 until TerrainGenerator.chunkSize) {
 
                             if (x == 6 && y <= 10 && y >= 6) {
                                 if (y == 8)
-                                    tile.at(x, y, z).type = TileType.CLOSED_DOOR
+                                    it.at(x, y, z).type = TileType.CLOSED_DOOR
                                 else
-                                    tile.at(x, y, z).type = TileType.WALL
+                                    it.at(x, y, z).type = TileType.WALL
                             }
                         }
                     }
@@ -72,11 +83,11 @@ class World(xSize: Int, ySize: Int, zSize: Int,
             }
         }
 
-        val currentMap = getMapAt(xFocus, yFocus, zFocus)
+
         player = Entity(
                 name = "Player",
                 chunk = currentMap,
-                pos = Vec3[TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2],
+                pos = playerStart,
                 faction = Faction.HUMAN,
                 displayOrder = DisplayOrder.PLAYER,
                 turnTaker = TurnTaker(0, { _, _ -> null }),
@@ -129,11 +140,13 @@ class World(xSize: Int, ySize: Int, zSize: Int,
         currentMap.addPawn(horse)
 
         if (!skip) {
-            for (mapChunk in tiles) {
+            tiles.forEachIndexed { x, y, z, mapChunk ->
+                // todo: wolves should not be underground or in space
                 for (i in 1..5) {
                     val x = MatUtils.getIntInRange(0, mapChunk.upper.x - 1)
                     val y = MatUtils.getIntInRange(0, mapChunk.upper.y - 1)
-                    val z = MatUtils.getIntInRange(0, mapChunk.upper.z - 1)
+                    val z = player.pos.z
+                            //MatUtils.getIntInRange(0, mapChunk.upper.z - 1)
 
                     if (mapChunk.at(x, y, z).type.blocks)
                         continue
@@ -186,7 +199,7 @@ class World(xSize: Int, ySize: Int, zSize: Int,
     }
 
     fun getMapAt(pos: Vec3): MapChunk = getMapAt(pos.x, pos.y, pos.z)
-    fun getMapAt(x: Int, y: Int, z: Int): MapChunk = tiles[x + y * upper.x]  // todo z
+    fun getMapAt(x: Int, y: Int, z: Int): MapChunk = tiles[x,y,z]
 
     fun update() {
 

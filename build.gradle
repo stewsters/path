@@ -36,7 +36,7 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 
-    implementation 'com.github.stewsters:kaiju:master'
+    implementation 'com.github.stewsters:kaiju:master-SNAPSHOT'
 }
 
 compileKotlin {

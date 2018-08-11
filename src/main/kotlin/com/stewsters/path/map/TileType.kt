@@ -4,6 +4,8 @@ import java.awt.Color
 
 enum class TileType(val word: String, val blocks: Boolean, val char: Char, val foreground: Color, val background: Color = Color.BLACK) {
 
+    AIR("air", false, ' ', Color(0, 0, 0, 0), Color(0, 0, 0, 0)),
+
     GRASS("grass", false, '.', Color.BLACK, Color(20, 200, 20)),
     TREE("tree", true, '£', Color.BLACK, Color(20, 150, 20)),
 

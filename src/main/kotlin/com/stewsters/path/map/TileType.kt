@@ -2,9 +2,9 @@ package com.stewsters.path.map
 
 import java.awt.Color
 
-enum class TileType(val word: String, val blocks: Boolean, val char: Char, val foreground: Color, val background: Color = Color.BLACK) {
+enum class TileType(val word: String, val blocks: Boolean, val char: Char, val foreground: Color, val background: Color = Color.BLACK, val transparent: Boolean = false) {
 
-    AIR("air", false, ' ', Color(0, 0, 0, 0), Color(0, 0, 0, 0)),
+    AIR("air", false, ' ', Color(0, 0, 0, 0), Color(0, 0, 0, 0), true),
 
     GRASS("grass", false, '.', Color.BLACK, Color(20, 200, 20)),
     TREE("tree", true, '£', Color.BLACK, Color(20, 150, 20)),

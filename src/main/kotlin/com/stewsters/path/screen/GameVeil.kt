@@ -8,6 +8,7 @@ import com.stewsters.path.action.DismountAction
 import com.stewsters.path.action.HarvestAction
 import com.stewsters.path.action.MountAction
 import com.stewsters.path.action.WalkAction
+import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
 import com.stewsters.path.map.generator.TerrainGenerator
 import com.valkryst.VTerminal.Screen
@@ -21,7 +22,7 @@ class GameVeil : Veil {
     init {
     }
 
-    private val world = World(Vec3(16, 16,1), Vec3(8, 8,0))
+    private val world = World(Vec3(16, 16, 1), Vec3(8, 8, 0))
     private val displayArea = Rectangle(Vec2[32, 1], Vec2[32 + TerrainGenerator.chunkSize - 1, TerrainGenerator.chunkSize])
 
     override fun keyboard(e: KeyEvent, game: Game) {
@@ -89,24 +90,33 @@ class GameVeil : Veil {
             for (sx in (displayArea.lower.x..displayArea.upper.x)) {
                 val x = sx - displayArea.lower.x
                 val y = sy - displayArea.lower.y
-                val z = world.player.pos.z
 
-                val entities = map.pawnInSquare(x, y, z)
-                if (entities.isNotEmpty()) { // Render that entity
-                    val entity = entities.minBy { it.displayOrder }
-                    with(screen.getTileAt(sx, sy)) {
-                        character = entity?.char ?: '?'
-                        foregroundColor = entity?.color ?: Color.WHITE
-                        backgroundColor = Color.BLACK
+                for (zDepth in (0..5)) {
+                    val z = world.player.pos.z - zDepth
+                    val entities = map.pawnInSquare(x, y, z)
+                    if (entities.isNotEmpty()) { // Render that entity
+                        val entity = entities.minBy { it.displayOrder }
+                        with(screen.getTileAt(sx, sy)) {
+                            character = entity?.char ?: '?'
+                            foregroundColor = entity?.color ?: Color.WHITE
+                            backgroundColor = Color.BLACK
+                        }
+                        break
+
+                    } else { // render ground
+                        var type: TileType?
+
+                        type = map.at(x, y, z).type
+                        if (!type.transparent) {
+                            with(screen.getTileAt(sx, sy)) {
+                                character = type.char
+                                foregroundColor = type.foreground
+                                backgroundColor = type.background
+                            }
+                            break
+                        }
                     }
 
-                } else { // render ground
-                    val type = map.at(x, y, z).type
-                    with(screen.getTileAt(sx, sy)) {
-                        character = type.char
-                        foregroundColor = type.foreground
-                        backgroundColor = type.background
-                    }
 
                 }
             }
@@ -114,33 +124,6 @@ class GameVeil : Veil {
 
         Game.screen.draw()
     }
-
-
-//        screen.addListener(this)
-
-//        val printer = RectanglePrinter()
-//        printer.width = 40
-//        printer.height = 4
-//        printer.title = "Player"
-//        printer.print(this, 33, 1)
-//
-//        printer.width = 40
-//        printer.height = 4
-//        printer.title = "Target"
-//        printer.print(this, 33, 6)
-//        addComponent(worldArea)
-
-//        val builder = TextAreaBuilder()
-//        builder.xPosition = 32
-//        builder.yPosition = 0
-////        builder.columnIndex = 32
-////        builder.rowIndex = 0
-//        builder.width = 32
-//        builder.height = 10
-//        builder.isEditable = false
-//        messageBox = builder.build()
-//        messageBox.appendText("Testing")
-
 
 }
 

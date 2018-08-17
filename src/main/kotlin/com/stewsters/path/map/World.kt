@@ -200,6 +200,7 @@ class World(size:Vec3,
     fun getMapAt(pos: Vec3): MapChunk = getMapAt(pos.x, pos.y, pos.z)
     fun getMapAt(x: Int, y: Int, z: Int): MapChunk = tiles[x,y,z]
 
+    //TODO: add gravity
     fun update() {
 
         while (player.isAlive()) {

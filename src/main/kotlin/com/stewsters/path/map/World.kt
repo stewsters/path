@@ -26,21 +26,21 @@ import java.io.File
 import java.util.*
 
 
-class World(xSize: Int, ySize: Int, zSize: Int,
-            xFocus: Int, yFocus: Int, zFocus: Int,
+class World(size:Vec3,
+            focus:Vec3,
             val gameName: String = UUID.randomUUID().toString(),
-            skip: Boolean = false) : RectangularPrism(Vec3[0, 0, 0], Vec3[xSize, ySize, zSize]) {
+            skip: Boolean = false) : RectangularPrism(Vec3[0, 0, 0],size) {
 
     private val tiles: Matrix3d<MapChunk>
     var player: Entity
 
     init {
-        assert(xFocus in 0..(xSize - 1))
-        assert(yFocus in 0..(ySize - 1))
+        assert(focus.x in 0 until size.x)
+        assert(focus.y in 0 until size.y)
 
         val seed = gameName.hashCode().toLong()
 
-        val worldWidth: Double = (TerrainGenerator.chunkSize * xSize).toDouble()
+        val worldWidth: Double = (TerrainGenerator.chunkSize * size.z).toDouble()
 
         val shapes = listOf({ x: Int, y: Int ->
             val xPercent = ((x / worldWidth) - 0.5) * 2
@@ -49,11 +49,11 @@ class World(xSize: Int, ySize: Int, zSize: Int,
             maxOf(xPercent * xPercent, yPercent * yPercent)
         })
 
-        tiles = Matrix3d(xSize , ySize , zSize) { x,y,z ->
+        tiles = Matrix3d(size) { x,y,z ->
             TerrainGenerator.generateChunk(this, shapes, Vec3[x,y,z], seed, skip)
         }
 
-        var currentMap = getMapAt(xFocus, yFocus, zFocus)
+        var currentMap = getMapAt(focus)
         var playerStart = Vec3[TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2]
         if (!skip) {
 
@@ -63,7 +63,6 @@ class World(xSize: Int, ySize: Int, zSize: Int,
 
             // TODO
             currentMap = townTiles.first()
-
 
             townTiles.subList(0,5).forEach{
 

@@ -21,7 +21,7 @@ class GameVeil : Veil {
     init {
     }
 
-    private val world = World(16, 16,1, 8, 8,0)
+    private val world = World(Vec3(16, 16,1), Vec3(8, 8,0))
     private val displayArea = Rectangle(Vec2[32, 1], Vec2[32 + TerrainGenerator.chunkSize - 1, TerrainGenerator.chunkSize])
 
     override fun keyboard(e: KeyEvent, game: Game) {

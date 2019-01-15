@@ -3,8 +3,8 @@ package com.stewsters.path.map.generator
 import com.stewsters.path.map.MapChunk
 import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
-import com.stewsters.util.noise.OpenSimplexNoise
 import kaiju.math.Vec3
+import kaiju.noise.OpenSimplexNoise
 
 object TerrainGenerator {
     const val chunkSize = 32

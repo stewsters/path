@@ -16,11 +16,12 @@ import com.stewsters.path.ecs.enums.DisplayOrder
 import com.stewsters.path.ecs.enums.Faction
 import com.stewsters.path.ecs.enums.Slot
 import com.stewsters.path.map.generator.TerrainGenerator
-import com.stewsters.util.math.MatUtils
 import kaiju.math.Matrix3d
 import kaiju.math.RectangularPrism
 import kaiju.math.Vec3
 import kaiju.math.getChebyshevDistance
+import kaiju.math.getIntInRange
+import kaiju.math.limit
 import java.awt.Color
 import java.io.File
 import java.util.*
@@ -125,8 +126,8 @@ class World(size:Vec3,
 
                     if (getChebyshevDistance(player.pos, entity.pos) > 5) {
                         WalkAction(entity, Vec3[
-                                MatUtils.limit(playerX - horseX, -1, 1),
-                                MatUtils.limit(playerY - horseY, -1, 1),
+                                limit(playerX - horseX, -1, 1),
+                                limit(playerY - horseY, -1, 1),
                                 0
                         ]
                         )
@@ -142,8 +143,8 @@ class World(size:Vec3,
             tiles.forEachIndexed { x, y, z, mapChunk ->
                 // todo: wolves should not be underground or in space
                 for (i in 1..5) {
-                    val x = MatUtils.getIntInRange(0, mapChunk.upper.x - 1)
-                    val y = MatUtils.getIntInRange(0, mapChunk.upper.y - 1)
+                    val x = getIntInRange(0, mapChunk.upper.x - 1)
+                    val y = getIntInRange(0, mapChunk.upper.y - 1)
                     val z = player.pos.z
                             //MatUtils.getIntInRange(0, mapChunk.upper.z - 1)
 
@@ -169,8 +170,8 @@ class World(size:Vec3,
                                 val yPos = entity.globalY()
 
                                 WalkAction(entity, Vec3[
-                                        MatUtils.limit(playerX - xPos, -1, 1),
-                                        MatUtils.limit(playerY - yPos, -1, 1),
+                                        limit(playerX - xPos, -1, 1),
+                                        limit(playerY - yPos, -1, 1),
                                         0
                                 ])
                             }),

@@ -8,11 +8,13 @@ import com.stewsters.path.action.DismountAction
 import com.stewsters.path.action.HarvestAction
 import com.stewsters.path.action.MountAction
 import com.stewsters.path.action.WalkAction
+import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
 import com.stewsters.path.map.generator.TerrainGenerator
 import com.valkryst.VTerminal.Screen
 import kaiju.math.Rectangle
 import kaiju.math.Vec2
+import kaiju.math.Vec3
 import java.awt.Color
 import java.awt.event.KeyEvent
 
@@ -20,23 +22,23 @@ class GameVeil : Veil {
     init {
     }
 
-    private val world = World(16, 16, 8, 8)
+    private val world = World(Vec3(16, 16, 1), Vec3(8, 8, 0))
     private val displayArea = Rectangle(Vec2[32, 1], Vec2[32 + TerrainGenerator.chunkSize - 1, TerrainGenerator.chunkSize])
 
     override fun keyboard(e: KeyEvent, game: Game) {
         var action: Action? = null
         when (e.keyCode) {
             KeyEvent.VK_UP, KeyEvent.VK_W -> {
-                action = WalkAction(world.player, Vec2[0, -1])
+                action = WalkAction(world.player, Vec3[0, -1, 0])
             }
             KeyEvent.VK_DOWN, KeyEvent.VK_S -> {
-                action = WalkAction(world.player, Vec2[0, 1])
+                action = WalkAction(world.player, Vec3[0, 1, 0])
             }
             KeyEvent.VK_LEFT, KeyEvent.VK_A -> {
-                action = WalkAction(world.player, Vec2[-1, 0])
+                action = WalkAction(world.player, Vec3[-1, 0, 0])
             }
             KeyEvent.VK_RIGHT, KeyEvent.VK_D -> {
-                action = WalkAction(world.player, Vec2[1, 0])
+                action = WalkAction(world.player, Vec3[1, 0, 0])
             }
             KeyEvent.VK_C -> {
                 action = CloseAdjacentDoorsAction(world.player)
@@ -89,22 +91,32 @@ class GameVeil : Veil {
                 val x = sx - displayArea.lower.x
                 val y = sy - displayArea.lower.y
 
-                val entities = map.pawnInSquare(x, y)
-                if (entities.isNotEmpty()) { // Render that entity
-                    val entity = entities.minBy { it.displayOrder }
-                    with(screen.getTileAt(sx, sy)) {
-                        character = entity?.char ?: '?'
-                        foregroundColor = entity?.color ?: Color.WHITE
-                        backgroundColor = Color.BLACK
+                for (zDepth in (0..5)) {
+                    val z = world.player.pos.z - zDepth
+                    val entities = map.pawnInSquare(x, y, z)
+                    if (entities.isNotEmpty()) { // Render that entity
+                        val entity = entities.minBy { it.displayOrder }
+                        with(screen.getTileAt(sx, sy)) {
+                            character = entity?.char ?: '?'
+                            foregroundColor = entity?.color ?: Color.WHITE
+                            backgroundColor = Color.BLACK
+                        }
+                        break
+
+                    } else { // render ground
+                        var type: TileType?
+
+                        type = map.at(x, y, z).type
+                        if (!type.transparent) {
+                            with(screen.getTileAt(sx, sy)) {
+                                character = type.char
+                                foregroundColor = type.foreground
+                                backgroundColor = type.background
+                            }
+                            break
+                        }
                     }
 
-                } else { // render ground
-                    val type = map.at(x, y).type
-                    with(screen.getTileAt(sx, sy)) {
-                        character = type.char
-                        foregroundColor = type.foreground
-                        backgroundColor = type.background
-                    }
 
                 }
             }
@@ -112,33 +124,6 @@ class GameVeil : Veil {
 
         Game.screen.draw()
     }
-
-
-//        screen.addListener(this)
-
-//        val printer = RectanglePrinter()
-//        printer.width = 40
-//        printer.height = 4
-//        printer.title = "Player"
-//        printer.print(this, 33, 1)
-//
-//        printer.width = 40
-//        printer.height = 4
-//        printer.title = "Target"
-//        printer.print(this, 33, 6)
-//        addComponent(worldArea)
-
-//        val builder = TextAreaBuilder()
-//        builder.xPosition = 32
-//        builder.yPosition = 0
-////        builder.columnIndex = 32
-////        builder.rowIndex = 0
-//        builder.width = 32
-//        builder.height = 10
-//        builder.isEditable = false
-//        messageBox = builder.build()
-//        messageBox.appendText("Testing")
-
 
 }
 

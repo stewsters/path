@@ -3,8 +3,9 @@ package com.stewsters.path.action
 import com.stewsters.path.ecs.entity.Entity
 import com.stewsters.path.map.TileType
 import kaiju.math.Vec2
+import kaiju.math.Vec3
 
-class WalkAction(pawn: Entity, private val offset: Vec2) : Action(pawn) {
+class WalkAction(pawn: Entity, private val offset: Vec3) : Action(pawn) {
 
 
     override fun onPerform(): ActionResult {
@@ -57,14 +58,14 @@ class WalkAction(pawn: Entity, private val offset: Vec2) : Action(pawn) {
 //        }
 
         // See if we can walk there.
-        if (!pawn.canTraverse(curPos.x, curPos.y, nextPos.x, nextPos.y)) {
+        if (!pawn.canTraverse(curPos, nextPos)) {
             return ActionResult.FAILURE
         }
 
 //        println("move from ${pawn.globalX()},${pawn.globalY()}")
 
         // At this point we know that we can walk, lets do it
-        pawn.chunk.updatePawnPos(pawn, nextPos.x, nextPos.y)
+        pawn.chunk.updatePawnPos(pawn, nextPos.x, nextPos.y, nextPos.z)
 
         // See if the hero stepped on anything interesting that would cause them to react.
 //        if (targetTileType === TileType.UP_STAIR) {

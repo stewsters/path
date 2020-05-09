@@ -1,4 +1,4 @@
-package com.stewsters.path.ecs
+package com.stewsters.path.ecs.system
 
 private data class Message(val text: String)
 

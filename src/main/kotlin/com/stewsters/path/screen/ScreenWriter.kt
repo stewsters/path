@@ -24,7 +24,7 @@ fun VPanel.clear() {
 fun VPanel.horizontalLine(
     y: Int,
     x1: Int = 0,
-    x2: Int = this.width - 1,
+    x2: Int = this.widthInTiles - 1,
     char: Char = '#',
     color: Color = Color.WHITE,
     background: Color = Color.BLACK
@@ -40,7 +40,7 @@ fun VPanel.horizontalLine(
 fun VPanel.verticalLine(
     x: Int,
     y1: Int = 0,
-    y2: Int = this.height - 1,
+    y2: Int = this.heightInTiles - 1,
     char: Char = '#',
     color: Color = Color.WHITE,
     background: Color = Color.BLACK

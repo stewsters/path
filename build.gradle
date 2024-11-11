@@ -27,7 +27,6 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    //  compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version"
 
     implementation "com.github.Valkryst:VTerminal:2024.9.8"
     implementation "com.github.stewsters:stewsters-util:0.19"
@@ -36,5 +35,5 @@ dependencies {
 
     testImplementation 'junit:junit:4.13.2'
 
-    implementation 'com.github.stewsters:kaiju:master-SNAPSHOT'
+    implementation 'com.github.stewsters:kaiju:1.6'
 }

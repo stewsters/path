@@ -2,7 +2,6 @@ package com.stewsters.path.action
 
 import com.stewsters.path.ecs.entity.Entity
 import com.stewsters.path.map.TileType
-import kaiju.math.Vec2
 import kaiju.math.Vec3
 
 class WalkAction(pawn: Entity, private val offset: Vec3) : Action(pawn) {
@@ -28,8 +27,9 @@ class WalkAction(pawn: Entity, private val offset: Vec3) : Action(pawn) {
 
         //See if there is an actor there
         val targetList = chunkMap.pawnInSquare(
-                nextPos.x, nextPos.y,
-                nextPos.x + pawn.xSize - 1, nextPos.y + pawn.ySize - 1)
+            nextPos.x, nextPos.y,
+            nextPos.x + pawn.xSize - 1, nextPos.y + pawn.ySize - 1
+        )
 
         if (targetList.isNotEmpty()) {
 

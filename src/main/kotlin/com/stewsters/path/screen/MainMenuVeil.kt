@@ -50,6 +50,7 @@ class MainMenuVeil : Veil {
             KeyEvent.VK_N, KeyEvent.VK_SPACE -> {
                 game.currentVeil = GameVeil()
             }
+
             KeyEvent.VK_X -> {
                 exitProcess(0)
             }

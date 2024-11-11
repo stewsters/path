@@ -5,7 +5,6 @@ package com.stewsters.path
 import com.stewsters.path.screen.MainMenuVeil
 import com.stewsters.path.screen.Veil
 import com.valkryst.VTerminal.component.VFrame
-import com.valkryst.VTerminal.component.VPanel
 import com.valkryst.VTerminal.plaf.VTerminalLookAndFeel
 import java.awt.Color
 import java.awt.event.KeyEvent
@@ -19,8 +18,8 @@ import javax.swing.UnsupportedLookAndFeelException
 object Game : KeyListener {
 
     val saveFolder = File("saves")
-   private val frame = VFrame(
-            100, 64
+    private val frame = VFrame(
+        100, 64
     )
     var currentVeil: Veil = MainMenuVeil()
 
@@ -39,7 +38,6 @@ object Game : KeyListener {
         frame.isVisible = true
         frame.pack()
         frame.setLocationRelativeTo(null)
-
 
 
 //        SwingUtilities.invokeLater {

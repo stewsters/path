@@ -11,34 +11,34 @@ import kaiju.math.Vec3
 import java.awt.Color
 
 class Entity(
-        var chunk: MapChunk,
-        var pos: Vec3,
+    var chunk: MapChunk,
+    var pos: Vec3,
 
-        var name: String,
-        var description: String? = null,
+    var name: String,
+    var description: String? = null,
 
-        var char: Int = '@'.code,
-        var color: Color = Color.WHITE,
-        var displayOrder: DisplayOrder = DisplayOrder.LAST,
+    var char: Int = '@'.code,
+    var color: Color = Color.WHITE,
+    var displayOrder: DisplayOrder = DisplayOrder.LAST,
 
-        var turnTaker: TurnTaker? = null,
-        var faction: Faction? = null,
+    var turnTaker: TurnTaker? = null,
+    var faction: Faction? = null,
 
-        var life: Life? = null,
-        var deathFunction: (Entity) -> Unit = {},
+    var life: Life? = null,
+    var deathFunction: (Entity) -> Unit = {},
 
-        val item: Item? = null,
-        var inventory: Inventory? = null,
+    val item: Item? = null,
+    var inventory: Inventory? = null,
 
-        val doorOpener: Boolean = false,
+    val doorOpener: Boolean = false,
 
-        val mountable: Boolean = false,
-        var mount: Entity? = null,
+    val mountable: Boolean = false,
+    var mount: Entity? = null,
 
-        val xSize: Int = 1,
-        val ySize: Int = 1,
+    val xSize: Int = 1,
+    val ySize: Int = 1,
 
-        var blocks: Boolean = false
+    var blocks: Boolean = false
 ) {
 
     init {

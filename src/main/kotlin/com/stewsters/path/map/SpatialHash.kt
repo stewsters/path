@@ -1,11 +1,11 @@
 package com.stewsters.path.map
 
 import com.stewsters.path.ecs.entity.Entity
-import kaiju.math.Matrix3d
+import kaiju.math.matrix3dOf
 
 class SpatialHash(xSize: Int, ySize: Int, zSize: Int) {
 
-    private val hash = Matrix3d<ArrayList<Entity>>(xSize, ySize, zSize) { x, y, z -> arrayListOf() }
+    private val hash = matrix3dOf<ArrayList<Entity>>(xSize, ySize, zSize) { x, y, z -> arrayListOf() }
 
     fun get(x: Int, y: Int, z: Int): List<Entity> {
         return hash[x, y, z]

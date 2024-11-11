@@ -14,11 +14,12 @@ class CloseAdjacentDoorsAction(pawn: Entity) : Action(pawn) {
         val z = pawn.pos.z
         for (x in pawn.pos.x - 1..pawn.pos.x + 1) {
             for (y in pawn.pos.y - 1..pawn.pos.y + 1) {
-                if (chunkMap.at(x, y,z).type == TileType.OPEN_DOOR
-                        // && !chunkMap.pawnInSquare(x,y).any { it.blocks }
-                        && chunkMap.pawnInSquare(x, y,z).isEmpty()) {
+                if (chunkMap.at(x, y, z).type == TileType.OPEN_DOOR
+                    // && !chunkMap.pawnInSquare(x,y).any { it.blocks }
+                    && chunkMap.pawnInSquare(x, y, z).isEmpty()
+                ) {
 
-                    chunkMap.at(x, y,z).type = TileType.CLOSED_DOOR
+                    chunkMap.at(x, y, z).type = TileType.CLOSED_DOOR
                     return ActionResult.SUCCESS
                 }
             }

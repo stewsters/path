@@ -1,7 +1,7 @@
 package com.stewsters.path.action
 
-import com.stewsters.path.ecs.system.Msg
 import com.stewsters.path.ecs.entity.Entity
+import com.stewsters.path.ecs.system.Msg
 
 class HarvestAction(pawn: Entity) : Action(pawn) {
 

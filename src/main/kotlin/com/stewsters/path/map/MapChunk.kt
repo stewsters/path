@@ -2,16 +2,18 @@ package com.stewsters.path.map
 
 import com.stewsters.path.ecs.component.TurnTaker
 import com.stewsters.path.ecs.entity.Entity
-import kaiju.math.Matrix3d
-import kaiju.math.RectangularPrism
 import kaiju.math.Vec3
+import kaiju.math.geom.RectangularPrism
+import kaiju.math.matrix3dOf
 import java.io.File
 import java.util.*
 
-class MapChunk(val world: World, val pos: Vec3,
-               xSize: Int, ySize: Int, zSize: Int) : RectangularPrism(Vec3[0, 0, 0], Vec3[xSize - 1, ySize - 1, zSize - 1]) {
+class MapChunk(
+    val world: World, val pos: Vec3,
+    xSize: Int, ySize: Int, zSize: Int
+) : RectangularPrism(lower = Vec3(0, 0, 0), upper = Vec3(xSize - 1, ySize - 1, zSize - 1)) {
 
-    private val tiles = Matrix3d<Tile>(xSize, ySize, zSize) { x, y, z -> Tile(TileType.GRASS) }
+    private val tiles = matrix3dOf<Tile>(xSize, ySize, zSize) { x, y, z -> Tile(TileType.GRASS) }
     val pawnQueue: PriorityQueue<TurnTaker> = PriorityQueue()
 
     private val spatialHash: SpatialHash = SpatialHash(xSize, ySize, zSize)
@@ -21,13 +23,20 @@ class MapChunk(val world: World, val pos: Vec3,
 
     fun updatePawnPos(pawn: Entity, xPos: Int, yPos: Int, zPos: Int) {
         spatialHash.remove(pawn)
-        pawn.pos = Vec3[xPos, yPos, zPos]
+        pawn.pos = Vec3(xPos, yPos, zPos)
         spatialHash.add(pawn)
     }
 
     fun pawnInSquare(p: Vec3): List<Entity> = pawnInSquare(p.x, p.y, p.z)
 
-    fun pawnInSquare(xPos: Int, yPos: Int, zPos: Int, xPos2: Int = xPos, yPos2: Int = yPos, zPos2: Int = zPos): List<Entity> {
+    fun pawnInSquare(
+        xPos: Int,
+        yPos: Int,
+        zPos: Int,
+        xPos2: Int = xPos,
+        yPos2: Int = yPos,
+        zPos2: Int = zPos
+    ): List<Entity> {
         return spatialHash.findEntitiesInSquare(xPos, yPos, zPos, xPos2, yPos2, zPos2)
     }
 

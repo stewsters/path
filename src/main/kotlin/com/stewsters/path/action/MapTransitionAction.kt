@@ -1,7 +1,6 @@
 package com.stewsters.path.action
 
 import com.stewsters.path.ecs.entity.Entity
-import kaiju.math.Vec2
 import kaiju.math.Vec3
 
 class MapTransitionAction(entity: Entity, private var movement: Vec3) : Action(entity) {
@@ -36,15 +35,15 @@ class MapTransitionAction(entity: Entity, private var movement: Vec3) : Action(e
 
         // Update positions
         if (movement.x < 0) {
-            pawn.pos = Vec3[newChunk.upper.x, pawn.pos.y,pawn.pos.z]
+            pawn.pos = Vec3(newChunk.upper.x, pawn.pos.y, pawn.pos.z)
         } else if (movement.x > 0) {
-            pawn.pos = Vec3[0, pawn.pos.y,pawn.pos.z]
+            pawn.pos = Vec3(0, pawn.pos.y, pawn.pos.z)
         }
 
         if (movement.y < 0) {
-            pawn.pos = Vec3[pawn.pos.x, newChunk.upper.y,pawn.pos.z]
+            pawn.pos = Vec3(pawn.pos.x, newChunk.upper.y, pawn.pos.z)
         } else if (movement.y > 0) {
-            pawn.pos = Vec3[pawn.pos.x, 0,pawn.pos.z]
+            pawn.pos = Vec3(pawn.pos.x, 0, pawn.pos.z)
         }
 
         newChunk.addPawn(pawn)

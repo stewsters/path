@@ -12,38 +12,35 @@ import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
 import com.stewsters.path.map.generator.TerrainGenerator
 import com.valkryst.VTerminal.component.VPanel
-
-import kaiju.math.Rectangle
 import kaiju.math.Vec2
 import kaiju.math.Vec3
+import kaiju.math.geom.Rectangle
 import java.awt.Color
 import java.awt.event.KeyEvent
 
 class GameVeil : Veil {
-    init {
-    }
-
 
     private val world = World(Vec3(16, 16, 1), Vec3(8, 8, 0))
-    private val displayArea = Rectangle(Vec2[32, 1], Vec2[32 + TerrainGenerator.chunkSize - 1, TerrainGenerator.chunkSize])
+    private val displayArea =
+        Rectangle(Vec2(32, 1), Vec2(32 + TerrainGenerator.chunkSize - 1, TerrainGenerator.chunkSize))
 
     override fun keyboard(e: KeyEvent, game: Game) {
         var action: Action? = null
         when (e.keyCode) {
             KeyEvent.VK_UP, KeyEvent.VK_W -> {
-                action = WalkAction(world.player, Vec3[0, -1, 0])
+                action = WalkAction(world.player, Vec3(0, -1, 0))
             }
 
             KeyEvent.VK_DOWN, KeyEvent.VK_S -> {
-                action = WalkAction(world.player, Vec3[0, 1, 0])
+                action = WalkAction(world.player, Vec3(0, 1, 0))
             }
 
             KeyEvent.VK_LEFT, KeyEvent.VK_A -> {
-                action = WalkAction(world.player, Vec3[-1, 0, 0])
+                action = WalkAction(world.player, Vec3(-1, 0, 0))
             }
 
             KeyEvent.VK_RIGHT, KeyEvent.VK_D -> {
-                action = WalkAction(world.player, Vec3[1, 0, 0])
+                action = WalkAction(world.player, Vec3(1, 0, 0))
             }
 
             KeyEvent.VK_C -> {
@@ -105,11 +102,11 @@ class GameVeil : Veil {
                     val entities = map.pawnInSquare(x, y, z)
                     if (entities.isNotEmpty()) { // Render that entity
                         val entity = entities.minBy { it.displayOrder }
-                    with(screen) {
-                        setCodePointAt(sx, sy, entity.char)
-                        setForegroundAt(sx, sy, entity.color)
-                        setBackgroundAt(sx, sy, Color.BLACK)
-                    }
+                        with(screen) {
+                            setCodePointAt(sx, sy, entity.char)
+                            setForegroundAt(sx, sy, entity.color)
+                            setBackgroundAt(sx, sy, Color.BLACK)
+                        }
                         break
 
                     } else { // render ground
@@ -117,9 +114,9 @@ class GameVeil : Veil {
 
                         type = map.at(x, y, z).type
                         if (!type.transparent) {
-                            setCodePointAt(sx, sy, type.char)
-                            setForegroundAt(sx, sy, type.foreground)
-                            setBackgroundAt(sx, sy, type.background)
+                            screen.setCodePointAt(sx, sy, type.char)
+                            screen.setForegroundAt(sx, sy, type.foreground)
+                            screen.setBackgroundAt(sx, sy, type.background)
                             break
                         }
                     }

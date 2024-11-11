@@ -13,12 +13,12 @@ class DismountAction(pawn: Entity) : Action(pawn) {
 
         //find a clear spot to put it
         val possible = pawn.pos.vonNeumanNeighborhood2d()
-                .filter {
-                    pawn.chunk.inside(it)
-                            && !pawn.chunk.at(it).type.blocks
-                            && pawn.chunk.pawnInSquare(it).none { it.blocks }
-                }
-                .random()
+            .filter {
+                pawn.chunk.inside(it)
+                        && !pawn.chunk.at(it).type.blocks
+                        && pawn.chunk.pawnInSquare(it).none { it.blocks }
+            }
+            .random()
 
         if (possible == null) {
             // Cannot dismount in crowded environments

@@ -5,9 +5,11 @@ import com.stewsters.path.ecs.entity.Entity
 import com.stewsters.path.map.MapChunk
 
 // This controls Entities that do stuff on turns
-data class TurnTaker(var gameTurn: Int,
-                     var ai: (MapChunk, Entity) -> Action?,
-                     var parent: Entity? = null) : Comparable<TurnTaker> {
+data class TurnTaker(
+    var gameTurn: Int,
+    var ai: (MapChunk, Entity) -> Action?,
+    var parent: Entity? = null
+) : Comparable<TurnTaker> {
 
     private var action: Action? = null
 

@@ -3,7 +3,7 @@ package path
 import com.stewsters.path.action.WalkAction
 import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
-import kaiju.math.Vec2
+import kaiju.math.Vec3
 import org.junit.Test
 import java.io.File
 
@@ -12,9 +12,9 @@ class WorldTest {
     @Test
     fun walkThroughWorldTest() {
 
-        val world = World(xSize = 8, ySize = 8, xFocus = 4, yFocus = 4, skip = true)
+        val world = World(Vec3[8, 8, 1], Vec3(4, 4, 1), skip = true)
 
-        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2[1, 0]))
+        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec3[1, 0, 0]))
 
         assert(world.player.pos.x == 16)
         assert(world.player.pos.y == 16)
@@ -26,7 +26,7 @@ class WorldTest {
         assert(world.player.pos.x == 17)
         assert(world.player.pos.y == 16)
 
-        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2[0, 1]))
+        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec3[0, 1, 0]))
 
         for (i in 1..10) {
             world.update()
@@ -39,22 +39,22 @@ class WorldTest {
 
     @Test
     fun walkIntoWallsTest() {
-        val world = World(1, 1, 0, 0)
+        val world = World(Vec3[1, 1, 1], Vec3[0, 0, 0])
 
         assert(world.player.pos.x == 16)
         assert(world.player.pos.y == 16)
 
-        world.player.chunk.at(18, 16).type = TileType.WALL
+        world.player.chunk.at(18, 16, 0).type = TileType.WALL
 
         println("Start walking")
-        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2[1, 0]))
+        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec3[1, 0, 0]))
         world.update()
 
         assert(world.player.pos.x == 17)
         assert(world.player.pos.y == 16)
 
         println("Walking into wall")
-        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2[1, 0]))
+        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec3[1, 0, 0]))
         world.update()
 
         assert(world.player.pos.x == 17)
@@ -65,48 +65,48 @@ class WorldTest {
 
     @Test
     fun walkThroughDoorTest() {
-        val world = World(1, 1, 0, 0)
+        val world = World(Vec3[1, 1, 1], Vec3[0, 0, 0])
         assert(world.player.pos.x == 16)
         assert(world.player.pos.y == 16)
 
 
-        world.player.chunk.at(17, 16).type = TileType.CLOSED_DOOR
+        world.player.chunk.at(17, 16, 0).type = TileType.CLOSED_DOOR
 
         println("Start walking")
-        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2[1, 0]))
+        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec3[1, 0, 0]))
         world.update()
 
-        assert(world.player.chunk.at(17, 16).type == TileType.OPEN_DOOR)
+        assert(world.player.chunk.at(17, 16,0).type == TileType.OPEN_DOOR)
 
         println("Continue walking")
-        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2[1, 0]))
+        world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec3[1, 0, 0]))
         world.update()
 
-        assert(world.player.pos == Vec2[17, 16])
+        assert(world.player.pos == Vec3[17, 16, 0])
     }
 
     @Test
     fun testAreaTransition() {
-        val world = World(xSize = 8, ySize = 8, xFocus = 2, yFocus = 2, skip = true)
-        assert(world.player.chunk.pos == Vec2[2, 2])
+        val world = World(Vec3[8, 8, 1], Vec3[2, 2, 0], skip = true)
+        assert(world.player.chunk.pos == Vec3[2, 2, 0])
 
         for (x in (16..32)) {
-            world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec2[1, 0]))
+            world.player.turnTaker?.setNextAction(WalkAction(world.player, Vec3[1, 0, 0]))
             world.update()
         }
-        assert(world.player.chunk.pos == Vec2[3, 2])
-        assert(world.player.pos == Vec2[0, 16])
+        assert(world.player.chunk.pos == Vec3[3, 2, 0])
+        assert(world.player.pos == Vec3[0, 16, 0])
     }
 
 
     @Test
     fun indexTest() {
-        val world = World(8, 8, 2, 2)
+        val world = World(Vec3[8, 8, 1], Vec3[2, 2, 0])
 
         for (x in (0..7)) {
             for (y in (0..7)) {
-                val chunk = world.getMapAt(x, y)
-                assert(chunk.pos == Vec2[x, y])
+                val chunk = world.getMapAt(x, y, 0)
+                assert(chunk.pos == Vec3[x, y, 0])
             }
         }
 
@@ -115,7 +115,7 @@ class WorldTest {
     @Test
     fun saveWorld() {
 
-        val world = World(8, 8, 2, 2)
+        val world = World(Vec3[8, 8, 1], Vec3[2, 2, 0])
         val saveDir = File.createTempFile("pathTest-", "")
 
         world.saveGame(saveDir)

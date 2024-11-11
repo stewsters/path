@@ -16,30 +16,32 @@ import com.stewsters.path.ecs.enums.DisplayOrder
 import com.stewsters.path.ecs.enums.Faction
 import com.stewsters.path.ecs.enums.Slot
 import com.stewsters.path.map.generator.TerrainGenerator
-import com.stewsters.util.math.MatUtils
-import kaiju.math.Rectangle
-import kaiju.math.Vec2
+import kaiju.math.Matrix3d
+import kaiju.math.RectangularPrism
+import kaiju.math.Vec3
 import kaiju.math.getChebyshevDistance
+import kaiju.math.getIntInRange
+import kaiju.math.limit
 import java.awt.Color
 import java.io.File
 import java.util.*
 
 
-class World(xSize: Int, ySize: Int,
-            xFocus: Int, yFocus: Int,
+class World(size:Vec3,
+            focus:Vec3,
             val gameName: String = UUID.randomUUID().toString(),
-            skip: Boolean = false) : Rectangle(Vec2[0, 0], Vec2[xSize, ySize]) {
+            skip: Boolean = false) : RectangularPrism(Vec3[0, 0, 0],size) {
 
-    private val tiles: Array<MapChunk>
+    private val tiles: Matrix3d<MapChunk>
     var player: Entity
 
     init {
-        assert(xFocus in 0..(xSize - 1))
-        assert(yFocus in 0..(ySize - 1))
+        assert(focus.x in 0 until size.x)
+        assert(focus.y in 0 until size.y)
 
         val seed = gameName.hashCode().toLong()
 
-        val worldWidth: Double = (TerrainGenerator.chunkSize * xSize).toDouble()
+        val worldWidth: Double = (TerrainGenerator.chunkSize * size.z).toDouble()
 
         val shapes = listOf({ x: Int, y: Int ->
             val xPercent = ((x / worldWidth) - 0.5) * 2
@@ -48,32 +50,44 @@ class World(xSize: Int, ySize: Int,
             maxOf(xPercent * xPercent, yPercent * yPercent)
         })
 
-        tiles = Array(xSize * ySize, { index ->
-            TerrainGenerator.generateChunk(this, shapes, Vec2[index % xSize, index / ySize], seed, skip)
-        })
+        tiles = Matrix3d(size) { x,y,z ->
+            TerrainGenerator.generateChunk(this, shapes, Vec3[x,y,z], seed, skip)
+        }
 
+        var currentMap = getMapAt(focus)
+        var playerStart = Vec3[TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2]
         if (!skip) {
-            // Construction
-            for (tile in tiles) {
+
+           val townTiles = tiles.sortedBy {
+               it.statsTilesOfType(TileType.GRASS)
+           }
+
+            // TODO
+            currentMap = townTiles.first()
+
+            townTiles.subList(0,5).forEach{
+
                 for (x in 0 until TerrainGenerator.chunkSize) {
                     for (y in 0 until TerrainGenerator.chunkSize) {
+                        for (z in 0 until TerrainGenerator.chunkSize) {
 
-                        if (x == 6 && y <= 10 && y >= 6) {
-                            if (y == 8)
-                                tile.at(x, y).type = TileType.CLOSED_DOOR
-                            else
-                                tile.at(x, y).type = TileType.WALL
+                            if (x == 6 && y <= 10 && y >= 6) {
+                                if (y == 8)
+                                    it.at(x, y, z).type = TileType.CLOSED_DOOR
+                                else
+                                    it.at(x, y, z).type = TileType.WALL
+                            }
                         }
                     }
                 }
             }
         }
 
-        val currentMap = getMapAt(xFocus, yFocus)
+
         player = Entity(
                 name = "Player",
                 chunk = currentMap,
-                pos = Vec2[TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2],
+                pos = playerStart,
                 faction = Faction.HUMAN,
                 displayOrder = DisplayOrder.PLAYER,
                 turnTaker = TurnTaker(0, { _, _ -> null }),
@@ -102,7 +116,7 @@ class World(xSize: Int, ySize: Int,
                 char = 'h'.code,
                 displayOrder = DisplayOrder.ALLY,
                 chunk = player.chunk,
-                pos = Vec2[player.pos.x + 2, player.pos.y],
+                pos = player.pos + Vec3[2, 0, 0],
                 faction = Faction.HUMAN,
                 turnTaker = TurnTaker(1, { _, entity ->
                     val playerX = player.globalX()
@@ -111,9 +125,11 @@ class World(xSize: Int, ySize: Int,
                     val horseY = entity.globalY()
 
                     if (getChebyshevDistance(player.pos, entity.pos) > 5) {
-                        WalkAction(entity, Vec2[
-                                MatUtils.limit(playerX - horseX, -1, 1),
-                                MatUtils.limit(playerY - horseY, -1, 1)]
+                        WalkAction(entity, Vec3[
+                                limit(playerX - horseX, -1, 1),
+                                limit(playerY - horseY, -1, 1),
+                                0
+                        ]
                         )
                     } else
                         RestAction(entity)
@@ -124,15 +140,18 @@ class World(xSize: Int, ySize: Int,
         currentMap.addPawn(horse)
 
         if (!skip) {
-            for (mapChunk in tiles) {
+            tiles.forEachIndexed { x, y, z, mapChunk ->
+                // todo: wolves should not be underground or in space
                 for (i in 1..5) {
-                    val x = MatUtils.getIntInRange(0, mapChunk.upper.x - 1)
-                    val y = MatUtils.getIntInRange(0, mapChunk.upper.y - 1)
+                    val x = getIntInRange(0, mapChunk.upper.x - 1)
+                    val y = getIntInRange(0, mapChunk.upper.y - 1)
+                    val z = player.pos.z
+                            //MatUtils.getIntInRange(0, mapChunk.upper.z - 1)
 
-                    if (mapChunk.at(x, y).type.blocks)
+                    if (mapChunk.at(x, y, z).type.blocks)
                         continue
 
-                    if (mapChunk.pawnInSquare(x, y).isNotEmpty())
+                    if (mapChunk.pawnInSquare(x, y, z).isNotEmpty())
                         continue
 
 
@@ -140,7 +159,7 @@ class World(xSize: Int, ySize: Int,
                             name = "Wolf",
                             char = 'w'.code,
                             chunk = mapChunk,
-                            pos = Vec2[x, y],
+                            pos = Vec3[x, y, z],
                             life = Life(1),
                             faction = Faction.MONSTER,
                             displayOrder = DisplayOrder.OPPONENT,
@@ -150,10 +169,11 @@ class World(xSize: Int, ySize: Int,
                                 val xPos = entity.globalX()
                                 val yPos = entity.globalY()
 
-                                WalkAction(entity, Vec2[
-                                        MatUtils.limit(playerX - xPos, -1, 1),
-                                        MatUtils.limit(playerY - yPos, -1, 1)]
-                                )
+                                WalkAction(entity, Vec3[
+                                        limit(playerX - xPos, -1, 1),
+                                        limit(playerY - yPos, -1, 1),
+                                        0
+                                ])
                             }),
                             deathFunction = {
                                 with(it) {
@@ -178,9 +198,10 @@ class World(xSize: Int, ySize: Int,
         }
     }
 
-    fun getMapAt(pos: Vec2): MapChunk = getMapAt(pos.x, pos.y)
-    fun getMapAt(x: Int, y: Int): MapChunk = tiles[x + y * upper.x]
+    fun getMapAt(pos: Vec3): MapChunk = getMapAt(pos.x, pos.y, pos.z)
+    fun getMapAt(x: Int, y: Int, z: Int): MapChunk = tiles[x,y,z]
 
+    //TODO: add gravity
     fun update() {
 
         while (player.isAlive()) {

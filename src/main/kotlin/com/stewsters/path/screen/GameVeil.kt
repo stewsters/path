@@ -10,7 +10,8 @@ import com.stewsters.path.action.MountAction
 import com.stewsters.path.action.WalkAction
 import com.stewsters.path.map.World
 import com.stewsters.path.map.generator.TerrainGenerator
-import com.valkryst.VTerminal.Screen
+import com.valkryst.VTerminal.component.VPanel
+
 import kaiju.math.Rectangle
 import kaiju.math.Vec2
 import java.awt.Color
@@ -21,7 +22,8 @@ class GameVeil : Veil {
     }
 
     private val world = World(16, 16, 8, 8)
-    private val displayArea = Rectangle(Vec2[32, 1], Vec2[32 + TerrainGenerator.chunkSize - 1, TerrainGenerator.chunkSize])
+    private val displayArea =
+        Rectangle(Vec2[32, 1], Vec2[32 + TerrainGenerator.chunkSize - 1, TerrainGenerator.chunkSize])
 
     override fun keyboard(e: KeyEvent, game: Game) {
         var action: Action? = null
@@ -29,24 +31,31 @@ class GameVeil : Veil {
             KeyEvent.VK_UP, KeyEvent.VK_W -> {
                 action = WalkAction(world.player, Vec2[0, -1])
             }
+
             KeyEvent.VK_DOWN, KeyEvent.VK_S -> {
                 action = WalkAction(world.player, Vec2[0, 1])
             }
+
             KeyEvent.VK_LEFT, KeyEvent.VK_A -> {
                 action = WalkAction(world.player, Vec2[-1, 0])
             }
+
             KeyEvent.VK_RIGHT, KeyEvent.VK_D -> {
                 action = WalkAction(world.player, Vec2[1, 0])
             }
+
             KeyEvent.VK_C -> {
                 action = CloseAdjacentDoorsAction(world.player)
             }
+
             KeyEvent.VK_H -> {
                 action = HarvestAction(world.player)
             }
+
             KeyEvent.VK_M -> {
                 action = MountAction(world.player)
             }
+
             KeyEvent.VK_U -> {
                 action = DismountAction(world.player)
             }
@@ -63,7 +72,7 @@ class GameVeil : Veil {
 
     }
 
-    override fun draw(screen: Screen) {
+    override fun draw(screen: VPanel) {
 
         screen.clear()
         val map = world.player.chunk
@@ -92,25 +101,31 @@ class GameVeil : Veil {
                 val entities = map.pawnInSquare(x, y)
                 if (entities.isNotEmpty()) { // Render that entity
                     val entity = entities.minBy { it.displayOrder }
-                    with(screen.getTileAt(sx, sy)) {
-                        character = entity?.char ?: '?'
-                        foregroundColor = entity?.color ?: Color.WHITE
-                        backgroundColor = Color.BLACK
+
+
+                    with(screen) {
+                        setCodePointAt(sx, sy, entity.char)
+                        setForegroundAt(sx, sy, entity.color)
+                        setBackgroundAt(sx, sy, Color.BLACK)
                     }
 
                 } else { // render ground
                     val type = map.at(x, y).type
-                    with(screen.getTileAt(sx, sy)) {
-                        character = type.char
-                        foregroundColor = type.foreground
-                        backgroundColor = type.background
+                    with(screen) {
+//                        character = type.char
+//                        foregroundColor = type.foreground
+//                        backgroundColor = type.background
+
+                        setCodePointAt(sx, sy, type.char)
+                        setForegroundAt(sx, sy, type.foreground)
+                        setBackgroundAt(sx, sy, type.background)
                     }
 
                 }
             }
         }
 
-        Game.screen.draw()
+        screen.repaint()
     }
 
 

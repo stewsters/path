@@ -17,7 +17,7 @@ class Entity(
         var name: String,
         var description: String? = null,
 
-        var char: Char = '@',
+        var char: Int = '@'.code,
         var color: Color = Color.WHITE,
         var displayOrder: DisplayOrder = DisplayOrder.LAST,
 

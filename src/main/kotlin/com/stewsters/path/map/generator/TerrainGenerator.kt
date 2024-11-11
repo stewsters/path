@@ -24,7 +24,7 @@ object TerrainGenerator {
                 var ridginess = fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 320.0, 1.0, 2.0, 0.5)
                 ridginess = Math.abs(ridginess) * -1
 
-                val elevation = Math.max(fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 200.0, 1.0, 2.0, 0.5), ridginess) + shapeMods.sumByDouble { it(nx, ny) }
+                val elevation = Math.max(fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 200.0, 1.0, 2.0, 0.5), ridginess) + shapeMods.sumOf { it(nx, ny) }
 
                 var type: TileType
                 when {

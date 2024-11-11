@@ -2,8 +2,9 @@ package com.stewsters.path.screen
 
 
 import com.stewsters.path.Game
-import com.valkryst.VTerminal.Screen
+import com.valkryst.VTerminal.component.VPanel
 import java.awt.event.KeyEvent
+import kotlin.system.exitProcess
 
 class MainMenuVeil : Veil {
 
@@ -37,7 +38,7 @@ class MainMenuVeil : Veil {
 
     }
 
-    override fun draw(screen: Screen) {
+    override fun draw(screen: VPanel) {
         screen.clear()
         screen.drawString("Space - New Game", 10, 10)
         screen.drawString("x - Exit", 10, 20)
@@ -50,7 +51,7 @@ class MainMenuVeil : Veil {
                 game.currentVeil = GameVeil()
             }
             KeyEvent.VK_X -> {
-                System.exit(0)
+                exitProcess(0)
             }
         }
     }

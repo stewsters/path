@@ -2,7 +2,8 @@ group 'com.stewsters.path'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.3.11'
+
+    ext.kotlin_version = '2.0.20'
     //ext.jackson_version = '2.9.0'
 
     repositories {
@@ -21,7 +22,6 @@ mainClassName = 'com.stewsters.path.Game'
 
 repositories {
     mavenCentral()
-    jcenter()
     maven { url 'https://jitpack.io' }
 }
 
@@ -29,19 +29,12 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     //  compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version"
 
-    implementation "com.github.Valkryst:VTerminal:3.4.4"
-    // compile "com.stewsters.util:stewsters-util:0.18"
-    api "com.github.alexeyr.pcg:pcg:0.9.1"
-    implementation 'com.google.code.gson:gson:2.7'
+    implementation "com.github.Valkryst:VTerminal:2024.9.8"
+    implementation "com.github.stewsters:stewsters-util:0.19"
 
-    testCompile 'junit:junit:4.12'
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+    testImplementation 'junit:junit:4.13.2'
 
     implementation 'com.github.stewsters:kaiju:master-SNAPSHOT'
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
 }

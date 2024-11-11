@@ -1,46 +1,54 @@
 package com.stewsters.path.screen
 
-import com.valkryst.VTerminal.Screen
+import com.valkryst.VTerminal.component.VPanel
 import java.awt.Color
 
-fun Screen.drawString(string: String, x: Int, y: Int) {
+fun VPanel.drawString(string: String, x: Int, y: Int) {
 
     string.forEachIndexed { index, c ->
-        with(getTileAt(x + index, y)) {
-            reset()
-            character = c
-        }
+
+        this.setCodePointAt(x + index, y, c.code)
+//        with(getTileAt(x + index, y)) {
+//            reset()
+//            character = c
+//        }
     }
 
 }
 
-fun Screen.clear() {
-    for (y in 0 until height) {
-        for (x in 0 until width) {
-            getTileAt(x, y).reset()
-        }
-    }
+fun VPanel.clear() {
+    reset()
 }
 
 
-fun Screen.horizontalLine(y: Int, x1: Int = 0, x2: Int = this.width - 1, char: Char = '#', color: Color = Color.WHITE, background: Color = Color.BLACK) {
+fun VPanel.horizontalLine(
+    y: Int,
+    x1: Int = 0,
+    x2: Int = this.widthInTiles - 1,
+    char: Char = '#',
+    color: Color = Color.WHITE,
+    background: Color = Color.BLACK
+) {
+
     for (x in x1..x2) {
-        with(this.getTileAt(x, y)) {
-            reset()
-            character = char
-            foregroundColor = color
-            backgroundColor = background
-        }
+        setForegroundAt(x, y, color)
+        setBackgroundAt(x, y, background)
+        setCodePointAt(x, y, char.code)
     }
 }
 
-fun Screen.verticalLine(x: Int, y1: Int = 0, y2: Int = this.height - 1, char: Char = '#', color: Color = Color.WHITE, background: Color = Color.BLACK) {
+fun VPanel.verticalLine(
+    x: Int,
+    y1: Int = 0,
+    y2: Int = this.heightInTiles - 1,
+    char: Char = '#',
+    color: Color = Color.WHITE,
+    background: Color = Color.BLACK
+) {
     for (y in y1..y2) {
-        with(this.getTileAt(x, y)) {
-            reset()
-            character = char
-            foregroundColor = color
-            backgroundColor = background
-        }
+
+        setForegroundAt(x, y, color)
+        setBackgroundAt(x, y, background)
+        setCodePointAt(x, y, char.code)
     }
 }

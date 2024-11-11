@@ -102,7 +102,7 @@ class World(size:Vec3,
                 description = "An old sword, it has seen its fair share of combat.",
                 chunk = player.chunk,
                 pos = player.pos,
-                char = '/',
+                char = '/'.code,
                 displayOrder = DisplayOrder.ITEM,
                 item = Item(
                         weapon = Weapon(damage = 5),
@@ -113,7 +113,7 @@ class World(size:Vec3,
 
         val horse = Entity(
                 name = "Roach",
-                char = 'h',
+                char = 'h'.code,
                 displayOrder = DisplayOrder.ALLY,
                 chunk = player.chunk,
                 pos = player.pos + Vec3[2, 0, 0],
@@ -157,7 +157,7 @@ class World(size:Vec3,
 
                     val wolf = Entity(
                             name = "Wolf",
-                            char = 'w',
+                            char = 'w'.code,
                             chunk = mapChunk,
                             pos = Vec3[x, y, z],
                             life = Life(1),
@@ -182,7 +182,7 @@ class World(size:Vec3,
                                     displayOrder = DisplayOrder.BODY
                                     faction = null
                                     life = null
-                                    char = '%'
+                                    char = '%'.code
                                     blocks = false
                                     color = Color.RED
 //                                    chunk.update(it)

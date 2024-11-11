@@ -11,32 +11,32 @@ class MainMenuVeil : Veil {
 //    val buttonNewGame: Button
 //    val buttonExitGame: Button
 
-    init {
-
-        // Construct menu options:
-//        val builder = ButtonBuilder()
-//        builder.text = "New Game"
-//        builder.xPosition = Game.screen.width / 3
-//        builder.yPosition = Game.screen.height / 3
-//        buttonNewGame = builder.build()
+//    init {
 //
-//        builder.text = "Exit"
-//        builder.yPosition = builder.yPosition + 1
-//        buttonExitGame = builder.build()
-
-        // Swap Screen:
-//        screen.swapScreen(this)
-
-//        buttonNewGame.setOnClickFunction({
-//            screen.addComponent(GameScreen(screen))
-//        })
-//        buttonExitGame.setOnClickFunction({ System.exit(0) })
+//        // Construct menu options:
+////        val builder = ButtonBuilder()
+////        builder.text = "New Game"
+////        builder.xPosition = Game.screen.width / 3
+////        builder.yPosition = Game.screen.height / 3
+////        buttonNewGame = builder.build()
+////
+////        builder.text = "Exit"
+////        builder.yPosition = builder.yPosition + 1
+////        buttonExitGame = builder.build()
 //
-//        // Add components to Screen VIA Panel functions:
-//        screen.addComponent(buttonNewGame)
-//        screen.addComponent( buttonExitGame)
-
-    }
+//        // Swap Screen:
+////        screen.swapScreen(this)
+//
+////        buttonNewGame.setOnClickFunction({
+////            screen.addComponent(GameScreen(screen))
+////        })
+////        buttonExitGame.setOnClickFunction({ System.exit(0) })
+////
+////        // Add components to Screen VIA Panel functions:
+////        screen.addComponent(buttonNewGame)
+////        screen.addComponent( buttonExitGame)
+//
+//    }
 
     override fun draw(screen: VPanel) {
         screen.clear()

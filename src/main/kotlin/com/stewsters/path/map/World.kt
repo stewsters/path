@@ -4,6 +4,7 @@ import com.stewsters.path.action.Action
 import com.stewsters.path.action.ActionResult
 import com.stewsters.path.action.RestAction
 import com.stewsters.path.action.WalkAction
+import com.stewsters.path.ecs.component.Armor
 import com.stewsters.path.ecs.component.Equipment
 import com.stewsters.path.ecs.component.Inventory
 import com.stewsters.path.ecs.component.Item
@@ -43,7 +44,7 @@ class World(
 
         val seed = gameName.hashCode().toLong()
 
-        val worldWidth: Double = (TerrainGenerator.chunkSize * size.z).toDouble()
+        val worldWidth: Double = (TerrainGenerator.CHUNK_SIZE * size.z).toDouble()
 
         val shapes = listOf({ x: Int, y: Int ->
             val xPercent = ((x / worldWidth) - 0.5) * 2
@@ -58,7 +59,7 @@ class World(
 
         var currentMap = getMapAt(focus)
         val playerStart =
-            Vec3(TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2)
+            Vec3(TerrainGenerator.CHUNK_SIZE / 2, TerrainGenerator.CHUNK_SIZE / 2, TerrainGenerator.CHUNK_SIZE / 2)
         if (!skip) {
 
             val townTiles = tiles.sortedBy {
@@ -70,9 +71,9 @@ class World(
 
             townTiles.subList(0, 5).forEach {
 
-                for (x in 0 until TerrainGenerator.chunkSize) {
-                    for (y in 0 until TerrainGenerator.chunkSize) {
-                        for (z in 0 until TerrainGenerator.chunkSize) {
+                for (x in 0 until TerrainGenerator.CHUNK_SIZE) {
+                    for (y in 0 until TerrainGenerator.CHUNK_SIZE) {
+                        for (z in 0 until TerrainGenerator.CHUNK_SIZE) {
 
                             if (x == 6 && y <= 10 && y >= 6) {
                                 if (y == 8)
@@ -111,6 +112,18 @@ class World(
                 item = Item(
                     weapon = Weapon(damage = 5),
                     equipment = Equipment(Slot.WEAPON, isEquipped = true)
+                )))
+        player.inventory?.items?.add(
+            Entity(
+                name = "A floppy cloak",
+                description = "Brown floppy cloak",
+                chunk = player.chunk,
+                pos = player.pos,
+                char = 'c'.code,
+                displayOrder = DisplayOrder.ITEM,
+                item = Item(
+                    armor = Armor(1),
+                    equipment = Equipment(Slot.CLOAK, isEquipped = true)
                 )
             )
         )

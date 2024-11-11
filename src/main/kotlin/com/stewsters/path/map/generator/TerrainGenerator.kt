@@ -7,7 +7,7 @@ import kaiju.math.Vec3
 import kaiju.noise.OpenSimplexNoise
 
 object TerrainGenerator {
-    const val chunkSize = 32
+    const val CHUNK_SIZE = 32
 
     fun generateChunk(
         world: World,
@@ -17,16 +17,16 @@ object TerrainGenerator {
         skip: Boolean
     ): MapChunk {
 
-        val chunk = MapChunk(world, chunkPos, chunkSize, chunkSize, chunkSize)
+        val chunk = MapChunk(world, chunkPos, CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE)
         val el = OpenSimplexNoise(seed)
 
         // Map type
-        for (x in 0 until chunkSize) {
-            for (y in 0 until chunkSize) {
+        for (x in 0 until CHUNK_SIZE) {
+            for (y in 0 until CHUNK_SIZE) {
 
 
-                val nx: Int = chunkPos.x * chunkSize + x
-                val ny: Int = chunkPos.y * chunkSize + y
+                val nx: Int = chunkPos.x * CHUNK_SIZE + x
+                val ny: Int = chunkPos.y * CHUNK_SIZE + y
 
                 var ridginess = fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 320.0, 1.0, 2.0, 0.5)
                 ridginess = Math.abs(ridginess) * -1
@@ -36,11 +36,11 @@ object TerrainGenerator {
                     ridginess
                 ) + shapeMods.sumOf { it(nx, ny) }
 
-                val groundHeight = (elevation * chunkSize).toInt()
+                val groundHeight = (elevation * CHUNK_SIZE).toInt()
 
                 var type: TileType = TileType.AIR
 
-                for (z in 0 until chunkSize) {
+                for (z in 0 until CHUNK_SIZE) {
 
                     if (z < elevation) {
                         type = TileType.WALL

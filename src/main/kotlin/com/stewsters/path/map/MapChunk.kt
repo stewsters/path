@@ -62,14 +62,15 @@ class MapChunk(
         val entitySave = File(gameSaveFolder, "${pos.x}:${pos.y}:${pos.z}.ent")
 
         // TODO: serialize Entities:
-        spatialHash.findEntitiesInSquare(0, 0, 0, upper.x - 1, upper.y - 1, upper.z - 1).forEach {
+        spatialHash.findEntitiesInSquare(0, 0, 0, upper.x - 1, upper.y - 1, upper.z - 1)
+            .forEach {
             //            entitySave.writeText(JSON.Companion.stringify(it))
         }
 
     }
 
     fun restoreFromDisk(gameSaveFolder: File) {
-        val values = TileType.values()
+        val values = TileType.entries.toTypedArray()
 //        File(gameSaveFolder, "${pos.x}:${pos.y}.map")
 //                .readBytes()
 //                .map { values[it.toInt()] }

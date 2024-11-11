@@ -23,7 +23,7 @@ data class TurnTaker(
     }
 
     override fun compareTo(other: TurnTaker): Int {
-        return Integer.compare(gameTurn, other.gameTurn)
+        return gameTurn.compareTo(other.gameTurn)
     }
 
 }

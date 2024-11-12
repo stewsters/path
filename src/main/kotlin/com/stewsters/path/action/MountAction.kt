@@ -11,7 +11,12 @@ class MountAction(pawn: Entity) : Action(pawn) {
 
         // find all mountable creatures at range 1, choose best.
         val entities: List<Entity> =
-            chunkMap.pawnInSquare(pawn.pos.x - 1, pawn.pos.y - 1, pawn.pos.x + 1, pawn.pos.y + 1)
+            chunkMap.pawnInSquare(
+                pawn.pos.x - 1,
+                pawn.pos.y - 1,
+                pawn.pos.z,
+                pawn.pos.x + 1,
+                pawn.pos.y + 1)
         println(entities)
 
         val mount = entities.firstOrNull { it.mountable }

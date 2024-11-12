@@ -27,8 +27,10 @@ class WalkAction(pawn: Entity, private val offset: Vec3) : Action(pawn) {
 
         //See if there is an actor there
         val targetList = chunkMap.pawnInSquare(
-            nextPos.x, nextPos.y,
-            nextPos.x + pawn.xSize - 1, nextPos.y + pawn.ySize - 1
+            nextPos.x, nextPos.y,nextPos.z,
+            nextPos.x + pawn.xSize - 1,
+            nextPos.y + pawn.ySize - 1,
+//            nextPos.z + pawn.zSize - 1,
         )
 
         if (targetList.isNotEmpty()) {

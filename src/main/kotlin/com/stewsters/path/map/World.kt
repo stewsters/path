@@ -4,6 +4,7 @@ import com.stewsters.path.action.Action
 import com.stewsters.path.action.ActionResult
 import com.stewsters.path.action.RestAction
 import com.stewsters.path.action.WalkAction
+import com.stewsters.path.action.complex.wolfAction
 import com.stewsters.path.ecs.component.Armor
 import com.stewsters.path.ecs.component.Equipment
 import com.stewsters.path.ecs.component.Inventory
@@ -182,20 +183,7 @@ class World(
                         life = Life(1),
                         faction = Faction.MONSTER,
                         displayOrder = DisplayOrder.OPPONENT,
-                        turnTaker = TurnTaker(2 + i, { _, entity ->
-                            val playerX = player.globalX()
-                            val playerY = player.globalY()
-                            val xPos = entity.globalX()
-                            val yPos = entity.globalY()
-
-                            WalkAction(
-                                entity, Vec3(
-                                    limit(playerX - xPos, -1, 1),
-                                    limit(playerY - yPos, -1, 1),
-                                    0
-                                )
-                            )
-                        }),
+                        turnTaker = TurnTaker(2 + i, wolfAction),
                         deathFunction = {
                             with(it) {
                                 println("$name died.")

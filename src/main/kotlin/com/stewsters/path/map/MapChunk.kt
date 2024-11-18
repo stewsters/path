@@ -28,6 +28,10 @@ class MapChunk(
     }
 
     fun pawnInSquare(p: Vec3): List<Entity> = pawnInSquare(p.x, p.y, p.z)
+    fun pawnInSquare(lower: Vec3, upper: Vec3): List<Entity> = pawnInSquare(
+        lower.x, lower.y, lower.z,
+        upper.x, upper.y, upper.z
+    )
 
     fun pawnInSquare(
         xPos: Int,
@@ -64,8 +68,8 @@ class MapChunk(
         // TODO: serialize Entities:
         spatialHash.findEntitiesInSquare(0, 0, 0, upper.x - 1, upper.y - 1, upper.z - 1)
             .forEach {
-            //            entitySave.writeText(JSON.Companion.stringify(it))
-        }
+                //            entitySave.writeText(JSON.Companion.stringify(it))
+            }
 
     }
 

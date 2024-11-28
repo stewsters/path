@@ -5,6 +5,8 @@ import com.stewsters.path.map.TileType
 import com.stewsters.path.map.World
 import kaiju.math.Vec3
 import kaiju.noise.OpenSimplexNoise
+import kotlin.math.abs
+import kotlin.math.max
 
 object TerrainGenerator {
     const val CHUNK_SIZE = 32
@@ -24,14 +26,14 @@ object TerrainGenerator {
         for (x in 0 until CHUNK_SIZE) {
             for (y in 0 until CHUNK_SIZE) {
 
-
+                // world coordinate
                 val nx: Int = chunkPos.x * CHUNK_SIZE + x
                 val ny: Int = chunkPos.y * CHUNK_SIZE + y
 
                 var ridginess = fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 320.0, 1.0, 2.0, 0.5)
-                ridginess = Math.abs(ridginess) * -1
+                ridginess = abs(ridginess) * -1
 
-                val elevation = Math.max(
+                val elevation = max(
                     fbm(el, nx.toDouble(), ny.toDouble(), 6, 1.0 / 200.0, 1.0, 2.0, 0.5),
                     ridginess
                 ) + shapeMods.sumOf { it(nx, ny) }

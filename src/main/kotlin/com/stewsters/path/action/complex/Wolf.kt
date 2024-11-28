@@ -8,6 +8,9 @@ import kaiju.math.Vec3
 import kaiju.math.getChebyshevDistance
 import kaiju.math.limit
 
+
+// Need to be able to define a set of available high level actions, test them out, and choose the best one
+
 //class Wolf(pawn: Entity, chunkMap: MapChunk = pawn.chunk, costInTurns: Int = 100) :
 //    Action(pawn, chunkMap, costInTurns) {
 //}

@@ -3,7 +3,7 @@ version '1.0-SNAPSHOT'
 
 buildscript {
 
-    ext.kotlin_version = '2.0.20'
+    ext.kotlin_version = '2.3.21'
     //ext.jackson_version = '2.9.0'
 
     repositories {
@@ -18,7 +18,9 @@ buildscript {
 apply plugin: 'kotlin'
 apply plugin: 'application'
 
-mainClassName = 'com.stewsters.path.Game'
+application {
+    mainClass = 'com.stewsters.path.Game'
+}
 
 repositories {
     mavenCentral()
@@ -28,7 +30,7 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    implementation "com.github.Valkryst:VTerminal:2024.9.8"
+    implementation "com.github.Valkryst:VTerminal:2025.10.1"
     implementation "com.github.stewsters:stewsters-util:0.19"
 
     implementation 'com.google.code.gson:gson:2.11.0'

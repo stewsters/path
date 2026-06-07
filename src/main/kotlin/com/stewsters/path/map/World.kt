@@ -1,10 +1,11 @@
 package com.stewsters.path.map
 
-import com.stewsters.path.Game.saveFolder
 import com.stewsters.path.action.Action
 import com.stewsters.path.action.ActionResult
 import com.stewsters.path.action.RestAction
 import com.stewsters.path.action.WalkAction
+import com.stewsters.path.action.complex.wolfAction
+import com.stewsters.path.ecs.component.Armor
 import com.stewsters.path.ecs.component.Equipment
 import com.stewsters.path.ecs.component.Inventory
 import com.stewsters.path.ecs.component.Item
@@ -16,30 +17,35 @@ import com.stewsters.path.ecs.enums.DisplayOrder
 import com.stewsters.path.ecs.enums.Faction
 import com.stewsters.path.ecs.enums.Slot
 import com.stewsters.path.map.generator.TerrainGenerator
-import com.stewsters.util.math.MatUtils
-import kaiju.math.Rectangle
-import kaiju.math.Vec2
+import kaiju.math.Matrix3d
+import kaiju.math.Vec3
+import kaiju.math.geom.RectangularPrism
 import kaiju.math.getChebyshevDistance
+import kaiju.math.getIntInRange
+import kaiju.math.limit
+import kaiju.math.matrix3dOf
 import java.awt.Color
 import java.io.File
 import java.util.*
 
 
-class World(xSize: Int, ySize: Int,
-            xFocus: Int, yFocus: Int,
-            val gameName: String = UUID.randomUUID().toString(),
-            skip: Boolean = false) : Rectangle(Vec2[0, 0], Vec2[xSize, ySize]) {
+class World(
+    size: Vec3,
+    focus: Vec3,
+    val gameName: String = UUID.randomUUID().toString(),
+    skip: Boolean = false
+) : RectangularPrism(Vec3(0, 0, 0), size) {
 
-    private val tiles: Array<MapChunk>
+    private val tiles: Matrix3d<MapChunk>
     var player: Entity
 
     init {
-        assert(xFocus in 0..(xSize - 1))
-        assert(yFocus in 0..(ySize - 1))
+        assert(focus.x in 0 until size.x)
+        assert(focus.y in 0 until size.y)
 
         val seed = gameName.hashCode().toLong()
 
-        val worldWidth: Double = (TerrainGenerator.chunkSize * xSize).toDouble()
+        val worldWidth: Double = (TerrainGenerator.CHUNK_SIZE * size.z).toDouble()
 
         val shapes = listOf({ x: Int, y: Int ->
             val xPercent = ((x / worldWidth) - 0.5) * 2
@@ -48,42 +54,56 @@ class World(xSize: Int, ySize: Int,
             maxOf(xPercent * xPercent, yPercent * yPercent)
         })
 
-        tiles = Array(xSize * ySize, { index ->
-            TerrainGenerator.generateChunk(this, shapes, Vec2[index % xSize, index / ySize], seed, skip)
-        })
+        tiles = matrix3dOf(size) { x, y, z ->
+            TerrainGenerator.generateChunk(this, shapes, Vec3(x, y, z), seed, skip)
+        }
 
+        var currentMap = getMapAt(focus)
+        val playerStart =
+            Vec3(TerrainGenerator.CHUNK_SIZE / 2, TerrainGenerator.CHUNK_SIZE / 2, TerrainGenerator.CHUNK_SIZE / 2)
         if (!skip) {
-            // Construction
-            for (tile in tiles) {
-                for (x in 0 until TerrainGenerator.chunkSize) {
-                    for (y in 0 until TerrainGenerator.chunkSize) {
 
-                        if (x == 6 && y <= 10 && y >= 6) {
-                            if (y == 8)
-                                tile.at(x, y).type = TileType.CLOSED_DOOR
-                            else
-                                tile.at(x, y).type = TileType.WALL
+            val townTiles = tiles.sortedBy {
+                it.statsTilesOfType(TileType.GRASS)
+            }
+
+            // TODO
+            currentMap = townTiles.first()
+
+            townTiles.subList(0, 5).forEach {
+
+                for (x in 0 until TerrainGenerator.CHUNK_SIZE) {
+                    for (y in 0 until TerrainGenerator.CHUNK_SIZE) {
+                        for (z in 0 until TerrainGenerator.CHUNK_SIZE) {
+
+                            if (x == 6 && y <= 10 && y >= 6) {
+                                if (y == 8)
+                                    it.at(x, y, z).type = TileType.CLOSED_DOOR
+                                else
+                                    it.at(x, y, z).type = TileType.WALL
+                            }
                         }
                     }
                 }
             }
         }
 
-        val currentMap = getMapAt(xFocus, yFocus)
+
         player = Entity(
-                name = "Player",
-                chunk = currentMap,
-                pos = Vec2[TerrainGenerator.chunkSize / 2, TerrainGenerator.chunkSize / 2],
-                faction = Faction.HUMAN,
-                displayOrder = DisplayOrder.PLAYER,
-                turnTaker = TurnTaker(0, { _, _ -> null }),
-                life = Life(10),
-                doorOpener = true,
-                inventory = Inventory(ArrayList())
+            name = "Player",
+            chunk = currentMap,
+            pos = playerStart,
+            faction = Faction.HUMAN,
+            displayOrder = DisplayOrder.PLAYER,
+            turnTaker = TurnTaker(0, { _, _ -> null }),
+            life = Life(10),
+            doorOpener = true,
+            inventory = Inventory(ArrayList())
         )
         currentMap.addPawn(player)
 
-        player.inventory?.items?.add(Entity(
+        player.inventory?.items?.add(
+            Entity(
                 name = "Rusted Saber",
                 description = "An old sword, it has seen its fair share of combat.",
                 chunk = player.chunk,
@@ -91,84 +111,93 @@ class World(xSize: Int, ySize: Int,
                 char = '/'.code,
                 displayOrder = DisplayOrder.ITEM,
                 item = Item(
-                        weapon = Weapon(damage = 5),
-                        equipment = Equipment(Slot.WEAPON, isEquipped = true)
+                    weapon = Weapon(damage = 5),
+                    equipment = Equipment(Slot.WEAPON, isEquipped = true)
+                )))
+        player.inventory?.items?.add(
+            Entity(
+                name = "A floppy cloak",
+                description = "Brown floppy cloak",
+                chunk = player.chunk,
+                pos = player.pos,
+                char = 'c'.code,
+                displayOrder = DisplayOrder.ITEM,
+                item = Item(
+                    armor = Armor(1),
+                    equipment = Equipment(Slot.CLOAK, isEquipped = true)
                 )
-        ))
+            )
+        )
 
 
         val horse = Entity(
-                name = "Roach",
-                char = 'h'.code,
-                displayOrder = DisplayOrder.ALLY,
-                chunk = player.chunk,
-                pos = Vec2[player.pos.x + 2, player.pos.y],
-                faction = Faction.HUMAN,
-                turnTaker = TurnTaker(1, { _, entity ->
-                    val playerX = player.globalX()
-                    val playerY = player.globalY()
-                    val horseX = entity.globalX()
-                    val horseY = entity.globalY()
+            name = "Roach",
+            char = 'h'.code,
+            displayOrder = DisplayOrder.ALLY,
+            chunk = player.chunk,
+            pos = player.pos + Vec3(2, 0, 0),
+            faction = Faction.HUMAN,
+            turnTaker = TurnTaker(1, { _, entity ->
+                val playerX = player.globalX()
+                val playerY = player.globalY()
+                val horseX = entity.globalX()
+                val horseY = entity.globalY()
 
-                    if (getChebyshevDistance(player.pos, entity.pos) > 5) {
-                        WalkAction(entity, Vec2[
-                                MatUtils.limit(playerX - horseX, -1, 1),
-                                MatUtils.limit(playerY - horseY, -1, 1)]
+                if (getChebyshevDistance(player.pos, entity.pos) > 5) {
+                    WalkAction(
+                        entity, Vec3(
+                            limit(playerX - horseX, -1, 1),
+                            limit(playerY - horseY, -1, 1),
+                            0
                         )
-                    } else
-                        RestAction(entity)
-                }),
-                life = Life(100),
-                mountable = true
+                    )
+                } else
+                    RestAction(entity)
+            }),
+            life = Life(100),
+            mountable = true
         )
         currentMap.addPawn(horse)
 
         if (!skip) {
-            for (mapChunk in tiles) {
+            tiles.forEachIndexed { x, y, z, mapChunk ->
+                // todo: wolves should not be underground or in space
                 for (i in 1..5) {
-                    val x = MatUtils.getIntInRange(0, mapChunk.upper.x - 1)
-                    val y = MatUtils.getIntInRange(0, mapChunk.upper.y - 1)
+                    val x = getIntInRange(0, mapChunk.upper.x - 1)
+                    val y = getIntInRange(0, mapChunk.upper.y - 1)
+                    val z = player.pos.z
+                    //MatUtils.getIntInRange(0, mapChunk.upper.z - 1)
 
-                    if (mapChunk.at(x, y).type.blocks)
+                    if (mapChunk.at(x, y, z).type.blocks)
                         continue
 
-                    if (mapChunk.pawnInSquare(x, y).isNotEmpty())
+                    if (mapChunk.pawnInSquare(x, y, z).isNotEmpty())
                         continue
 
 
                     val wolf = Entity(
-                            name = "Wolf",
-                            char = 'w'.code,
-                            chunk = mapChunk,
-                            pos = Vec2[x, y],
-                            life = Life(1),
-                            faction = Faction.MONSTER,
-                            displayOrder = DisplayOrder.OPPONENT,
-                            turnTaker = TurnTaker(2 + i, { _, entity ->
-                                val playerX = player.globalX()
-                                val playerY = player.globalY()
-                                val xPos = entity.globalX()
-                                val yPos = entity.globalY()
-
-                                WalkAction(entity, Vec2[
-                                        MatUtils.limit(playerX - xPos, -1, 1),
-                                        MatUtils.limit(playerY - yPos, -1, 1)]
-                                )
-                            }),
-                            deathFunction = {
-                                with(it) {
-                                    println("$name died.")
-                                    turnTaker = null
-                                    displayOrder = DisplayOrder.BODY
-                                    faction = null
-                                    life = null
-                                    char = '%'.code
-                                    blocks = false
-                                    color = Color.RED
+                        name = "Wolf",
+                        char = 'w'.code,
+                        chunk = mapChunk,
+                        pos = Vec3(x, y, z),
+                        life = Life(1),
+                        faction = Faction.MONSTER,
+                        displayOrder = DisplayOrder.OPPONENT,
+                        turnTaker = TurnTaker(2 + i, wolfAction),
+                        deathFunction = {
+                            with(it) {
+                                println("$name died.")
+                                turnTaker = null
+                                displayOrder = DisplayOrder.BODY
+                                faction = null
+                                life = null
+                                char = '%'.code
+                                blocks = false
+                                color = Color.RED
 //                                    chunk.update(it)
-                                }
-
                             }
+
+                        }
                     )
                     mapChunk.addPawn(wolf)
 
@@ -178,9 +207,10 @@ class World(xSize: Int, ySize: Int,
         }
     }
 
-    fun getMapAt(pos: Vec2): MapChunk = getMapAt(pos.x, pos.y)
-    fun getMapAt(x: Int, y: Int): MapChunk = tiles[x + y * upper.x]
+    fun getMapAt(pos: Vec3): MapChunk = getMapAt(pos.x, pos.y, pos.z)
+    fun getMapAt(x: Int, y: Int, z: Int): MapChunk = tiles[x, y, z]
 
+    //TODO: add gravity
     fun update() {
 
         while (player.isAlive()) {
@@ -258,9 +288,9 @@ class World(xSize: Int, ySize: Int,
     }
 
     fun saveGame(saveDir: File) {
-        val gameSaveFolder = File(saveFolder, gameName)
+        val gameSaveFolder = File(saveDir, gameName)
         gameSaveFolder.mkdirs()
-        tiles.forEach {
+        tiles.forEach { it ->
             it.writeToDisk(gameSaveFolder)
         }
     }

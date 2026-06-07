@@ -5,9 +5,7 @@ package com.stewsters.path
 import com.stewsters.path.screen.MainMenuVeil
 import com.stewsters.path.screen.Veil
 import com.valkryst.VTerminal.component.VFrame
-import com.valkryst.VTerminal.component.VPanel
 import com.valkryst.VTerminal.plaf.VTerminalLookAndFeel
-import java.awt.Color
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 import java.io.File
@@ -19,8 +17,8 @@ import javax.swing.UnsupportedLookAndFeelException
 object Game : KeyListener {
 
     val saveFolder = File("saves")
-   private val frame = VFrame(
-            100, 64
+    private val frame = VFrame(
+        100, 64
     )
     var currentVeil: Veil = MainMenuVeil()
 
@@ -40,7 +38,8 @@ object Game : KeyListener {
         frame.pack()
         frame.setLocationRelativeTo(null)
 
-
+        // TODO: Is there an automatic way to do this?
+        frame.setSize(1000, 1000)
 
 //        SwingUtilities.invokeLater {
 //            val frame: VFrame = VFrame(40, 20)
@@ -78,7 +77,7 @@ object Game : KeyListener {
         println(e)
         currentVeil.keyboard(e, this)
         currentVeil.draw(frame.contentPane)
-//        screen.repaint()
+
         frame.repaint()
     }
 
@@ -88,42 +87,5 @@ object Game : KeyListener {
 
     override fun keyTyped(e: KeyEvent) {
 
-    }
-
-
-    private fun getRandomCodePoint(): Int {
-        return ThreadLocalRandom.current().nextInt(33, 127)
-    }
-
-    private fun getRandomColor(): Color {
-        return when (ThreadLocalRandom.current().nextInt(0, 6)) {
-            0 -> {
-                Color.MAGENTA
-            }
-
-            1 -> {
-                Color.GREEN
-            }
-
-            2 -> {
-                Color.YELLOW
-            }
-
-            3 -> {
-                Color.BLUE
-            }
-
-            4 -> {
-                Color.RED
-            }
-
-            5 -> {
-                Color.ORANGE
-            }
-
-            else -> {
-                Color.WHITE
-            }
-        }
     }
 }

@@ -2,8 +2,15 @@ package com.stewsters.path.map
 
 import java.awt.Color
 
-enum class TileType(val word: String, val blocks: Boolean, val char: Int, val foreground: Color, val background: Color = Color.BLACK) {
-
+enum class TileType(
+    val word: String,
+    val blocks: Boolean,
+    val char: Int,
+    val foreground: Color,
+    val background: Color = Color.BLACK,
+    val transparent: Boolean = false
+) {
+    AIR("air", false, ' '.code, Color(0, 0, 0, 0), Color(0, 0, 0, 0), true),
     GRASS("grass", false, '.'.code, Color.BLACK, Color(20, 200, 20)),
     TREE("tree", true, '£'.code, Color.BLACK, Color(20, 150, 20)),
 
@@ -14,5 +21,8 @@ enum class TileType(val word: String, val blocks: Boolean, val char: Int, val fo
     CLOSED_DOOR("closed door", true, '+'.code, Color.BLACK, Color.LIGHT_GRAY),
 
     WATER_SWAMP("swamp", false, ';'.code, Color(255, 222, 173), Color(160, 82, 45)),
-    WATER_LAKE("lake", false, '~'.code, Color.CYAN, Color.BLUE)
+    WATER_LAKE("lake", false, '~'.code, Color.CYAN, Color.BLUE),
+
+    UP_STAIR("up stair", false, '<'.code, Color.BLACK, Color.WHITE),
+    DOWN_STAIR("down stair", false, '>'.code, Color.BLACK, Color.WHITE);
 }

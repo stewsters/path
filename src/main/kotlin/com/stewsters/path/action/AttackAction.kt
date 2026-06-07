@@ -6,13 +6,15 @@ class AttackAction(pawn: Entity, private var target: Entity) : Action(pawn) {
 
     override fun onPerform(): ActionResult {
 
-        if (target.life == null) {
+        val targetLife = target.life
+
+        if (targetLife == null) {
             return ActionResult.FAILURE
         }
 
-        target.life?.damage(1)
+        targetLife.damage(1)
 
-        if (target.life?.cur ?: 0 <= 0) {
+        if (targetLife.cur <= 0) {
             target.deathFunction(target)
         }
 

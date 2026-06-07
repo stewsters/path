@@ -21,6 +21,10 @@ class MapChunk(
     fun at(p: Vec3): Tile = at(p.x, p.y, p.z)
     fun at(x: Int, y: Int, z: Int): Tile = tiles[x, y, z]
 
+    fun updatePawnPos(pawn: Entity, pos: Vec3) {
+        updatePawnPos(pawn, pos.x, pos.y, pos.z)
+    }
+
     fun updatePawnPos(pawn: Entity, xPos: Int, yPos: Int, zPos: Int) {
         spatialHash.remove(pawn)
         pawn.pos = Vec3(xPos, yPos, zPos)

@@ -70,12 +70,12 @@ class WalkAction(pawn: Entity, private val offset: Vec3) : Action(pawn) {
         pawn.chunk.updatePawnPos(pawn, nextPos.x, nextPos.y, nextPos.z)
 
         // See if the hero stepped on anything interesting that would cause them to react.
-//        if (targetTileType === TileType.UP_STAIR) {
-//            return ActionResult(true, AscendAction(pawn))
-//        }
-//        if (targetTileType === TileType.DOWN_STAIR) {
-//            return ActionResult(true, DescendAction(pawn))
-//        }
+        if (targetTileType === TileType.UP_STAIR) {
+            return ActionResult(true, nextAction = AscendAction(pawn))
+        }
+        if (targetTileType === TileType.DOWN_STAIR) {
+            return ActionResult(true, nextAction = DescendAction(pawn))
+        }
 
         return ActionResult.SUCCESS
     }

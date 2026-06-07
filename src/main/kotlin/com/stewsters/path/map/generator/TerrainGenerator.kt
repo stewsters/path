@@ -10,6 +10,7 @@ import kotlin.math.max
 
 object TerrainGenerator {
     const val CHUNK_SIZE = 32
+    // TODO: make chunks not so tall
 
     fun generateChunk(
         world: World,
@@ -49,16 +50,14 @@ object TerrainGenerator {
 
                     } else if (z == groundHeight) {
 
-                        when {
-                            elevation < -0.2 -> type = TileType.WATER_LAKE
-                            elevation < 0 -> type = TileType.WATER_SWAMP
-                            elevation < 0.50 -> type =
-                                if (el.random2D(nx.toDouble(), ny.toDouble()) < elevation - 0.4) {
-                                    TileType.TREE
-                                } else
-                                    TileType.GRASS
-
-                            else -> type = TileType.WALL
+                        type = when {
+                            elevation < -0.2 -> TileType.WATER_LAKE
+                            elevation < 0 -> TileType.WATER_SWAMP
+                            elevation < 0.50 -> if (el.random2D(nx.toDouble(), ny.toDouble()) < elevation - 0.4) {
+                                TileType.TREE
+                            } else
+                                TileType.GRASS
+                            else -> TileType.WALL
                         }
 
                     } else {
